@@ -62,10 +62,30 @@ staging    IN    AAAA     (IPv6 du serveur si disponible)
     └── ...
 ```
 
+## 🖥️ Environnement local staging
+
+Pour développer localement avec le même environnement que le staging OVH, créez un fichier `.env.staging` à la racine du projet et lancez les commandes avec `APP_ENV=staging`.
+
+Exemple d’utilisation locale :
+
+```bash
+cp .env.staging .env.staging.local
+# modifier .env.staging.local avec vos secrets locaux
+APP_ENV=staging php bin/console cache:clear
+```
+
+La configuration commise pour le staging local doit contenir :
+
+- `APP_ENV=staging`
+- `APP_DEBUG=1`
+- `DATABASE_URL` locale
+- `MAILER_DSN=null://null` pour désactiver les emails
+
 ## 📊 Différences entre les environnements
 
 | Aspect | Production | Staging |
 |--------|------------|---------|
+| **Branche Git** | `main` | `staging` |
 | **Debug** | Désactivé | Activé (erreurs détaillées) |
 | **Toolbar** | Non | Non (bundles dev non installés) |
 | **Cache** | Optimisé | Standard |
