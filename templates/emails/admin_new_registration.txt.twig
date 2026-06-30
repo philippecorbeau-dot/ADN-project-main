@@ -1,0 +1,29 @@
+🆕 Nouvelle inscription sur ADN Family Office
+=============================================
+
+Bonjour,
+
+Un nouvel utilisateur vient de s'inscrire sur la plateforme ADN Family Office et nécessite une activation sur MoneyPitch / O2S.
+
+👤 INFORMATIONS DU NOUVEL UTILISATEUR
+-------------------------------------
+Nom : {{ user.fullName }}
+Email : {{ user.email }}
+Type de compte : {{ user.typeName }}
+Date d'inscription : {{ user.createdAt|date('d/m/Y à H:i') }}
+
+⚠️ ACTION REQUISE
+-----------------
+1. Connectez-vous à O2S
+2. Créez le contact avec l'email {{ user.email }}
+3. Activez l'accès MoneyPitch pour ce client
+
+Lien vers la fiche utilisateur :
+{{ admin_url }}
+
+---
+Cet email est envoyé automatiquement à chaque nouvelle inscription.
+Une fois le client activé sur O2S, il pourra accéder à MoneyPitch depuis ADN Family Office.
+
+© {{ "now"|date("Y") }} ADN Family Office
+

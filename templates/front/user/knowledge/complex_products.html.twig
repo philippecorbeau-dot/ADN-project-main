@@ -1,0 +1,192 @@
+{% extends 'front/user/knowledge/layout.html.twig' %}
+
+{% block step_title %}Connaissance des produits complexes{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Introduction -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-info-circle text-blue-600 mt-1"></i>
+            <div class="flex-1">
+                <h3 class="font-semibold text-blue-800 mb-2">Informations sur les produits complexes</h3>
+                <p class="text-sm text-blue-700">
+                    Ces questions nous permettent d'évaluer votre connaissance des produits financiers complexes et de leurs risques spécifiques.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulaire -->
+    <form method="post" class="space-y-6">
+        {{ form_start(form) }}
+        
+        <!-- Question 1 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.question1) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Les fonds alternatifs et les fonds à formule sont considérés comme des OPC complexes ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.question1) }}
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.question2) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Un FCPI/FIP/FCPR est un fonds qui permet d'investir dans des entreprises non cotées et de bénéficier d'un abattement fiscal ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.question2) }}
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.question3) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Il est possible de sortir d'un FCPI/FIP/FCPR à tout moment, même si cela fait perdre l'éventuel avantage fiscal lié au produit ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.question3) }}
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.question4) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Un produit structuré est exposé à un risque de perte en capital, un risque de marché, un risque de liquidité et un risque de contrepartie ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.question4) }}
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.question5) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Les produits structurés garantissent toujours au moins 90% du capital à échéance ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.question5) }}
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.question6) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    En général, la durée de vie d'un produit structuré est fixée au départ et c'est à son échéance, qui peut être variable, que l'investisseur récupère son capital majoré ou minoré en fonction de la performance du sous-jacent ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.question6) }}
+            </div>
+        </div>
+
+        <!-- Question 7 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.question7) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Une SCPI est un produit financier investi sur des biens immobiliers qui offre un revenu régulier du fait de la perception des loyers de ces biens ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.question7) }}
+            </div>
+        </div>
+
+        <!-- Question 8 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.question8) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Il est possible de perdre de l'argent avec une SCPI ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.question8) }}
+            </div>
+        </div>
+
+        <!-- Question 9 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.question9) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    La valeur d'un OPCI (Organisme de Placement Collectif Immobilier) reste en partie liée à l'évolution des marchés financiers, contrairement à celle d'une SCPI (Société Civile de Placement Immobilier) ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.question9) }}
+            </div>
+        </div>
+
+        <!-- Question 10 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.question10) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Les produits à effet de levier sont beaucoup plus risqués que les produits conventionnels et amplifient les hausses comme les baisses ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.question10) }}
+            </div>
+        </div>
+
+        <!-- Boutons de navigation -->
+        <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+            <a href="{{ path('knowledge_financial_products') }}" 
+               class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                <i class="fa-solid fa-arrow-left mr-2"></i>
+                Précédent
+            </a>
+            
+            <button type="submit" 
+                    class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105">
+                Suivant
+                <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </form>
+</div>
+{% endblock %} 

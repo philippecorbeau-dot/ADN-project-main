@@ -1,0 +1,277 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page introuvable - ADN Family Office{% endblock %}
+
+{% block page_styles %}
+<style>
+    :root {
+        --adn-primary: #1C29A1;
+        --adn-primary-light: #2D3FDB;
+        --gradient-primary: linear-gradient(135deg, #1C29A1 0%, #3B82F6 40%, #6366F1 100%);
+        --gradient-hero: linear-gradient(135deg, #0F1751 0%, #1C29A1 30%, #2D3FDB 70%, #3B82F6 100%);
+    }
+
+    body {
+        background: var(--gradient-hero);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .error-page {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .error-page::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="g" cx="50%%" cy="50%%" r="50%%"><stop offset="0%%" style="stop-color:rgba(255,255,255,0.1)"/><stop offset="100%%" style="stop-color:rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23g)"/><circle cx="800" cy="300" r="150" fill="url(%23g)"/></svg>') no-repeat center center / cover;
+        animation: floatingBg 20s ease-in-out infinite;
+        z-index: 1;
+    }
+
+    @keyframes floatingBg {
+        0%, 100% { transform: translateY(0px) scale(1); }
+        50% { transform: translateY(-20px) scale(1.05); }
+    }
+
+    .error-container {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        max-width: 520px;
+        margin: 0 auto;
+    }
+
+    .error-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(30px);
+        border-radius: 2rem;
+        padding: 3rem 2rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        text-align: center;
+        animation: cardAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes cardAppear {
+        0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .error-illustration {
+        width: 200px;
+        height: 160px;
+        margin: 0 auto 1.5rem;
+        position: relative;
+    }
+
+    .error-illustration svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .floating-element {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .error-code {
+        font-size: 5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        line-height: 1;
+    }
+
+    .error-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+
+    .error-message {
+        color: #64748b;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .error-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .error-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 1rem 2rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .error-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .error-btn-primary {
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: 0 4px 14px rgba(28, 41, 161, 0.35);
+    }
+
+    .error-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(28, 41, 161, 0.45);
+    }
+
+    .error-btn-secondary {
+        background: transparent;
+        color: #64748b;
+        border: 2px solid #e2e8f0;
+    }
+
+    .error-btn-secondary:hover {
+        background: #f8fafc;
+        color: #334155;
+        border-color: #cbd5e1;
+    }
+
+    .search-box {
+        margin-bottom: 1.5rem;
+    }
+
+    .search-input-wrapper {
+        position: relative;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.875rem 1rem 0.875rem 3rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .search-input:focus {
+        border-color: var(--adn-primary);
+        box-shadow: 0 0 0 3px rgba(28, 41, 161, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        color: #94a3b8;
+    }
+
+    @media (min-width: 640px) {
+        .error-card { padding: 3.5rem 3rem; }
+        .error-actions { flex-direction: row; justify-content: center; }
+        .error-btn { flex: 1; max-width: 200px; }
+    }
+
+    @media (max-width: 480px) {
+        .error-card { padding: 2rem 1.5rem; border-radius: 1.5rem; }
+        .error-illustration { width: 160px; height: 130px; }
+        .error-code { font-size: 3.5rem; }
+        .error-title { font-size: 1.25rem; }
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+    <header class="bg-white shadow-sm py-4 px-6 fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="{{ path('app_home') }}" class="flex items-center">
+                <img src="{{ asset('assets/logo_adn.svg') }}" alt="ADN Family Office" class="h-10">
+            </a>
+        </div>
+    </header>
+{% endblock %}
+
+{% block body %}
+<div class="error-page" style="padding-top: 100px;">
+    <div class="error-container">
+        <div class="error-card">
+            <!-- Illustration animée -->
+            <div class="error-illustration floating-element">
+                <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Document avec point d'interrogation -->
+                    <rect x="50" y="30" width="100" height="120" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+                    <rect x="60" y="45" width="60" height="6" rx="3" fill="#cbd5e1"/>
+                    <rect x="60" y="58" width="80" height="4" rx="2" fill="#e2e8f0"/>
+                    <rect x="60" y="68" width="70" height="4" rx="2" fill="#e2e8f0"/>
+                    <rect x="60" y="78" width="75" height="4" rx="2" fill="#e2e8f0"/>
+                    <!-- Point d'interrogation -->
+                    <circle cx="100" cy="115" r="25" fill="#F59E0B" opacity="0.2"/>
+                    <text x="100" y="125" text-anchor="middle" font-size="32" font-weight="bold" fill="#F59E0B">?</text>
+                    <!-- Loupe -->
+                    <circle cx="155" cy="45" r="18" fill="white" stroke="#3B82F6" stroke-width="3"/>
+                    <line x1="168" y1="58" x2="180" y2="70" stroke="#3B82F6" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <div class="error-code">404</div>
+            <h1 class="error-title">Page introuvable</h1>
+            <p class="error-message">
+                Oups ! La page que vous recherchez n'existe pas ou a été déplacée. 
+                Vérifiez l'URL ou retournez à l'accueil.
+            </p>
+
+            <div class="error-actions">
+                <a href="{{ path('app_home') }}" class="error-btn error-btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Accueil
+                </a>
+                <a href="javascript:history.back()" class="error-btn error-btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Retour
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}
+

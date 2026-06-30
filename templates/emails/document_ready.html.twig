@@ -1,0 +1,33 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Document disponible' %}
+
+{% block content %}
+    <h1>📄 Nouveau document disponible</h1>
+    
+    <p>Bonjour {{ user.firstname }},</p>
+    
+    <p>Un nouveau document est disponible sur votre espace client.</p>
+    
+    <div class="info-box">
+        <p><strong>📋 Détails du document :</strong></p>
+        <p style="margin-top: 10px;">
+            <strong>Type :</strong> {{ document_type|default('Document') }}<br>
+            <strong>Date :</strong> {{ document_date|default('now')|date('d/m/Y') }}<br>
+            {% if document_name is defined %}<strong>Nom :</strong> {{ document_name }}{% endif %}
+        </p>
+    </div>
+    
+    <p>{{ document_description|default('Vous pouvez consulter et télécharger ce document depuis votre espace client.') }}</p>
+    
+    <div class="button-container">
+        <a href="{{ url('user_dashboard') }}" class="button">Consulter le document</a>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p style="font-size: 13px; color: #64748b; text-align: center;">
+        💡 Tous vos documents sont stockés de manière sécurisée et accessibles à tout moment.
+    </p>
+{% endblock %}
+

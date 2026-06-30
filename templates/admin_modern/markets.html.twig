@@ -1,0 +1,296 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Marchés Financiers - Back-office ADN{% endblock %}
+{% block page_title %}📈 Marchés Financiers{% endblock %}
+
+{% block content %}
+<div x-data="marketsManagement()">
+    <!-- Header avec sélecteur de marché -->
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+            <div class="flex-1 min-w-0">
+                <h2 class="text-lg font-semibold text-gray-900">Données de marché en temps réel</h2>
+                <p class="text-sm text-gray-500">Surveillez les performances des différents marchés financiers</p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                <!-- Market Selector -->
+                <select x-model="selectedMarket" @change="changeMarket()" 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="us">🇺🇸 Marchés US</option>
+                    <option value="cac40">🇫🇷 CAC 40</option>
+                    <option value="germany">🇩🇪 DAX</option>
+                    <option value="china">🇨🇳 Marchés Chinois</option>
+                    <option value="indices">📊 Indices Globaux</option>
+                </select>
+                
+                <!-- Refresh Button -->
+                <button @click="refreshData()" 
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Actualiser
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Market Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Market Performance -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Performance du marché</h3>
+                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Actions en hausse</span>
+                    <span class="text-sm font-semibold text-green-600" x-text="positiveStocks + '/' + totalStocks"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Actions en baisse</span>
+                    <span class="text-sm font-semibold text-red-600" x-text="negativeStocks + '/' + totalStocks"></span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-green-500 h-2 rounded-full transition-all duration-500" 
+                         :style="'width: ' + ((positiveStocks / totalStocks) * 100) + '%'"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Volume Trading -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Volume total</h3>
+                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+            </div>
+            <div class="text-2xl font-bold text-gray-900" x-text="formatVolume(totalVolume)"></div>
+            <p class="text-sm text-gray-500">Transactions aujourd'hui</p>
+        </div>
+
+        <!-- Market Status -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Statut du marché</h3>
+                <div class="flex items-center space-x-1">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-xs text-green-600 font-medium">EN LIGNE</span>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Dernière maj</span>
+                    <span class="text-sm font-semibold" x-text="lastUpdate"></span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Actions suivies</span>
+                    <span class="text-sm font-semibold" x-text="totalStocks"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stocks Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for stock in stocks %}
+        <div class="bg-white rounded-xl shadow-sm hover-lift border border-gray-100 overflow-hidden">
+            <!-- Stock Header -->
+            <div class="p-4 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-lg font-bold text-gray-900 truncate">{{ stock.symbol }}</h3>
+                        <p class="text-sm text-gray-500 truncate">{{ stock.name }}</p>
+                    </div>
+                    <div class="ml-2 flex-shrink-0">
+                        {% if stock.isPositive %}
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        {% else %}
+                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stock Price -->
+            <div class="p-4">
+                <div class="flex items-baseline justify-between mb-3">
+                    <div class="text-2xl font-bold text-gray-900">
+                        ${{ stock.price|number_format(2) }}
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        {% if stock.isPositive %}
+                        <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                        </svg>
+                        <span class="text-sm font-semibold text-green-600">
+                            +{{ stock.changePercent|number_format(2) }}%
+                        </span>
+                        {% else %}
+                        <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                        <span class="text-sm font-semibold text-red-600">
+                            {{ stock.changePercent|number_format(2) }}%
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Price Change -->
+                <div class="flex items-center justify-between text-sm mb-4">
+                    <span class="text-gray-500">Variation</span>
+                    <span class="font-medium {{ stock.isPositive ? 'text-green-600' : 'text-red-600' }}">
+                        {{ stock.isPositive ? '+' : '' }}${{ stock.change|number_format(2) }}
+                    </span>
+                </div>
+                
+                <!-- Stock Details -->
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Ouverture</span>
+                        <span class="font-medium">${{ stock.open|number_format(2) }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Plus haut</span>
+                        <span class="font-medium text-green-600">${{ stock.high|number_format(2) }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Plus bas</span>
+                        <span class="font-medium text-red-600">${{ stock.low|number_format(2) }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Volume</span>
+                        <span class="font-medium">{{ (stock.volume / 1000000)|number_format(1) }}M</span>
+                    </div>
+                </div>
+                
+                <!-- Mini Chart Placeholder -->
+                <div class="mt-4 h-16 bg-gray-50 rounded-lg flex items-center justify-center">
+                    <div class="flex items-end space-x-1">
+                        {% for i in 1..10 %}
+                        <div class="w-1 bg-{{ stock.isPositive ? 'green' : 'red' }}-400 rounded-t" 
+                             style="height: {{ random(8, 40) }}px;"></div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stock Footer -->
+            <div class="px-4 py-3 bg-gray-50 border-t border-gray-100">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-gray-500">
+                        Mis à jour: {{ stock.updatedAt ? stock.updatedAt|date('H:i') : 'N/A' }}
+                    </span>
+                    <button class="text-indigo-600 hover:text-indigo-700 font-medium">
+                        Détails →
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Empty State -->
+    {% if stocks is empty %}
+    <div class="text-center py-16">
+        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">Aucune donnée de marché</h3>
+        <p class="mt-2 text-gray-500">Les données de marché ne sont pas disponibles pour le moment.</p>
+        <div class="mt-6">
+            <button @click="refreshData()" 
+                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Réessayer
+            </button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Market Summary -->
+    {% if stocks is not empty %}
+    <div class="mt-8 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Résumé du marché</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="text-center">
+                <p class="text-3xl font-bold text-gray-900">{{ stocks|length }}</p>
+                <p class="text-sm text-gray-500">Actions suivies</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold text-green-600">
+                    {{ stocks|filter(s => s.isPositive)|length }}
+                </p>
+                <p class="text-sm text-gray-500">En hausse</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold text-red-600">
+                    {{ stocks|filter(s => not s.isPositive)|length }}
+                </p>
+                <p class="text-sm text-gray-500">En baisse</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold text-blue-600">
+                    {{ ((stocks|filter(s => s.volume)|map(s => s.volume)|reduce((carry, volume) => carry + volume, 0)) / 1000000)|number_format(0) }}M
+                </p>
+                <p class="text-sm text-gray-500">Volume total</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+function marketsManagement() {
+    return {
+        selectedMarket: '{{ app.request.query.get('market', 'us') }}',
+        positiveStocks: {{ stocks|filter(s => s.isPositive)|length }},
+        negativeStocks: {{ stocks|filter(s => not s.isPositive)|length }},
+        totalStocks: {{ stocks|length }},
+        totalVolume: {{ stocks|filter(s => s.volume)|map(s => s.volume)|reduce((carry, volume) => carry + volume, 0) }},
+        lastUpdate: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        
+        changeMarket() {
+            window.location.href = '{{ path('admin_modern_markets') }}?market=' + this.selectedMarket;
+        },
+        
+        refreshData() {
+            // Show loading state
+            document.getElementById('loading').style.display = 'flex';
+            
+            // Reload page to fetch fresh data
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        },
+        
+        formatVolume(volume) {
+            if (volume >= 1000000000) {
+                return (volume / 1000000000).toFixed(1) + 'B';
+            } else if (volume >= 1000000) {
+                return (volume / 1000000).toFixed(1) + 'M';
+            } else if (volume >= 1000) {
+                return (volume / 1000).toFixed(1) + 'K';
+            }
+            return volume.toString();
+        },
+        
+        init() {
+            // Auto-refresh every 30 seconds
+            setInterval(() => {
+                this.lastUpdate = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            }, 30000);
+        }
+    }
+}
+</script>
+{% endblock %}
+

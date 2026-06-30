@@ -1,0 +1,40 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Demande d\'investissement reçue' %}
+
+{% block content %}
+    <h1>Demande d'investissement en cours</h1>
+    
+    <p>Bonjour {{ user.firstname }},</p>
+    
+    <p>Nous avons bien reçu votre demande d'investissement. Votre dossier est actuellement en cours de traitement par notre équipe.</p>
+    
+    <div class="info-box">
+        <p><strong>📋 Récapitulatif de votre demande :</strong></p>
+        {% if product is defined %}
+        <p style="margin-top: 10px;">
+            <strong>Produit :</strong> {{ product }}<br>
+            {% if amount is defined %}<strong>Montant :</strong> {{ amount|number_format(0, ',', ' ') }} €{% endif %}
+        </p>
+        {% endif %}
+    </div>
+    
+    <h2>Prochaines étapes</h2>
+    
+    <p>Votre conseiller va étudier votre demande et vous recontactera sous 48 heures pour :</p>
+    
+    <ul style="margin: 20px 0; padding-left: 20px; color: #475569;">
+        <li style="margin-bottom: 10px;">Valider votre profil investisseur</li>
+        <li style="margin-bottom: 10px;">Vous proposer la solution la plus adaptée à vos besoins</li>
+        <li style="margin-bottom: 10px;">Finaliser les documents nécessaires</li>
+    </ul>
+    
+    <div class="button-container">
+        <a href="{{ url('user_dashboard') }}" class="button">Suivre ma demande</a>
+    </div>
+    
+    <p style="margin-top: 30px; text-align: center; font-size: 14px; color: #64748b;">
+        Des questions ? Votre conseiller est à votre écoute.
+    </p>
+{% endblock %}
+

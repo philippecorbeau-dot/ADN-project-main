@@ -1,0 +1,63 @@
+# ═══════════════════════════════════════════════════════════════════
+# CRONTAB - Synchronisation O2S (Harvest) - ADN Project
+# ═══════════════════════════════════════════════════════════════════
+#
+# ⚠️  IMPORTANT : Sur OVH mutualisé, les commandes CLI (php bin/console)
+# ne peuvent PAS joindre les serveurs Harvest/O2S (firewall OVH).
+# On utilise donc un script wrapper qui fait un appel HTTP vers
+# notre propre site web → passe par Apache → pas de blocage.
+#
+# Prérequis dans .env.local :
+#   CRON_SECRET=votre_token_secret_ici
+#   CRON_BASE_URL=https://staging.adnfamilyoffice.fr
+#
+# ═══════════════════════════════════════════════════════════════════
+# OPTION A : OVH MUTUALISÉ (via le Manager OVH)
+# ═══════════════════════════════════════════════════════════════════
+#
+# Dans le Manager OVH → Hébergements → Tâches planifiées :
+#
+# Tâche 1 : Sync incrémentale (toutes les 15 min)
+#   Commande : cron/o2s_cron.php incremental
+#   Langage  : PHP 8.x
+#   Fréquence: */15 * * * *
+#
+# Tâche 2 : Valorisations (toutes les 2 heures)
+#   Commande : cron/o2s_cron.php valuations 50
+#   Langage  : PHP 8.x
+#   Fréquence: 0 */2 * * *
+#
+# Tâche 3 : Sync complète (une fois par jour à 3h)
+#   Commande : cron/o2s_cron.php full
+#   Langage  : PHP 8.x
+#   Fréquence: 0 3 * * *
+#
+# ═══════════════════════════════════════════════════════════════════
+# OPTION B : SERVEUR DÉDIÉ / VPS (crontab classique)
+# ═══════════════════════════════════════════════════════════════════
+#
+# Si vous avez un serveur dédié sans restriction firewall,
+# vous pouvez utiliser les commandes CLI directement :
+#
+
+# Sync incrémentale - Toutes les 15 minutes (~10s)
+# Détecte les NOUVEAUX contacts et synchronise leurs comptes
+*/15 * * * * cd /home/boyer/ADN-project && /usr/bin/php bin/console o2s:sync-incremental --env=prod --no-debug >> var/log/o2s-incremental.log 2>&1
+
+# Mise à jour des valorisations - Toutes les 2 heures (~2-3min)
+0 */2 * * * cd /home/boyer/ADN-project && /usr/bin/php bin/console o2s:sync-incremental --valuations -b 50 --env=prod --no-debug >> var/log/o2s-valuations.log 2>&1
+
+# Sync complète - Tous les jours à 3h du matin (~15min)
+0 3 * * * cd /home/boyer/ADN-project && /usr/bin/php bin/console o2s:sync --comptes --env=prod --no-debug >> var/log/o2s-full-sync.log 2>&1
+
+# Nettoyage des logs - Tous les dimanches à 4h
+0 4 * * 0 find /home/boyer/ADN-project/var/log/ -name "o2s-*.log" -mtime +7 -delete
+
+# ═══════════════════════════════════════════════════════════════════
+# OPTION C : SERVEUR DÉDIÉ/VPS avec wrapper HTTP (même approche qu'OVH mutu)
+# ═══════════════════════════════════════════════════════════════════
+# (utile si vous voulez la même méthode partout)
+#
+# */15 * * * * cd /home/boyer/ADN-project && /usr/bin/php cron/o2s_cron.php incremental >> var/log/o2s-cron.log 2>&1
+# 0 */2 * * * cd /home/boyer/ADN-project && /usr/bin/php cron/o2s_cron.php valuations 50 >> var/log/o2s-cron.log 2>&1
+# 0 3 * * * cd /home/boyer/ADN-project && /usr/bin/php cron/o2s_cron.php full >> var/log/o2s-cron.log 2>&1

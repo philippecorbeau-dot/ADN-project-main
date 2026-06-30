@@ -1,0 +1,278 @@
+[
+    {
+        "entry": {
+            "isin": "LU0273159177",
+            "name": "DWS Invest Gold and Precious Metals",
+            "expectedNav": 291.22,
+            "expectedCcy": "EUR",
+            "expectedDate": "22/05/2026",
+            "kind": "OPCVM"
+        },
+        "sources": [
+            {
+                "source": "Boursorama",
+                "ok": true,
+                "nav": 301.93,
+                "ccy": "EUR",
+                "navDate": "26/05/2026",
+                "url": "https://www.boursorama.com/bourse/opcvm/cours/MP-234016/",
+                "elapsedMs": 1288,
+                "reason": null
+            },
+            {
+                "source": "YahooHTML",
+                "ok": false,
+                "reason": "Symbole non résolu",
+                "elapsedMs": 569
+            }
+        ]
+    },
+    {
+        "entry": {
+            "isin": "LU1834983477",
+            "name": "Lyxor Index Fund (Multi Units)",
+            "expectedNav": 65.0038,
+            "expectedCcy": "EUR",
+            "expectedDate": "25/05/2026",
+            "kind": "OPCVM"
+        },
+        "sources": [
+            {
+                "source": "Boursorama",
+                "ok": true,
+                "nav": 64.967,
+                "ccy": "EUR",
+                "navDate": null,
+                "url": "https://www.boursorama.com/bourse/trackers/cours/1rTBNK/",
+                "elapsedMs": 988,
+                "reason": null
+            },
+            {
+                "source": "YahooHTML",
+                "ok": false,
+                "reason": "Symbole non résolu",
+                "elapsedMs": 572
+            }
+        ]
+    },
+    {
+        "entry": {
+            "isin": "IE00B5BMR087",
+            "name": "iShares Core S&P 500 UCITS ETF",
+            "expectedNav": 690.2122,
+            "expectedCcy": "EUR",
+            "expectedDate": "22/05/2026",
+            "kind": "ETF"
+        },
+        "sources": [
+            {
+                "source": "Boursorama",
+                "ok": true,
+                "nav": 412.4,
+                "ccy": "USD",
+                "navDate": null,
+                "url": "https://www.boursorama.com/bourse/opcvm/cours/0P0000OO1Z/",
+                "elapsedMs": 591,
+                "reason": null
+            },
+            {
+                "source": "YahooHTML",
+                "ok": false,
+                "reason": "Symbole non résolu",
+                "elapsedMs": 439
+            }
+        ]
+    },
+    {
+        "entry": {
+            "isin": "FR0010149302",
+            "name": "Carmignac Emergents",
+            "expectedNav": 1865.46,
+            "expectedCcy": "EUR",
+            "expectedDate": "22/05/2026",
+            "kind": "OPCVM"
+        },
+        "sources": [
+            {
+                "source": "Boursorama",
+                "ok": true,
+                "nav": 1891.26,
+                "ccy": "EUR",
+                "navDate": "26/05/2026",
+                "url": "https://www.boursorama.com/bourse/opcvm/cours/MP-802603/",
+                "elapsedMs": 1361,
+                "reason": null
+            },
+            {
+                "source": "YahooHTML",
+                "ok": false,
+                "reason": "Symbole non résolu",
+                "elapsedMs": 546
+            }
+        ]
+    },
+    {
+        "entry": {
+            "isin": "IE00B53L3W79",
+            "name": "iShares Core EURO STOXX 50 UCITS ETF",
+            "expectedNav": 233.6954,
+            "expectedCcy": "EUR",
+            "expectedDate": "22/05/2026",
+            "kind": "ETF"
+        },
+        "sources": [
+            {
+                "source": "Boursorama",
+                "ok": true,
+                "nav": 235.8,
+                "ccy": "EUR",
+                "navDate": null,
+                "url": "https://www.boursorama.com/bourse/trackers/cours/1zSXRT/",
+                "elapsedMs": 1160,
+                "reason": null
+            },
+            {
+                "source": "YahooHTML",
+                "ok": false,
+                "reason": "Symbole non résolu",
+                "elapsedMs": 551
+            }
+        ]
+    },
+    {
+        "entry": {
+            "isin": "FR0010135103",
+            "name": "Comgest Magellan C",
+            "expectedNav": null,
+            "expectedCcy": "EUR",
+            "expectedDate": null,
+            "kind": "OPCVM"
+        },
+        "sources": [
+            {
+                "source": "Boursorama",
+                "ok": true,
+                "nav": 821.83,
+                "ccy": "EUR",
+                "navDate": "26/05/2026",
+                "url": "https://www.boursorama.com/bourse/opcvm/cours/MP-829413/",
+                "elapsedMs": 893,
+                "reason": null
+            },
+            {
+                "source": "YahooHTML",
+                "ok": false,
+                "reason": "Symbole non résolu",
+                "elapsedMs": 604
+            }
+        ]
+    },
+    {
+        "entry": {
+            "isin": "FR0010321802",
+            "name": "Carmignac Patrimoine A EUR",
+            "expectedNav": null,
+            "expectedCcy": "EUR",
+            "expectedDate": null,
+            "kind": "OPCVM"
+        },
+        "sources": [
+            {
+                "source": "Boursorama",
+                "ok": true,
+                "nav": 2129.54,
+                "ccy": "EUR",
+                "navDate": "26/05/2026",
+                "url": "https://www.boursorama.com/bourse/opcvm/cours/MP-800952/",
+                "elapsedMs": 1210,
+                "reason": null
+            },
+            {
+                "source": "YahooHTML",
+                "ok": false,
+                "reason": "Symbole non résolu",
+                "elapsedMs": 576
+            }
+        ]
+    },
+    {
+        "entry": {
+            "isin": "LU0823421689",
+            "name": "Pictet-Robotics P EUR",
+            "expectedNav": null,
+            "expectedCcy": "EUR",
+            "expectedDate": null,
+            "kind": "OPCVM"
+        },
+        "sources": [
+            {
+                "source": "Boursorama",
+                "ok": true,
+                "nav": 3519.88,
+                "ccy": "EUR",
+                "navDate": "26/05/2026",
+                "url": "https://www.boursorama.com/bourse/opcvm/cours/0P0000YSYV/",
+                "elapsedMs": 1450,
+                "reason": null
+            },
+            {
+                "source": "YahooHTML",
+                "ok": false,
+                "reason": "Symbole non résolu",
+                "elapsedMs": 636
+            }
+        ]
+    },
+    {
+        "entry": {
+            "isin": "IE00BK5BQT80",
+            "name": "Vanguard FTSE All-World UCITS ETF",
+            "expectedNav": null,
+            "expectedCcy": null,
+            "expectedDate": null,
+            "kind": "ETF"
+        },
+        "sources": [
+            {
+                "source": "Boursorama",
+                "ok": true,
+                "nav": 188.93,
+                "ccy": "USD",
+                "navDate": null,
+                "url": "https://www.boursorama.com/bourse/trackers/cours/1uVWRA.L/",
+                "elapsedMs": 1332,
+                "reason": null
+            },
+            {
+                "source": "YahooHTML",
+                "ok": false,
+                "reason": "Symbole non résolu",
+                "elapsedMs": 595
+            }
+        ]
+    },
+    {
+        "entry": {
+            "isin": "__FONDS_EURO__",
+            "name": "CNP Alysés Euro (fonds euros)",
+            "expectedNav": null,
+            "expectedCcy": null,
+            "expectedDate": null,
+            "kind": "FONDS_EURO"
+        },
+        "sources": [
+            {
+                "source": "Boursorama",
+                "ok": false,
+                "reason": "ISIN invalide",
+                "elapsedMs": 0
+            },
+            {
+                "source": "YahooHTML",
+                "ok": false,
+                "reason": "ISIN invalide",
+                "elapsedMs": 0
+            }
+        ]
+    }
+]

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{{ subject|default('ADN Family Office') }}{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        
+        img {
+            border: 0;
+            height: auto;
+            max-width: 100%;
+            outline: none;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .email-wrapper {
+            width: 100%;
+            background-color: #f5f7fa;
+            padding: 20px 0;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .email-header {
+            background: linear-gradient(135deg, #1C29A1 0%, #3B82F6 100%);
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .email-logo {
+            max-width: 150px;
+            margin: 0 auto 20px;
+        }
+        
+        .email-header-title {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .email-body {
+            padding: 40px 30px;
+            color: #334155;
+        }
+        
+        .email-body h1 {
+            color: #1C29A1;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .email-body h2 {
+            color: #1e293b;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 30px 0 15px;
+        }
+        
+        .email-body p {
+            color: #475569;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        
+        .email-body a {
+            color: #3B82F6;
+            text-decoration: none;
+        }
+        
+        .email-body a:hover {
+            text-decoration: underline;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #3B82F6 0%, #1C29A1 100%);
+            color: #ffffff !important;
+            text-decoration: none !important;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .info-box {
+            background-color: #EEF2FF;
+            border-left: 4px solid #3B82F6;
+            padding: 16px 20px;
+            margin: 24px 0;
+            border-radius: 4px;
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: #1e293b;
+        }
+        
+        .warning-box {
+            background-color: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+            padding: 16px 20px;
+            margin: 24px 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box p {
+            margin: 0;
+            color: #92400E;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: #E2E8F0;
+            margin: 32px 0;
+        }
+        
+        .email-footer {
+            background-color: #1e293b;
+            padding: 30px;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        .email-footer p {
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 8px 0;
+        }
+        
+        .email-footer a {
+            color: #60A5FA;
+            text-decoration: none;
+        }
+        
+        .email-footer-divider {
+            height: 1px;
+            background-color: #334155;
+            margin: 20px 0;
+        }
+        
+        .social-links {
+            margin: 20px 0;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            margin: 0 8px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        
+        .social-links a:hover {
+            opacity: 1;
+        }
+        
+        @media only screen and (max-width: 640px) {
+            .email-wrapper {
+                padding: 10px 0;
+            }
+            
+            .email-container {
+                border-radius: 0;
+            }
+            
+            .email-header {
+                padding: 30px 20px;
+            }
+            
+            .email-header-title {
+                font-size: 20px;
+            }
+            
+            .email-body {
+                padding: 30px 20px;
+            }
+            
+            .email-body h1 {
+                font-size: 20px;
+            }
+            
+            .button {
+                padding: 12px 24px;
+                font-size: 15px;
+                display: block;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-wrapper">
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+            <tr>
+                <td align="center">
+                    <div class="email-container">
+                        <!-- Header -->
+                        <div class="email-header">
+                            <img src="{{ absolute_url(asset('build/theme/images/ADN_Logo_enlarged_x5.png')) }}" alt="ADN Family Office" class="email-logo">
+                            {% if header_title is defined %}
+                            <h1 class="email-header-title">{{ header_title }}</h1>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Body Content -->
+                        <div class="email-body">
+                            {% block content %}
+                            {% endblock %}
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="email-footer">
+                            <p><strong>ADN Family Office</strong></p>
+                            <p>Premier family office ouvert à toutes les familles</p>
+                            
+                            <div class="email-footer-divider"></div>
+                            
+                            <p style="font-size: 12px;">
+                                Le site www.adnfamilyoffice.fr présente les activités de la société ADN,<br>
+                                qui propose les services de prestataire de conseil en investissements.
+                            </p>
+                            
+                            <p style="font-size: 12px; margin-top: 12px;">
+                                SAS ADN au capital de 10 542 € | Siège social : 131 boulevard Brune - 75014 Paris<br>
+                                RCS Paris n°00000 | Responsabilité civile professionnelle AIG n°0000000
+                            </p>
+                            
+                            <div class="email-footer-divider"></div>
+                            
+                            <p style="font-size: 11px; color: #64748b;">
+                                &copy; {{ "now"|date("Y") }} ADN Family Office. Tous droits réservés.
+                            </p>
+                            
+                            <p style="font-size: 11px; color: #64748b; margin-top: 12px;">
+                                Vous recevez cet email car vous êtes client ou prospect d'ADN Family Office.<br>
+                                <a href="#" style="color: #60A5FA;">Se désabonner</a>
+                            </p>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- Gmail fix -->
+    <div style="display:none; white-space:nowrap; font:15px courier; line-height:0;">
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    </div>
+</body>
+</html>
+

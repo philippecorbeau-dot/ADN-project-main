@@ -1,0 +1,952 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+
+{% block body %}
+<div class="container pb-10 mt-24 md:mt-0 px-4 sm:px-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- En-tête avec badge de statut -->
+    <div class="text-center mb-8 md:mb-12">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mb-4 shadow-lg">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">Récapitulatif de vos informations</h1>
+      <p class="text-gray-600 text-lg">Vérifiez vos informations puis téléchargez votre récapitulatif.</p>
+    </div>
+
+    <div class="space-y-6 lg:space-y-8">
+      
+      <!-- Bouton pour ouvrir la modale récap -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+        <div class="px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-lg sm:text-xl font-bold text-gray-900">Récapitulatif détaillé</h2>
+              <p class="text-sm text-gray-600 mt-0.5">Profil, profil investisseur, étape 2 & 3, expérience & MIF</p>
+            </div>
+          </div>
+          <button id="open-recap" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
+            <span class="flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+              Ouvrir
+            </span>
+          </button>
+        </div>
+      </div>
+
+        <!-- Ancien contenu (masqué, désormais dans la modale) -->
+        <div id="inline-recap" class="hidden">
+        
+        <!-- Card Profil -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-blue-100">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </div>
+              <h2 class="ml-3 text-xl font-bold text-gray-900">Profil</h2>
+            </div>
+          </div>
+          <div class="p-6">
+            <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Nom complet</dt>
+                <dd class="text-base font-semibold text-gray-900">{{ user.fullName }}</dd>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Email</dt>
+                <dd class="text-base font-semibold text-gray-900 break-all">{{ user.email }}</dd>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Type de compte</dt>
+                <dd class="mt-1">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {% if user.isPro %}bg-purple-100 text-purple-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                    {{ user.isPro ? 'Professionnel' : 'Particulier' }}
+                  </span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Card Profil Investisseur -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+          <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4 border-b border-indigo-100">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+              </div>
+              <h2 class="ml-3 text-xl font-bold text-gray-900">Profil investisseur</h2>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center justify-between bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6 text-white">
+              <div>
+                <p class="text-sm font-medium text-indigo-100">Votre profil</p>
+                <p class="text-2xl font-bold mt-1">{{ investorProfile ?? '—' }}</p>
+              </div>
+              <div class="flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full">
+                <span class="text-2xl font-bold">{{ investorScore ?? 0 }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% if info %}
+        <!-- Card Objectifs et Horizon -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+          <div class="bg-gradient-to-r from-emerald-50 to-teal-50 px-6 py-4 border-b border-emerald-100">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+              </div>
+              <h2 class="ml-3 text-xl font-bold text-gray-900">Objectifs et horizon</h2>
+            </div>
+          </div>
+          <div class="p-6">
+            <dl class="space-y-4">
+              <div class="border-l-4 border-emerald-400 bg-emerald-50 rounded-r-lg p-4">
+                <dt class="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-2">Objectifs d'investissement</dt>
+                <dd class="text-sm text-gray-900 font-medium">{{ (objectiveLabels ?? [])|join(', ') }}</dd>
+              </div>
+              <div class="border-l-4 border-teal-400 bg-teal-50 rounded-r-lg p-4">
+                <dt class="text-xs font-medium text-teal-700 uppercase tracking-wider mb-2">Horizon d'investissement</dt>
+                <dd class="text-sm text-gray-900 font-medium">{{ (investmentTermLabels ?? [])|join(', ') }}</dd>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                  <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Épargne disponible</dt>
+                  <dd class="text-lg font-bold text-emerald-600">{{ info.liquidity ?? 0 }} €</dd>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                  <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Origine des fonds</dt>
+                  <dd class="text-sm text-gray-900 font-medium">{{ (sourceOfFundsLabels ?? [])|join(', ') }}</dd>
+                </div>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Card Situation Financière -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+          <div class="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-amber-100">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <h2 class="ml-3 text-xl font-bold text-gray-900">Situation financière</h2>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="space-y-6">
+              <!-- Revenus -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                  </svg>
+                  Revenus
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-100">
+                    <dt class="text-xs font-medium text-amber-700 mb-1">Salaire mensuel</dt>
+                    <dd class="text-lg font-bold text-gray-900">{{ info.salary ?? 0 }} €</dd>
+                  </div>
+                  <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-100">
+                    <dt class="text-xs font-medium text-amber-700 mb-1">Capitalisation</dt>
+                    <dd class="text-lg font-bold text-gray-900">{{ info.capitalisation ?? 0 }} €</dd>
+                  </div>
+                  <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-100">
+                    <dt class="text-xs font-medium text-amber-700 mb-1">Revenus locatifs</dt>
+                    <dd class="text-lg font-bold text-gray-900">{{ info.realestateIncome ?? 0 }} €</dd>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Immobilier -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                  </svg>
+                  Patrimoine immobilier
+                </h3>
+                <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-4 border border-orange-200">
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-medium text-orange-800">Total immobilier</span>
+                    <span class="text-xl font-bold text-orange-900">{{ info.realestate ?? 0 }} €</span>
+                  </div>
+                  <div class="space-y-2 pl-4 border-l-2 border-orange-300">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">• Résidence principale</span>
+                      <span class="font-semibold text-gray-900">{{ info.realestatePrimaryResidence ?? 0 }} €</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">• Investissement</span>
+                      <span class="font-semibold text-gray-900">{{ info.realestateInvestment ?? 0 }} €</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">• SCPI</span>
+                      <span class="font-semibold text-gray-900">{{ info.scpi ?? 0 }} €</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Épargne -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Comptes et épargne
+                </h3>
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                  <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-medium text-green-800">Total épargne</span>
+                    <span class="text-xl font-bold text-green-900">{{ info.depositSavings ?? 0 }} €</span>
+                  </div>
+                  <div class="space-y-2 pl-4 border-l-2 border-green-300">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">• Compte courant</span>
+                      <span class="font-semibold text-gray-900">{{ info.depositSavingsChecking ?? 0 }} €</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">• Livret A</span>
+                      <span class="font-semibold text-gray-900">{{ info.depositSavingsLivretA ?? 0 }} €</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">• LDD</span>
+                      <span class="font-semibold text-gray-900">{{ info.depositSavingsLdd ?? 0 }} €</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">• CSL</span>
+                      <span class="font-semibold text-gray-900">{{ info.depositSavingsCsl ?? 0 }} €</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-gray-600">• Autre livret</span>
+                      <span class="font-semibold text-gray-900">{{ info.depositSavingsOther ?? 0 }} €</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if info %}
+        <!-- Card Expérience & MIF (Étape 4) -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+          <div class="bg-gradient-to-r from-violet-50 to-fuchsia-50 px-6 py-4 border-b border-violet-100">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 w-10 h-10 bg-violet-500 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                </svg>
+              </div>
+              <h2 class="ml-3 text-xl font-bold text-gray-900">Expérience & MIF (Étape 4)</h2>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Connaissance MIF</dt>
+                <dd class="text-sm font-semibold text-gray-900">{{ info.mif ? 'Oui' : 'Non' }}</dd>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Employé du secteur financier</dt>
+                <dd class="text-sm font-semibold text-gray-900">{{ info.financeWorker ? 'Oui' : 'Non' }}</dd>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Personne politiquement exposée</dt>
+                <dd class="text-sm font-semibold text-gray-900">{{ info.political is same as(null) ? '—' : (info.political ? 'Oui' : 'Non') }}</dd>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Titres financiers détenus</dt>
+                <dd class="text-sm font-semibold text-gray-900">{{ info.securities ? 'Oui' : 'Non' }}</dd>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-white rounded-xl p-4 border border-gray-100">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Types de titres</h3>
+                <p class="text-sm text-gray-900">{{ info.securitiesOptionsTxt ?: '—' }}</p>
+                {% if info.securitiesOptionsCount %}
+                  <p class="mt-1 text-xs text-gray-500">Nombre d'opérations: {{ info.securitiesOptionsCount }}</p>
+                {% endif %}
+              </div>
+              <div class="bg-white rounded-xl p-4 border border-gray-100">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Connaissances minimales</h3>
+                <ul class="text-sm text-gray-900 space-y-1">
+                  <li>Montant minimum: {{ info.awarenessMinimumAmount ? 'Oui' : 'Non' }}</li>
+                  <li>Durée minimale: {{ info.awarenessMinimumTime ? 'Oui' : 'Non' }}</li>
+                  <li>Transactions minimales: {{ info.awarenessTransactions ? 'Oui' : 'Non' }}</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-white rounded-xl p-4 border border-gray-100">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Adéquation (connaissances)</h3>
+                <ul class="text-sm text-gray-900 space-y-1">
+                  <li>Q1: {{ info.adequacy1 ?: '—' }}</li>
+                  <li>Q2: {{ info.adequacy2 ?: '—' }}</li>
+                  <li>Q3: {{ info.adequacy3 is same as(null) ? '—' : (info.adequacy3 ? 'Oui' : 'Non') }}</li>
+                  <li>Q4: {{ info.adequacy4 is same as(null) ? '—' : (info.adequacy4 ? 'Oui' : 'Non') }}</li>
+                  <li>Q5: {{ info.adequacy5 ?: '—' }}</li>
+                </ul>
+              </div>
+              <div class="bg-white rounded-xl p-4 border border-gray-100">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Attestations</h3>
+                <ul class="text-sm text-gray-900 space-y-1">
+                  <li>Revenus suffisants: {{ info.attestIncome ? 'Oui' : 'Non' }}</li>
+                  <li>Transactions significatives: {{ info.attestSignificantTransaction ? 'Oui' : 'Non' }}</li>
+                  <li>Compréhension des risques: {{ info.attestAware ? 'Oui' : 'Non' }}</li>
+                  <li>Sincérité des informations: {{ info.attestTruth ? 'Oui' : 'Non' }}</li>
+                </ul>
+              </div>
+            </div>
+
+            {% if ik %}
+            <div class="mt-6 grid grid-cols-1 gap-6">
+              <!-- Questionnaire de connaissances: Produits financiers -->
+              <div class="bg-gradient-to-br from-violet-50 to-fuchsia-50 rounded-xl p-5 border border-violet-100">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="text-sm font-semibold text-gray-800">Questionnaire — Connaissance des produits financiers</h3>
+                  <button type="button" class="text-xs px-2 py-1 rounded bg-violet-600 text-white" onclick="document.getElementById('modal-knowledge').classList.remove('hidden')">Voir les réponses</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-900">
+                  {% for i in 1..8 %}
+                    <div class="bg-white rounded-lg p-3 border border-gray-100">
+                      <div class="text-gray-700 mb-1">{{ financialLabels[i-1] }}</div>
+                      <div class="font-semibold">{{ financialProducts ? (answerMap[attribute(financialProducts, 'getQuestion' ~ i)] ?? '—') : '—' }}</div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Questionnaire de connaissances: Produits complexes -->
+              <div class="bg-gradient-to-br from-violet-50 to-fuchsia-50 rounded-xl p-5 border border-violet-100">
+                <h3 class="text-sm font-semibold text-gray-800 mb-3">Questionnaire — Connaissance des produits complexes</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-900">
+                  {% for i in 1..10 %}
+                    <div class="bg-white rounded-lg p-3 border border-gray-100">
+                      <div class="text-gray-700 mb-1">{{ complexLabels[i-1] }}</div>
+                      <div class="font-semibold">{{ complexProducts ? (answerMap[attribute(complexProducts, 'getQuestion' ~ i)] ?? '—') : '—' }}</div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Expérience de marché détaillée -->
+              <div class="bg-gradient-to-br from-violet-50 to-fuchsia-50 rounded-xl p-5 border border-violet-100">
+                <h3 class="text-sm font-semibold text-gray-800 mb-3">Expérience des marchés</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-900">
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><span>Actions</span><span class="float-right font-semibold">{{ marketExperience and marketExperience.hasStocksExperience ? 'Oui' : 'Non' }}</span></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><span>Obligations</span><span class="float-right font-semibold">{{ marketExperience and marketExperience.hasBondsExperience ? 'Oui' : 'Non' }}</span></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><span>OPCVM</span><span class="float-right font-semibold">{{ marketExperience and marketExperience.hasUcitsExperience ? 'Oui' : 'Non' }}</span></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><span>Immobilier</span><span class="float-right font-semibold">{{ marketExperience and marketExperience.hasRealEstateExperience ? 'Oui' : 'Non' }}</span></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><span>Instruments complexes</span><span class="float-right font-semibold">{{ marketExperience and marketExperience.hasComplexInstrumentsExperience ? 'Oui' : 'Non' }}</span></div>
+                </div>
+              </div>
+
+              <!-- Expérience d'investissement (questions oui/non + valeurs) -->
+              <div class="bg-gradient-to-br from-violet-50 to-fuchsia-50 rounded-xl p-5 border border-violet-100">
+                <h3 class="text-sm font-semibold text-gray-800 mb-3">Expérience d'investissement</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-900">
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><div class="text-gray-700 mb-1">{{ investmentExperienceLabels['hasLostSignificantAmounts'] }}</div><div class="font-semibold">{{ investmentExperience and investmentExperience.hasLostSignificantAmounts ? 'Oui' : 'Non' }}</div></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><div class="text-gray-700 mb-1">{{ investmentExperienceLabels['managesOwnPortfolio'] }}</div><div class="font-semibold">{{ investmentExperience and investmentExperience.managesOwnPortfolio ? 'Oui' : 'Non' }}</div></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><div class="text-gray-700 mb-1">{{ investmentExperienceLabels['portfolioSecuritiesLines'] }}</div><div class="font-semibold">{{ investmentExperience and investmentExperience.portfolioSecuritiesLines ?: '—' }}</div></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><div class="text-gray-700 mb-1">{{ investmentExperienceLabels['concentratesOnSingleSecurity'] }}</div><div class="font-semibold">{{ investmentExperience and investmentExperience.concentratesOnSingleSecurity ? 'Oui' : 'Non' }}</div></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><div class="text-gray-700 mb-1">{{ investmentExperienceLabels['appropriatenessTestPerformed'] }}</div><div class="font-semibold">{{ investmentExperience and investmentExperience.appropriatenessTestPerformed ? 'Vrai' : 'Faux' }}</div></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><div class="text-gray-700 mb-1">{{ investmentExperienceLabels['ordersThroughCif'] }}</div><div class="font-semibold">{{ investmentExperience and investmentExperience.ordersThroughCif ? 'Vrai' : 'Faux' }}</div></div>
+                </div>
+              </div>
+
+              <!-- Abus de marché -->
+              <div class="bg-gradient-to-br from-violet-50 to-fuchsia-50 rounded-xl p-5 border border-violet-100">
+                <h3 class="text-sm font-semibold text-gray-800 mb-3">Abus de marché</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-900">
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><div class="text-gray-700 mb-1">{{ marketAbuseLabels['hasOtherSecuritiesAccounts'] }}</div><div class="font-semibold">{{ ik and ik.marketAbuse and ik.marketAbuse.hasOtherSecuritiesAccounts ? 'Oui' : 'Non' }}</div></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><div class="text-gray-700 mb-1">{{ marketAbuseLabels['hasFinancialProfession'] }}</div><div class="font-semibold">{{ ik and ik.marketAbuse and ik.marketAbuse.hasFinancialProfession ? 'Oui' : 'Non' }}</div></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100"><div class="text-gray-700 mb-1">{{ marketAbuseLabels['isListedCompanyDirector'] }}</div><div class="font-semibold">{{ ik and ik.marketAbuse and ik.marketAbuse.isListedCompanyDirector ? 'Oui' : 'Non' }}</div></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100 sm:col-span-2"><div class="text-gray-700 mb-1">{{ marketAbuseLabels['professionDetails'] }}</div><div class="font-semibold">{{ ik and ik.marketAbuse and ik.marketAbuse.professionDetails ?: '—' }}</div></div>
+                  <div class="bg-white rounded-lg p-3 border border-gray-100 sm:col-span-2"><div class="text-gray-700 mb-1">{{ marketAbuseLabels['listedCompanyDetails'] }}</div><div class="font-semibold">{{ ik and ik.marketAbuse and ik.marketAbuse.listedCompanyDetails ?: '—' }}</div></div>
+                </div>
+              </div>
+
+              <!-- Niveau d'étude -->
+              <div class="bg-gradient-to-br from-violet-50 to-fuchsia-50 rounded-xl p-5 border border-violet-100">
+                <h3 class="text-sm font-semibold text-gray-800 mb-3">Niveau d'études</h3>
+                <div class="bg-white rounded-lg p-3 border border-gray-100 text-sm text-gray-900">{{ educationLevel and educationLevel.level ? educationLevel.level : '—' }}</div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if pro %}
+        <!-- Card Entreprise PRO -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+          <div class="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-purple-100">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+              </div>
+              <h2 class="ml-3 text-xl font-bold text-gray-900">Informations Entreprise</h2>
+              <span class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800">PRO</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
+                <dt class="text-xs font-medium text-purple-700 mb-1">Capital social</dt>
+                <dd class="text-lg font-bold text-gray-900">{{ pro.capital ?? 0 }} €</dd>
+              </div>
+              <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
+                <dt class="text-xs font-medium text-purple-700 mb-1">CA N-1</dt>
+                <dd class="text-lg font-bold text-gray-900">{{ pro.turnover ?? 0 }} €</dd>
+              </div>
+              <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
+                <dt class="text-xs font-medium text-purple-700 mb-1">Stocks</dt>
+                <dd class="text-lg font-bold text-gray-900">{{ pro.stocks ?? 0 }} €</dd>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        </div>
+
+      <!-- Documents et Signature en horizontal -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+        
+        <!-- Card Documents -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+          <details class="group" open>
+            <summary class="cursor-pointer list-none bg-gradient-to-r from-cyan-50 to-blue-50 px-6 py-4 border-b border-cyan-100 hover:from-cyan-100 hover:to-blue-100 transition-all duration-200">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="flex-shrink-0 w-10 h-10 bg-cyan-500 rounded-lg flex items-center justify-center shadow-md">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-900">Documents</h2>
+                    <p class="text-xs sm:text-sm text-cyan-700 mt-0.5">
+                      {% set docCount = documents|length %}
+                      {{ docCount > 0 ? docCount ~ ' document' ~ (docCount > 1 ? 's' : '') : 'Aucun document' }}
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs sm:text-sm text-gray-500 font-medium hidden sm:inline group-open:hidden">Cliquer pour voir</span>
+                  <span class="text-xs sm:text-sm text-gray-500 font-medium hidden group-open:inline">Cliquer pour masquer</span>
+                  <svg class="w-5 h-5 sm:w-6 sm:h-6 text-cyan-600 transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </div>
+              </div>
+            </summary>
+            <div class="p-6">
+              <ul class="space-y-3">
+                {% for doc in documents %}
+                  <li class="group bg-gradient-to-r from-gray-50 to-gray-100 hover:from-cyan-50 hover:to-blue-50 border border-gray-200 rounded-xl p-4 transition-all duration-200 hover:shadow-md">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 mb-1">{{ doc.type }}</p>
+                        <p class="text-xs text-gray-600 truncate">{{ doc.filename }}</p>
+                      </div>
+                      <a class="flex-shrink-0 inline-flex items-center px-3 py-1.5 bg-cyan-500 hover:bg-cyan-600 text-white text-xs font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105" 
+                         href="{{ path('user_kyc_file', { filename: doc.filename }) }}" 
+                         target="_blank">
+                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        Voir
+                      </a>
+                    </div>
+                  </li>
+                {% else %}
+                  <li class="text-center py-8 text-gray-500">
+                    <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <p class="text-sm">Aucun document téléchargé</p>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </details>
+        </div>
+
+        <!-- Card Signature -->
+        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+          <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4 border-b border-indigo-100">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+              </div>
+              <h2 class="ml-3 text-xl font-bold text-gray-900">Téléchargement du PDF</h2>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="mb-4">
+              <p class="text-sm text-gray-600">Votre récapitulatif est prêt. Téléchargez-le ci-dessous.</p>
+            </div>
+            
+            <div class="space-y-3">
+              
+              
+              <a id="btn-pdf" href="{{ path('user_kyc_pdf', { open: 1 }) }}" 
+                 class="block w-full px-4 py-2.5 rounded-xl text-white font-semibold text-center shadow-lg transition-all duration-200 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700" 
+                 target="_blank">
+                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                </svg>
+                Télécharger le PDF
+              </a>
+              
+              <a id="btn-next" href="{{ path('user_investor_profile') }}" 
+                 class="block w-full px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-center shadow-lg hover:shadow-xl transition-all duration-200">
+                <span class="inline-flex items-center">
+                  Continuer
+                  <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                  </svg>
+                </span>
+              </a>
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mt-4 flex justify-end">
+      <a href="{{ path('user_investor_profile') }}" id="continue-link" class="hidden"></a>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const modal = document.getElementById('recap-modal');
+  const openRecap = document.getElementById('open-recap');
+  const closeRecap = document.getElementById('recap-close');
+  const closeRecapFooter = document.getElementById('recap-close-footer');
+  if (openRecap && modal) {
+    openRecap.addEventListener('click', () => { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; });
+  }
+  if (closeRecap && modal) {
+    closeRecap.addEventListener('click', () => { modal.classList.add('hidden'); document.body.style.overflow = ''; });
+  }
+  if (closeRecapFooter && modal) {
+    closeRecapFooter.addEventListener('click', () => { modal.classList.add('hidden'); document.body.style.overflow = ''; });
+  }
+  if (modal) {
+    modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.add('hidden'); document.body.style.overflow = ''; } });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { modal.classList.add('hidden'); document.body.style.overflow = ''; } });
+  }
+});
+</script>
+<!-- MODALE RÉCAPITULATIF -->
+<div id="recap-modal" class="fixed inset-0 z-50 hidden transition-opacity duration-300">
+  <!-- Overlay avec animation -->
+  <div class="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/60 backdrop-blur-sm"></div>
+  
+  <!-- Conteneur de la modale -->
+  <div class="relative flex items-center justify-center min-h-screen p-4 sm:p-6">
+    <div class="relative w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col transform transition-all duration-300" style="max-height: 85vh;">
+      
+      <!-- Header moderne avec gradient -->
+      <div class="flex-shrink-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-6 sm:px-8 py-5 sm:py-6 border-b border-blue-500/20">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3 sm:gap-4">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
+              <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl sm:text-2xl font-bold text-white">Récapitulatif détaillé</h3>
+              <p class="text-xs sm:text-sm text-blue-100 mt-0.5 hidden sm:block">Toutes vos informations</p>
+            </div>
+          </div>
+          <button id="recap-close" class="group flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-medium transition-all duration-200 hover:scale-105 shadow-lg">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <span class="hidden sm:inline">Fermer</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Corps scrollable avec meilleur padding -->
+      <div class="flex-1 overflow-y-auto overscroll-contain px-4 sm:px-6 lg:px-8 py-6 bg-gradient-to-br from-gray-50 to-gray-100/50" style="max-height: calc(85vh - 100px);">
+        <div class="space-y-4 sm:space-y-5">
+          
+          <!-- Accordéon Profil -->
+          <details class="group bg-white rounded-2xl border-2 border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300">
+            <summary class="cursor-pointer list-none px-5 sm:px-6 py-4 sm:py-5 font-bold text-base sm:text-lg text-gray-900 flex items-center justify-between hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200 rounded-2xl">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </div>
+                <span>Profil</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs sm:text-sm text-gray-500 font-normal hidden sm:inline">Cliquer pour déplier</span>
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </summary>
+            <div class="px-5 sm:px-6 pb-5 sm:pb-6 pt-2">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                  <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Nom complet</dt>
+                  <dd class="text-base font-bold text-gray-900">{{ user.fullName }}</dd>
+                </div>
+                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                  <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Email</dt>
+                  <dd class="text-sm sm:text-base font-bold text-gray-900 break-all">{{ user.email }}</dd>
+                </div>
+                <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                  <dt class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Type de compte</dt>
+                  <dd><span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold {% if user.isPro %}bg-purple-100 text-purple-800 border border-purple-200{% else %}bg-blue-100 text-blue-800 border border-blue-200{% endif %}">{{ user.isPro ? 'Professionnel' : 'Particulier' }}</span></dd>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Accordéon Profil investisseur -->
+          <details class="group bg-white rounded-2xl border-2 border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300">
+            <summary class="cursor-pointer list-none px-5 sm:px-6 py-4 sm:py-5 font-bold text-base sm:text-lg text-gray-900 flex items-center justify-between hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200 rounded-2xl">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                </div>
+                <span>Profil investisseur</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs sm:text-sm text-gray-500 font-normal hidden sm:inline">Cliquer pour déplier</span>
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </summary>
+            <div class="px-5 sm:px-6 pb-5 sm:pb-6 pt-2">
+              <div class="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-indigo-500 via-purple-600 to-fuchsia-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+                <div>
+                  <p class="text-sm font-medium text-indigo-100 uppercase tracking-wider">Votre profil</p>
+                  <p class="text-2xl sm:text-3xl font-bold mt-2">{{ investorProfile ?? '—' }}</p>
+                </div>
+                <div class="flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg mt-4 sm:mt-0">
+                  <span class="text-3xl sm:text-4xl font-bold">{{ investorScore ?? 0 }}</span>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Accordéon Étape 2 -->
+          <details class="group bg-white rounded-2xl border-2 border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300">
+            <summary class="cursor-pointer list-none px-5 sm:px-6 py-4 sm:py-5 font-bold text-base sm:text-lg text-gray-900 flex items-center justify-between hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 transition-all duration-200 rounded-2xl">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                  </svg>
+                </div>
+                <span class="text-sm sm:text-base lg:text-lg">Étape 2 — Objectifs et horizon</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs sm:text-sm text-gray-500 font-normal hidden sm:inline">Cliquer pour déplier</span>
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </summary>
+            <div class="px-5 sm:px-6 pb-5 sm:pb-6 pt-2">
+              <dl class="space-y-3 sm:space-y-4">
+                <div class="border-l-4 border-emerald-500 bg-gradient-to-r from-emerald-50 to-emerald-100/50 rounded-r-xl p-4 shadow-sm">
+                  <dt class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">Objectifs d'investissement</dt>
+                  <dd class="text-sm font-semibold text-gray-900">{{ (objectiveLabels ?? [])|join(', ') }}</dd>
+                </div>
+                <div class="border-l-4 border-teal-500 bg-gradient-to-r from-teal-50 to-teal-100/50 rounded-r-xl p-4 shadow-sm">
+                  <dt class="text-xs font-bold text-teal-700 uppercase tracking-wider mb-2">Horizon d'investissement</dt>
+                  <dd class="text-sm font-semibold text-gray-900">{{ (investmentTermLabels ?? [])|join(', ') }}</dd>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200 shadow-sm">
+                    <dt class="text-xs font-medium text-emerald-700 uppercase tracking-wider mb-1">Épargne disponible</dt>
+                    <dd class="text-xl font-bold text-emerald-700">{{ info.liquidity ?? 0 }} €</dd>
+                  </div>
+                  <div class="bg-gradient-to-br from-teal-50 to-teal-100 rounded-xl p-4 border border-teal-200 shadow-sm">
+                    <dt class="text-xs font-medium text-teal-700 uppercase tracking-wider mb-1">Origine des fonds</dt>
+                    <dd class="text-sm font-semibold text-gray-900">{{ (sourceOfFundsLabels ?? [])|join(', ') }}</dd>
+                  </div>
+                </div>
+              </dl>
+            </div>
+          </details>
+
+          <!-- Accordéon Étape 3 -->
+          <details class="group bg-white rounded-2xl border-2 border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300">
+            <summary class="cursor-pointer list-none px-5 sm:px-6 py-4 sm:py-5 font-bold text-base sm:text-lg text-gray-900 flex items-center justify-between hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all duration-200 rounded-2xl">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-md">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                <span class="text-sm sm:text-base lg:text-lg">Étape 3 — Situation financière</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs sm:text-sm text-gray-500 font-normal hidden sm:inline">Cliquer pour déplier</span>
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </summary>
+            <div class="px-5 sm:px-6 pb-5 sm:pb-6 pt-2">
+              <!-- Revenus -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 sm:mb-6">
+                <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 border border-amber-200 shadow-sm">
+                  <dt class="text-xs font-medium text-amber-700 mb-1">Salaire mensuel</dt>
+                  <dd class="text-lg sm:text-xl font-bold text-amber-900">{{ info.salary ?? 0 }} €</dd>
+                </div>
+                <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 border border-amber-200 shadow-sm">
+                  <dt class="text-xs font-medium text-amber-700 mb-1">Capitalisation</dt>
+                  <dd class="text-lg sm:text-xl font-bold text-amber-900">{{ info.capitalisation ?? 0 }} €</dd>
+                </div>
+                <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 border border-amber-200 shadow-sm">
+                  <dt class="text-xs font-medium text-amber-700 mb-1">Revenus locatifs</dt>
+                  <dd class="text-lg sm:text-xl font-bold text-amber-900">{{ info.realestateIncome ?? 0 }} €</dd>
+                </div>
+              </div>
+              <!-- Immobilier -->
+              <div class="bg-gradient-to-br from-orange-50 to-red-100 rounded-xl p-5 border-2 border-orange-300 mb-4 sm:mb-6 shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                  <span class="text-sm font-bold text-orange-800 uppercase tracking-wide">Total immobilier</span>
+                  <span class="text-xl sm:text-2xl font-bold text-orange-900">{{ info.realestate ?? 0 }} €</span>
+                </div>
+                <div class="space-y-3 pl-4 border-l-4 border-orange-400">
+                  <div class="flex justify-between text-sm"><span class="text-gray-700 font-medium">• Résidence principale</span><span class="font-bold text-gray-900">{{ info.realestatePrimaryResidence ?? 0 }} €</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-gray-700 font-medium">• Investissement</span><span class="font-bold text-gray-900">{{ info.realestateInvestment ?? 0 }} €</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-gray-700 font-medium">• SCPI</span><span class="font-bold text-gray-900">{{ info.scpi ?? 0 }} €</span></div>
+                </div>
+              </div>
+              <!-- Épargne -->
+              <div class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl p-5 border-2 border-green-300 shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                  <span class="text-sm font-bold text-green-800 uppercase tracking-wide">Total épargne</span>
+                  <span class="text-xl sm:text-2xl font-bold text-green-900">{{ info.depositSavings ?? 0 }} €</span>
+                </div>
+                <div class="space-y-3 pl-4 border-l-4 border-green-400">
+                  <div class="flex justify-between text-sm"><span class="text-gray-700 font-medium">• Compte courant</span><span class="font-bold text-gray-900">{{ info.depositSavingsChecking ?? 0 }} €</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-gray-700 font-medium">• Livret A</span><span class="font-bold text-gray-900">{{ info.depositSavingsLivretA ?? 0 }} €</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-gray-700 font-medium">• LDD</span><span class="font-bold text-gray-900">{{ info.depositSavingsLdd ?? 0 }} €</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-gray-700 font-medium">• CSL</span><span class="font-bold text-gray-900">{{ info.depositSavingsCsl ?? 0 }} €</span></div>
+                  <div class="flex justify-between text-sm"><span class="text-gray-700 font-medium">• Autre livret</span><span class="font-bold text-gray-900">{{ info.depositSavingsOther ?? 0 }} €</span></div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Accordéon Étape 4 - Amélioré -->
+          <details class="group bg-white rounded-2xl border-2 border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300">
+            <summary class="cursor-pointer list-none px-5 sm:px-6 py-4 sm:py-5 font-bold text-base sm:text-lg text-gray-900 flex items-center justify-between hover:bg-gradient-to-r hover:from-violet-50 hover:to-fuchsia-50 transition-all duration-200 rounded-2xl">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-md">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                  </svg>
+                </div>
+                <span class="text-sm sm:text-base lg:text-lg">Étape 4 — Expérience & MIF</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs sm:text-sm text-gray-500 font-normal hidden sm:inline">Cliquer pour déplier</span>
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 transition-transform duration-300 group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </summary>
+            <div class="px-5 sm:px-6 pb-5 sm:pb-6 pt-2">
+              <!-- Mini synthèse -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-5 sm:mb-6">
+                <div class="bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl p-4 border-2 border-violet-200 shadow-sm">
+                  <dt class="text-xs font-bold text-violet-700 uppercase tracking-wider mb-2">Connaissance MIF</dt>
+                  <dd class="text-base sm:text-lg font-bold text-gray-900">{{ info.mif ? 'Oui' : 'Non' }}</dd>
+                </div>
+                <div class="bg-gradient-to-br from-fuchsia-50 to-fuchsia-100 rounded-xl p-4 border-2 border-fuchsia-200 shadow-sm">
+                  <dt class="text-xs font-bold text-fuchsia-700 uppercase tracking-wider mb-2">Employé secteur financier</dt>
+                  <dd class="text-base sm:text-lg font-bold text-gray-900">{{ info.financeWorker ? 'Oui' : 'Non' }}</dd>
+                </div>
+              </div>
+
+              <!-- Connaissance produits financiers -->
+              <div class="mb-5 sm:mb-6">
+                <div class="flex items-center gap-2 mb-3 sm:mb-4">
+                  <div class="w-1 h-6 bg-gradient-to-b from-violet-500 to-fuchsia-500 rounded-full"></div>
+                  <h4 class="text-sm sm:text-base font-bold text-gray-800">Questionnaire — Produits financiers</h4>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  {% for i in 1..8 %}
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+                      <div class="text-xs text-gray-600 mb-1.5 font-medium">{{ financialLabels[i-1] }}</div>
+                      <div class="text-sm font-bold text-gray-900">{{ financialProducts ? (answerMap[attribute(financialProducts, 'getQuestion' ~ i)] ?? '—') : '—' }}</div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Connaissance produits complexes -->
+              <div class="mb-5 sm:mb-6">
+                <div class="flex items-center gap-2 mb-3 sm:mb-4">
+                  <div class="w-1 h-6 bg-gradient-to-b from-violet-500 to-fuchsia-500 rounded-full"></div>
+                  <h4 class="text-sm sm:text-base font-bold text-gray-800">Questionnaire — Produits complexes</h4>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  {% for i in 1..10 %}
+                    <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+                      <div class="text-xs text-gray-600 mb-1.5 font-medium">{{ complexLabels[i-1] }}</div>
+                      <div class="text-sm font-bold text-gray-900">{{ complexProducts ? (answerMap[attribute(complexProducts, 'getQuestion' ~ i)] ?? '—') : '—' }}</div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Expérience marchés -->
+              <div class="mb-5 sm:mb-6">
+                <div class="flex items-center gap-2 mb-3 sm:mb-4">
+                  <div class="w-1 h-6 bg-gradient-to-b from-violet-500 to-fuchsia-500 rounded-full"></div>
+                  <h4 class="text-sm sm:text-base font-bold text-gray-800">Expérience des marchés</h4>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 flex justify-between items-center hover:shadow-md transition-all duration-200">
+                    <span class="text-sm font-medium text-gray-700">Actions</span>
+                    <span class="text-sm font-bold text-gray-900">{{ marketExperience and marketExperience.hasStocksExperience ? 'Oui' : 'Non' }}</span>
+                  </div>
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 flex justify-between items-center hover:shadow-md transition-all duration-200">
+                    <span class="text-sm font-medium text-gray-700">Obligations</span>
+                    <span class="text-sm font-bold text-gray-900">{{ marketExperience and marketExperience.hasBondsExperience ? 'Oui' : 'Non' }}</span>
+                  </div>
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 flex justify-between items-center hover:shadow-md transition-all duration-200">
+                    <span class="text-sm font-medium text-gray-700">OPCVM</span>
+                    <span class="text-sm font-bold text-gray-900">{{ marketExperience and marketExperience.hasUcitsExperience ? 'Oui' : 'Non' }}</span>
+                  </div>
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 flex justify-between items-center hover:shadow-md transition-all duration-200">
+                    <span class="text-sm font-medium text-gray-700">Immobilier</span>
+                    <span class="text-sm font-bold text-gray-900">{{ marketExperience and marketExperience.hasRealEstateExperience ? 'Oui' : 'Non' }}</span>
+                  </div>
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 flex justify-between items-center hover:shadow-md transition-all duration-200 sm:col-span-2">
+                    <span class="text-sm font-medium text-gray-700">Instruments complexes</span>
+                    <span class="text-sm font-bold text-gray-900">{{ marketExperience and marketExperience.hasComplexInstrumentsExperience ? 'Oui' : 'Non' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Expérience investissement -->
+              <div class="mb-5 sm:mb-6">
+                <div class="flex items-center gap-2 mb-3 sm:mb-4">
+                  <div class="w-1 h-6 bg-gradient-to-b from-violet-500 to-fuchsia-500 rounded-full"></div>
+                  <h4 class="text-sm sm:text-base font-bold text-gray-800">Expérience d'investissement</h4>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+                    <div class="text-xs text-gray-600 mb-1.5 font-medium">{{ investmentExperienceLabels['hasLostSignificantAmounts'] }}</div>
+                    <div class="text-sm font-bold text-gray-900">{{ investmentExperience and investmentExperience.hasLostSignificantAmounts ? 'Oui' : 'Non' }}</div>
+                  </div>
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+                    <div class="text-xs text-gray-600 mb-1.5 font-medium">{{ investmentExperienceLabels['managesOwnPortfolio'] }}</div>
+                    <div class="text-sm font-bold text-gray-900">{{ investmentExperience and investmentExperience.managesOwnPortfolio ? 'Oui' : 'Non' }}</div>
+                  </div>
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+                    <div class="text-xs text-gray-600 mb-1.5 font-medium">{{ investmentExperienceLabels['portfolioSecuritiesLines'] }}</div>
+                    <div class="text-sm font-bold text-gray-900">{{ investmentExperience and investmentExperience.portfolioSecuritiesLines ?: '—' }}</div>
+                  </div>
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+                    <div class="text-xs text-gray-600 mb-1.5 font-medium">{{ investmentExperienceLabels['concentratesOnSingleSecurity'] }}</div>
+                    <div class="text-sm font-bold text-gray-900">{{ investmentExperience and investmentExperience.concentratesOnSingleSecurity ? 'Oui' : 'Non' }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Abus de marché -->
+              <div>
+                <div class="flex items-center gap-2 mb-3 sm:mb-4">
+                  <div class="w-1 h-6 bg-gradient-to-b from-violet-500 to-fuchsia-500 rounded-full"></div>
+                  <h4 class="text-sm sm:text-base font-bold text-gray-800">Abus de marché</h4>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+                    <div class="text-xs text-gray-600 mb-1.5 font-medium">{{ marketAbuseLabels['hasOtherSecuritiesAccounts'] }}</div>
+                    <div class="text-sm font-bold text-gray-900">{{ ik and ik.marketAbuse and ik.marketAbuse.hasOtherSecuritiesAccounts ? 'Oui' : 'Non' }}</div>
+                  </div>
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+                    <div class="text-xs text-gray-600 mb-1.5 font-medium">{{ marketAbuseLabels['hasFinancialProfession'] }}</div>
+                    <div class="text-sm font-bold text-gray-900">{{ ik and ik.marketAbuse and ik.marketAbuse.hasFinancialProfession ? 'Oui' : 'Non' }}</div>
+                  </div>
+                  <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-all duration-200 sm:col-span-2">
+                    <div class="text-xs text-gray-600 mb-1.5 font-medium">{{ marketAbuseLabels['isListedCompanyDirector'] }}</div>
+                    <div class="text-sm font-bold text-gray-900">{{ ik and ik.marketAbuse and ik.marketAbuse.isListedCompanyDirector ? 'Oui' : 'Non' }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <!-- Footer avec gradient -->
+      <div class="flex-shrink-0 bg-gradient-to-r from-gray-50 to-gray-100 px-6 sm:px-8 py-4 sm:py-5 border-t-2 border-gray-200">
+        <div class="flex items-center justify-between">
+          <p class="text-xs sm:text-sm text-gray-600">
+            <svg class="w-4 h-4 inline mr-1.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Utilisez la touche <kbd class="px-2 py-1 bg-white border border-gray-300 rounded text-xs font-mono shadow-sm">Échap</kbd> pour fermer
+          </p>
+          <button id="recap-close-footer" class="px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
+            Fermer
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

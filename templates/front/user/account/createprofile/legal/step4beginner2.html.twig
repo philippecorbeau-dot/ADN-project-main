@@ -1,0 +1,153 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+
+{% block body %}
+    <div class="container pb-10 mt-24 md:mt-0">
+        <div class="rounded-xl bg-white p-6 sm:p-10 shadow-md transition-opacity transition-transform">
+            <hgroup class="mb-8">
+                <h1 class="text-2xl">{% trans %}Votre expérience{% endtrans %}</h1>
+                <p>{% trans %}3. Votre rapport à l'investissement et au risque{% endtrans %}</p>
+            </hgroup>
+            {{ alert.success("Pourquoi posons-nous ces questions ?", "Conformément au règlement 2020/1503, nous devons obtenir des informations sur vos investissements antérieurs et sur votre compréhension des risques liés à l'investissement.") }}
+            {{ form_start(form, {'attr': {'id': 'form-step4'}}) }}
+            <fieldset name="beginner2">
+                <div class="mb-10">
+                    <label class="required block leading-none">{{ form.adequacy1.vars.label }}</label>
+                    <div class="flex flex-col gap-y-2 mt-4">
+                        {% for value in form.adequacy1 %}
+                            <div>
+                                {{ form_widget(value, {'attr' : {'class' : 'hidden peer'}}) }}
+                                <label for="{{ value.vars.id }}" class="sm:w-96 block items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light px-2.5 py-2">
+                                    {{ value.vars.label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.adequacy1) }}
+                </div>
+                <div class="mb-10">
+                    <label class="required block leading-none">{{ form.adequacy2.vars.label }}</label>
+                    <div class="flex flex-col gap-y-2 mt-4">
+                        {% for value in form.adequacy2 %}
+                            <div>
+                                {{ form_widget(value, {'attr' : {'class' : 'hidden peer'}}) }}
+                                <label for="{{ value.vars.id }}" class="sm:w-96 block items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light px-2.5 py-2">
+                                    {{ value.vars.label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.adequacy2) }}
+                </div>
+                <div class="mb-10">
+                    <label class="required block leading-none">{{ form.adequacy3.vars.label }}</label>
+                    <div class="flex flex-col gap-y-4 mt-2">
+                        <div>
+                            {{ form_widget(form.adequacy3[0], {'attr' : {'class' : 'hidden peer'}}) }}
+                            <label for="{{ form.adequacy3[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                                <span class="font-bold">{{ form.adequacy3[0].vars.label }}</span>
+                            </label>
+                        </div>
+                        <div>
+                            {{ form_widget(form.adequacy3[1], {'attr' : {'class' : 'hidden peer'}}) }}
+                            <label for="{{ form.adequacy3[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span class="font-bold">{{ form.adequacy3[1].vars.label }}</span>
+                            </label>
+                        </div>
+                    </div>
+                    {{ form_errors(form.adequacy3) }}
+                </div>
+                <div class="mb-10">
+                    <label class="required block">{{ form.adequacy4.vars.label }}</label>
+                    <div class="flex flex-col gap-y-4 mt-2">
+                        <div>
+                            {{ form_widget(form.adequacy4[0], {'attr' : {'class' : 'hidden peer'}}) }}
+                            <label for="{{ form.adequacy4[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                                <span class="font-bold">{{ form.adequacy4[0].vars.label }}</span>
+                            </label>
+                        </div>
+                        <div>
+                            {{ form_widget(form.adequacy4[1], {'attr' : {'class' : 'hidden peer'}}) }}
+                            <label for="{{ form.adequacy4[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span class="font-bold">{{ form.adequacy4[1].vars.label }}</span>
+                            </label>
+                        </div>
+                    </div>
+                    {{ form_errors(form.adequacy4) }}
+                </div>
+                <div class="mb-10">
+                    <label class="required block leading-none">{{ form.adequacy5.vars.label }}</label>
+                    <div class="flex flex-col gap-y-2 mt-4">
+                        {% for value in form.adequacy5 %}
+                            <div>
+                                {{ form_widget(value, {'attr' : {'class' : 'hidden peer'}}) }}
+                                <label for="{{ value.vars.id }}" class="sm:w-96 block items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light px-2.5 py-2">
+                                    {{ value.vars.label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.adequacy5) }}
+                </div>
+                <div class="hidden" data-show-if="fieldset.name=beginner2>=3">
+                    {% embed "embed/alert.html.twig" with {'type' : 'info'} %}
+                        {% block title %}{% trans %}Vous êtes considéré comme investisseur non averti.{% endtrans %}{% endblock %}
+                        {% block content %}
+                            <p class="mb-5">{% trans %}Nous avons mis en place cet outil de calcul afin de vous permettre de simuler votre capacité à supporter des pertes, conformément au règlement n°2020/1503. Celui-ci utilise les informations sur vos revenus, vos actifs et vos engagements financiers pour estimer la proportion de votre patrimoine que vous pouvez risquer de perdre sur vos investissements. Ce résultat est uniquement informatif et ne sera pas retenu par Homunity, sauf si vous y consentez.{% endtrans %}</p>
+                        {% endblock %}
+                    {% endembed %}
+                </div>
+                <div class="hidden">
+                    {% embed "embed/alert.html.twig" with {'type' : 'info'} %}
+                        {% block title %}{% trans %}Simulation de votre capacité à supporter des pertes{% endtrans %}{% endblock %}
+                        {% block content %}
+                            <p class="mb-2">{% trans %}Nous avons mis en place cet outil de calcul afin de vous permettre de simuler votre capacité à supporter des pertes, conformément au règlement n°2020/1503. Celui-ci utilise les informations sur vos revenus, vos actifs et vos engagements financiers pour estimer la proportion de votre patrimoine que vous pouvez risquer de perdre sur vos investissements. Ce résultat est uniquement informatif et ne sera pas retenu par Homunity, sauf si vous y consentez.{% endtrans %}</p>
+                            <p>{% trans with {'%sbold%' : '<span class="font-bold">', '%ebold%' : '</span>'} %}Selon les informations que vous avez fournies, %sbold%votre capacité à supporter des pertes%ebold% est estimée à * :{% endtrans %}</p>
+                            {% set capacity =
+                                (
+                                (userInfo.liquidity) +
+                                (userInfo.salary +  userInfo.realEstateIncome  +  userInfo.other) -
+                                (userInfo.rent +  userInfo.taxation  +  userInfo.compulsoryExpenses)
+                                )
+                                /10
+                            %}
+                            <div class="text-xl font-bold mb-2">
+                                {{ capacity }}€
+                            </div>
+                            {{ form_row(form.accompaniment) }}
+                            <small>*Le simulateur estime votre capacité à supporter des pertes en calculant 10% de votre patrimoine net. Le patrimoine net est déterminé en additionnant vos revenus et actifs (à l'exception des biens immobiliers personnels et de rapport et des fonds de pension) et en déduisant vos engagements financiers.</small>
+                        {% endblock %}
+                    {% endembed %}
+                </div>
+            </fieldset>
+            {% include 'front/partials/modals/attest-profile-light.html.twig' %}
+            <div class="flex">
+                <a class="btn btn-link btn-w-ico" href="{{ path('user_create_profile', {'step' : 4, 'substep' : 'beginner' }) }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                    {% trans %}Précédent{% endtrans %}
+                </a>
+                <button id="btn-next" type="submit" class="btn btn-secondary btn-w-ico ml-auto">
+                    {% trans %}Suivant{% endtrans %}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                </button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

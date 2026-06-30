@@ -1,0 +1,23 @@
+{% extends "front/layouts/modal.layout.html.twig" %}
+
+{% block modalId %}aware{% endblock %}
+{% block modalWidth %}{% endblock %}
+{% block title %}
+    {% if user.isAwareProfile %}
+        {% trans %}Je souhaite être qualifié d'investisseur averti{% endtrans %}
+    {% else %}
+        {% trans %}Je souhaite être qualifié d'investisseur non averti{% endtrans %}
+    {% endif %}
+{% endblock %}
+{% block description %}{% trans %}Pour vérifier ce statut, veuillez cocher les mentions suivantes :{% endtrans %}{% endblock %}
+
+{% block modalBody %}
+    <div>
+        <button disabled data-enable-if="form.name={{ form.vars.full_name }}=isValid" type="submit" class="btn btn-secondary btn-w-ico w-full sm:w-auto justify-center">
+            {% trans %}Valider{% endtrans %}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+            </svg>
+        </button>
+    </div>
+{% endblock %}

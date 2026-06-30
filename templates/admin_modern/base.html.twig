@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light" class="{% if app.user and app.user.isAdminDarkMode() %}dark{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Back-office ADN Family Office{% endblock %}</title>
+    
+    <!-- Favicon commun (évite les 404 d'assets) -->
+    <link rel="icon" href="{{ asset('assets/favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('assets/favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/favicon-32.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('assets/favicon-192.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/apple-touch-icon.png') }}">
+    
+    <!-- Tailwind CSS & Admin Modern Styles -->
+    {{ encore_entry_link_tags('app') }}
+    {{ encore_entry_link_tags('admin_modern') }}
+    
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    
+    <!-- Icons (Heroicons) - retiré le module ES CDN qui provoquait une erreur CORS/mime -->
+    
+    <style>
+        /* ===== DARK MODE COMPLETE SYSTEM ===== */
+        
+        /* Variables CSS */
+        :root {
+            --bg-body: #f9fafb;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --bg-header: rgba(255, 255, 255, 0.95);
+            --bg-input: #ffffff;
+            --bg-hover: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --border-color: #e5e7eb;
+            --border-light: #f3f4f6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        html.dark {
+            --bg-body: #0f172a;
+            --bg-sidebar: #1e293b;
+            --bg-card: #1e293b;
+            --bg-header: rgba(30, 41, 59, 0.95);
+            --bg-input: #334155;
+            --bg-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --border-light: #475569;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Body */
+        html.dark body {
+            background-color: var(--bg-body) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        /* Sidebar */
+        html.dark .fixed.inset-y-0.left-0 {
+            background-color: var(--bg-sidebar) !important;
+            border-color: var(--border-color) !important;
+        }
+        
+        /* Header */
+        html.dark header,
+        html.dark #admin-header {
+            background-color: var(--bg-header) !important;
+            border-color: var(--border-color) !important;
+        }
+        
+        /* Cards and panels */
+        html.dark .bg-white {
+            background-color: var(--bg-card) !important;
+        }
+        
+        html.dark .bg-gray-50 {
+            background-color: var(--bg-body) !important;
+        }
+        
+        html.dark .bg-gray-100 {
+            background-color: var(--bg-hover) !important;
+        }
+        
+        /* Text colors */
+        html.dark .text-gray-900 {
+            color: var(--text-primary) !important;
+        }
+        
+        html.dark .text-gray-800 {
+            color: #e2e8f0 !important;
+        }
+        
+        html.dark .text-gray-700 {
+            color: #cbd5e1 !important;
+        }
+        
+        html.dark .text-gray-600 {
+            color: var(--text-secondary) !important;
+        }
+        
+        html.dark .text-gray-500 {
+            color: var(--text-muted) !important;
+        }
+        
+        html.dark .text-gray-400 {
+            color: #64748b !important;
+        }
+        
+        /* Borders */
+        html.dark .border-gray-200,
+        html.dark .border-gray-300 {
+            border-color: var(--border-color) !important;
+        }
+        
+        html.dark .border-gray-100 {
+            border-color: var(--border-light) !important;
+        }
+        
+        /* Shadows */
+        html.dark .shadow,
+        html.dark .shadow-sm,
+        html.dark .shadow-md,
+        html.dark .shadow-lg,
+        html.dark .shadow-xl {
+            box-shadow: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -1px var(--shadow-color) !important;
+        }
+        
+        /* Hover states */
+        html.dark .hover\:bg-gray-100:hover,
+        html.dark .hover\:bg-gray-50:hover {
+            background-color: var(--bg-hover) !important;
+        }
+        
+        /* Specific elements */
+        html.dark .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+        }
+        
+        /* Nav items in sidebar */
+        html.dark nav a.text-gray-600 {
+            color: var(--text-secondary) !important;
+        }
+        
+        html.dark nav a.text-gray-600:hover {
+            color: #818cf8 !important;
+            background-color: rgba(99, 102, 241, 0.1) !important;
+        }
+        
+        html.dark nav a.bg-indigo-50 {
+            background-color: rgba(99, 102, 241, 0.15) !important;
+        }
+        
+        /* Bottom section in sidebar */
+        html.dark .absolute.bottom-0 .bg-gray-100 {
+            background-color: var(--bg-hover) !important;
+        }
+        
+        /* Green status indicator */
+        html.dark .bg-green-50 {
+            background-color: rgba(16, 185, 129, 0.1) !important;
+        }
+        
+        /* Tables */
+        html.dark table {
+            background-color: var(--bg-card) !important;
+        }
+        
+        html.dark thead {
+            background-color: var(--bg-hover) !important;
+        }
+        
+        html.dark tbody tr {
+            border-color: var(--border-color) !important;
+        }
+        
+        html.dark tbody tr:hover {
+            background-color: var(--bg-hover) !important;
+        }
+        
+        /* Inputs */
+        html.dark input,
+        html.dark select,
+        html.dark textarea {
+            background-color: var(--bg-input) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        html.dark input::placeholder,
+        html.dark textarea::placeholder {
+            color: var(--text-muted) !important;
+        }
+        
+        /* Modals & Overlays */
+        html.dark .bg-gray-600.opacity-75 {
+            background-color: rgba(0, 0, 0, 0.75) !important;
+        }
+        
+        /* Ring colors */
+        html.dark .ring-indigo-100 {
+            --tw-ring-color: rgba(99, 102, 241, 0.3) !important;
+        }
+        
+        /* ===== AMÉLIORATION LISIBILITÉ DARK MODE ===== */
+        
+        /* Tous les textes blancs/noirs */
+        html.dark h1, html.dark h2, html.dark h3, html.dark h4, html.dark h5, html.dark h6 {
+            color: #f1f5f9 !important;
+        }
+        
+        html.dark p, html.dark span, html.dark div, html.dark label {
+            color: inherit;
+        }
+        
+        html.dark a:not(.btn):not([class*="bg-"]) {
+            color: #93c5fd !important;
+        }
+        
+        html.dark a:not(.btn):not([class*="bg-"]):hover {
+            color: #bfdbfe !important;
+        }
+        
+        /* Actions rapides - Cards cliquables */
+        html.dark .hover\:bg-blue-50:hover,
+        html.dark .hover\:bg-indigo-50:hover,
+        html.dark .hover\:bg-purple-50:hover {
+            background-color: rgba(99, 102, 241, 0.15) !important;
+        }
+        
+        html.dark .bg-blue-50,
+        html.dark .bg-indigo-50,
+        html.dark .bg-purple-50 {
+            background-color: rgba(99, 102, 241, 0.1) !important;
+        }
+        
+        html.dark .text-blue-600,
+        html.dark .text-blue-700,
+        html.dark .text-indigo-600,
+        html.dark .text-indigo-700 {
+            color: #93c5fd !important;
+        }
+        
+        html.dark .text-blue-500,
+        html.dark .text-indigo-500 {
+            color: #60a5fa !important;
+        }
+        
+        /* Actions rapides - améliorer la visibilité */
+        html.dark [class*="hover:bg-"][class*="-50"]:hover {
+            background-color: var(--bg-hover) !important;
+        }
+        
+        /* Badges et labels colorés */
+        html.dark .bg-green-50,
+        html.dark .bg-emerald-50 {
+            background-color: rgba(16, 185, 129, 0.15) !important;
+        }
+        
+        html.dark .text-green-600,
+        html.dark .text-green-700,
+        html.dark .text-emerald-600,
+        html.dark .text-emerald-700 {
+            color: #34d399 !important;
+        }
+        
+        html.dark .bg-red-50,
+        html.dark .bg-rose-50 {
+            background-color: rgba(239, 68, 68, 0.15) !important;
+        }
+        
+        html.dark .text-red-600,
+        html.dark .text-red-700,
+        html.dark .text-rose-600 {
+            color: #f87171 !important;
+        }
+        
+        html.dark .bg-yellow-50,
+        html.dark .bg-amber-50,
+        html.dark .bg-orange-50 {
+            background-color: rgba(245, 158, 11, 0.15) !important;
+        }
+        
+        html.dark .text-yellow-600,
+        html.dark .text-yellow-700,
+        html.dark .text-amber-600,
+        html.dark .text-orange-600 {
+            color: #fbbf24 !important;
+        }
+        
+        html.dark .bg-purple-50,
+        html.dark .bg-violet-50 {
+            background-color: rgba(139, 92, 246, 0.15) !important;
+        }
+        
+        html.dark .text-purple-600,
+        html.dark .text-purple-700,
+        html.dark .text-violet-600 {
+            color: #a78bfa !important;
+        }
+        
+        html.dark .bg-cyan-50,
+        html.dark .bg-teal-50 {
+            background-color: rgba(6, 182, 212, 0.15) !important;
+        }
+        
+        html.dark .text-cyan-600,
+        html.dark .text-cyan-700,
+        html.dark .text-teal-600 {
+            color: #22d3ee !important;
+        }
+        
+        /* Badges avec fond coloré - garder la lisibilité */
+        html.dark .bg-green-100 {
+            background-color: rgba(16, 185, 129, 0.2) !important;
+        }
+        
+        html.dark .bg-red-100 {
+            background-color: rgba(239, 68, 68, 0.2) !important;
+        }
+        
+        html.dark .bg-yellow-100,
+        html.dark .bg-amber-100 {
+            background-color: rgba(245, 158, 11, 0.2) !important;
+        }
+        
+        html.dark .bg-blue-100,
+        html.dark .bg-indigo-100 {
+            background-color: rgba(99, 102, 241, 0.2) !important;
+        }
+        
+        html.dark .bg-purple-100 {
+            background-color: rgba(139, 92, 246, 0.2) !important;
+        }
+        
+        /* Textes dans les badges colorés */
+        html.dark .text-green-800 {
+            color: #6ee7b7 !important;
+        }
+        
+        html.dark .text-red-800 {
+            color: #fca5a5 !important;
+        }
+        
+        html.dark .text-yellow-800,
+        html.dark .text-amber-800 {
+            color: #fcd34d !important;
+        }
+        
+        html.dark .text-blue-800,
+        html.dark .text-indigo-800 {
+            color: #a5b4fc !important;
+        }
+        
+        html.dark .text-purple-800 {
+            color: #c4b5fd !important;
+        }
+        
+        /* Bordures colorées */
+        html.dark .border-green-200 {
+            border-color: rgba(16, 185, 129, 0.3) !important;
+        }
+        
+        html.dark .border-red-200 {
+            border-color: rgba(239, 68, 68, 0.3) !important;
+        }
+        
+        html.dark .border-yellow-200,
+        html.dark .border-amber-200 {
+            border-color: rgba(245, 158, 11, 0.3) !important;
+        }
+        
+        html.dark .border-blue-200,
+        html.dark .border-indigo-200 {
+            border-color: rgba(99, 102, 241, 0.3) !important;
+        }
+        
+        html.dark .border-purple-200 {
+            border-color: rgba(139, 92, 246, 0.3) !important;
+        }
+        
+        /* Cards avec bordures */
+        html.dark [class*="rounded"][class*="border"] {
+            border-color: var(--border-color) !important;
+        }
+        
+        /* Placeholder dans les inputs */
+        html.dark ::placeholder {
+            color: #64748b !important;
+            opacity: 1 !important;
+        }
+        
+        /* Select dropdowns */
+        html.dark select option {
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+        }
+        
+        /* Focus rings */
+        html.dark *:focus {
+            outline-color: #6366f1 !important;
+        }
+        
+        html.dark .focus\:ring-indigo-500:focus {
+            --tw-ring-color: rgba(99, 102, 241, 0.5) !important;
+        }
+        
+        /* Stat cards */
+        html.dark .bg-gradient-to-br.from-blue-50,
+        html.dark .bg-gradient-to-br.from-indigo-50,
+        html.dark .bg-gradient-to-br.from-green-50,
+        html.dark .bg-gradient-to-br.from-emerald-50,
+        html.dark .bg-gradient-to-br.from-amber-50,
+        html.dark .bg-gradient-to-br.from-yellow-50 {
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border-color) !important;
+        }
+        
+        /* Info boxes / Alerts */
+        html.dark .bg-blue-50.border-blue-200,
+        html.dark .bg-indigo-50.border-indigo-200 {
+            background-color: rgba(99, 102, 241, 0.1) !important;
+            border-color: rgba(99, 102, 241, 0.3) !important;
+        }
+        
+        html.dark .bg-green-50.border-green-200,
+        html.dark .bg-emerald-50.border-emerald-200 {
+            background-color: rgba(16, 185, 129, 0.1) !important;
+            border-color: rgba(16, 185, 129, 0.3) !important;
+        }
+        
+        html.dark .bg-red-50.border-red-200,
+        html.dark .bg-rose-50.border-rose-200 {
+            background-color: rgba(239, 68, 68, 0.1) !important;
+            border-color: rgba(239, 68, 68, 0.3) !important;
+        }
+        
+        html.dark .bg-yellow-50.border-yellow-200,
+        html.dark .bg-amber-50.border-amber-200 {
+            background-color: rgba(245, 158, 11, 0.1) !important;
+            border-color: rgba(245, 158, 11, 0.3) !important;
+        }
+        
+        /* Divide colors for lists */
+        html.dark .divide-gray-200 > * + * {
+            border-color: var(--border-color) !important;
+        }
+        
+        html.dark .divide-gray-100 > * + * {
+            border-color: var(--border-light) !important;
+        }
+        
+        /* Scrollbar dark mode */
+        html.dark ::-webkit-scrollbar-track {
+            background: #1e293b !important;
+        }
+        
+        html.dark ::-webkit-scrollbar-thumb {
+            background: #475569 !important;
+        }
+        
+        html.dark ::-webkit-scrollbar-thumb:hover {
+            background: #64748b !important;
+        }
+        
+        /* Liens dans la navigation active */
+        html.dark nav a.bg-indigo-50.text-indigo-600 {
+            background-color: rgba(99, 102, 241, 0.2) !important;
+            color: #a5b4fc !important;
+        }
+        
+        /* Chart.js dark mode support */
+        html.dark canvas {
+            filter: brightness(0.95);
+        }
+        
+        /* Code/monospace text */
+        html.dark code, html.dark pre, html.dark .font-mono {
+            background-color: #0f172a !important;
+            color: #e2e8f0 !important;
+        }
+        
+        /* Loading spinner */
+        html.dark .animate-spin {
+            border-color: rgba(99, 102, 241, 0.2) !important;
+            border-top-color: #6366f1 !important;
+        }
+
+        /* Transitions fluides */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+        }
+        
+        /* Animation de fade-in */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hover effects */
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Glass effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Gradient backgrounds */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gradient-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .gradient-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .gradient-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        /* Header sticky amélioré */
+        #admin-header {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, background, box-shadow;
+        }
+
+        #admin-header.scrolled {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        #admin-header.hidden {
+            transform: translateY(-100%) !important;
+        }
+
+        /* Animation pour l'icône du header */
+        .header-icon {
+            transition: all 0.3s ease;
+        }
+
+        .header-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-inter" x-data="{ sidebarOpen: false }">
+    <!-- Loading indicator -->
+    <div id="loading" class="fixed inset-0 bg-white z-50 flex items-center justify-center" style="display: none;">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0"
+         :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }">
+        
+        <!-- Brand minimal (logo supprimé) -->
+        <div class="flex items-center justify-center h-16 px-4 gradient-bg">
+            <span class="text-xl font-bold text-white">Admin</span>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="mt-8 px-4 space-y-2">
+            <!-- Dashboard (accessible à tous les rôles admin) -->
+            {% if app.user.canAccessModule('dashboard') %}
+            <a href="{{ path('admin_modern_dashboard') }}" 
+               class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                      {% if app.request.get('_route') == 'admin_modern_dashboard' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6a2 2 0 01-2 2H10a2 2 0 01-2-2V5z"></path>
+                </svg>
+                Dashboard
+            </a>
+            {% endif %}
+
+            <!-- Separator -->
+            <div class="border-t border-gray-200 my-4"></div>
+
+            <!-- Tracking Section -->
+            {% if app.user.canAccessModule('dashboard') %}
+            <a href="{{ path('admin_modern_tracking') }}" 
+               class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                      {% if app.request.get('_route') == 'admin_modern_tracking' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                Tracking Inscriptions
+            </a>
+            {% endif %}
+
+            <!-- Separator -->
+            <div class="border-t border-gray-200 my-4"></div>
+
+            <!-- Users Section -->
+            {% if app.user.canAccessModule('users') %}
+            <div class="space-y-1">
+                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Utilisateurs</h3>
+                <a href="{{ path('admin_modern_users') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') == 'admin_modern_users' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                    Utilisateurs
+                </a>
+                <a href="{{ path('admin_modern_investor_profiles') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') == 'admin_modern_investor_profiles' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Profils Investisseurs
+                </a>
+                {% if app.user.canAccessModule('pros') %}
+                <a href="{{ path('admin_modern_pros') }}" class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') in ['admin_modern_pros','admin_modern_pro_view'] %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    Professionnels
+                </a>
+                {% endif %}
+                {% if app.user.canAccessModule('portfolio') %}
+                <a href="{{ path('admin_modern_client_portfolio') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') == 'admin_modern_client_portfolio' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Ensemble patrimoine clients
+                </a>
+                {% endif %}
+                <a href="{{ path('admin_products_index') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-emerald-600 transition-colors
+                          {% if app.request.get('_route') starts with 'admin_products_' %}bg-emerald-50 text-emerald-600 border-r-2 border-emerald-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    Produits
+                </a>
+                {# MoneyPitch - onglet temporaire pour redirection vers O2S #}
+                <a href="{{ path('admin_modern_moneypitch') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-purple-600 transition-colors
+                          {% if app.request.get('_route') starts with 'admin_modern_moneypitch' %}bg-purple-50 text-purple-600 border-r-2 border-purple-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                    </svg>
+                    MoneyPitch
+                    <span class="ml-auto text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">O2S</span>
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Documents Section -->
+            {% if app.user.canAccessModule('kyc') or app.user.canAccessModule('opportunity_documents') %}
+            <div class="space-y-1 mt-6">
+                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Documents</h3>
+                {% if app.user.canAccessModule('kyc') %}
+                <a href="{{ path('admin_modern_kyc') }}" 
+                   class="group relative flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') == 'admin_modern_kyc' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Documents KYC
+                    {% if pendingKycDocuments is defined and pendingKycDocuments > 0 %}
+                    <span class="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold px-1.5" id="kyc-pending-badge">
+                        {{ pendingKycDocuments }}
+                    </span>
+                    {% endif %}
+                </a>
+                {% endif %}
+                {% if app.user.canAccessModule('opportunity_documents') %}
+                <a href="{{ path('admin_modern_opportunity_documents') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') starts with 'admin_modern_opportunity_documents' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Docs Opportunités
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Communication Section -->
+            {% if app.user.canAccessModule('messages') or app.user.canAccessModule('contacts') or app.user.canAccessModule('activities') or app.user.canAccessModule('chat') %}
+            <div class="space-y-1 mt-6">
+                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Communication</h3>
+                {% if app.user.canAccessModule('messages') %}
+                <a href="{{ path('admin_modern_messages') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') starts with 'admin_modern_message' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    Messages
+                    {% if unreadMessages is defined and unreadMessages > 0 %}
+                        <span class="ml-auto inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full min-w-[20px]">{{ unreadMessages }}</span>
+                    {% endif %}
+                </a>
+                {% endif %}
+                {% if app.user.canAccessModule('contacts') %}
+                <a href="{{ path('admin_modern_contacts_index') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') starts with 'admin_modern_contacts' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    Contacts
+                    {% if unreadContacts is defined and unreadContacts > 0 %}
+                        <span class="ml-auto inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full min-w-[20px]">{{ unreadContacts }}</span>
+                    {% endif %}
+                </a>
+                {% endif %}
+                {% if app.user.canAccessModule('activities') %}
+                <a href="{{ path('admin_modern_activities') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') == 'admin_modern_activities' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4H8l4-8v6h3l-4 8z"/>
+                    </svg>
+                    Activités
+                </a>
+                {% endif %}
+                {% if app.user.canAccessModule('chat') %}
+                <a href="{{ path('admin_modern_chat') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') starts with 'admin_modern_chat' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"/>
+                    </svg>
+                    Chat Support
+                    {% if unreadChatMessages is defined and unreadChatMessages > 0 %}
+                        <span class="ml-auto inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full min-w-[20px]">{{ unreadChatMessages }}</span>
+                    {% endif %}
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Markets Section (Bourse/Produits/Recherche-support/O2S supprimés — voir commentaires ci-dessous) -->
+            {% if app.user.canAccessModule('comparison') or app.user.canAccessModule('news') %}
+            <div class="space-y-1 mt-6">
+                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Marchés</h3>
+                {# ── SUPPRIMÉ : Bourse (non utilisé) ── #}
+                {# ── SUPPRIMÉ : Produits (non utilisé) ── #}
+                {# ── SUPPRIMÉ : Recherche-support (non utilisé) ── #}
+                {# ── DÉSACTIVÉ : O2S Harvest API (conservé mais masqué pour réduire les appels API)
+                {% if app.user.canAccessModule('products') %}
+                <a href="{{ path('admin_o2s_index') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-green-600 transition-colors
+                          {% if app.request.get('_route') starts with 'admin_o2s_' %}bg-green-50 text-green-600 border-r-2 border-green-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                    </svg>
+                    O2S Harvest
+                    <span class="ml-auto text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">API</span>
+                </a>
+                {% endif %}
+                ── #}
+                {% if app.user.canAccessModule('comparison') %}
+                <a href="{{ path('admin_modern_comparison') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') == 'admin_modern_comparison' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"/>
+                    </svg>
+                    Comparaison produits
+                </a>
+                <a href="{{ path('admin_modern_site_settings') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') == 'admin_modern_site_settings' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Chiffres clés
+                </a>
+                {% endif %}
+                {% if app.user.canAccessModule('news') %}
+                <a href="{{ path('admin_modern_news') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') starts with 'admin_modern_news' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V7a2 2 0 012-2h7l2 2h5a2 2 0 012 2v9a2 2 0 01-2 2z"/>
+                    </svg>
+                    Actualités
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Settings -->
+            <div class="space-y-1 mt-6">
+                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Configuration</h3>
+                <a href="{{ path('admin_modern_settings') }}" 
+                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 hover:text-indigo-600 transition-colors
+                          {% if app.request.get('_route') == 'admin_modern_settings' %}bg-indigo-50 text-indigo-600 border-r-2 border-indigo-600{% else %}text-gray-600{% endif %}">
+                    <svg class="mr-3 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Paramètres
+                </a>
+            </div>
+        </nav>
+
+        <!-- Bottom section -->
+        <div class="absolute bottom-0 left-0 right-0 p-4">
+            <div class="bg-gray-100 rounded-lg p-3">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+                        <span class="text-white text-sm font-medium">
+                            {{ app.user.email|slice(0, 1)|upper }}
+                        </span>
+                    </div>
+                    <div class="ml-3 flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 truncate">{{ app.user.firstName ?? 'Admin' }}</p>
+                        <p class="text-xs truncate">
+                            {% set roleDisplay = app.user.rolesDisplay %}
+                            {% if roleDisplay == 'Super Admin' %}
+                                <span class="text-purple-600 font-medium">👑 {{ roleDisplay }}</span>
+                            {% elseif roleDisplay == 'Administrateur' %}
+                                <span class="text-indigo-600 font-medium">🔑 {{ roleDisplay }}</span>
+                            {% elseif roleDisplay == 'Opérateur' %}
+                                <span class="text-blue-600">🔧 {{ roleDisplay }}</span>
+                            {% elseif roleDisplay == 'Gestionnaire KYC' %}
+                                <span class="text-green-600">📋 {{ roleDisplay }}</span>
+                            {% elseif roleDisplay == 'Support Client' %}
+                                <span class="text-cyan-600">💬 {{ roleDisplay }}</span>
+                            {% elseif roleDisplay == 'Marketing' %}
+                                <span class="text-orange-600">📢 {{ roleDisplay }}</span>
+                            {% else %}
+                                <span class="text-gray-500">{{ roleDisplay }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <a href="{{ path('app_logout') }}" class="text-gray-400 hover:text-gray-600">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="lg:pl-64 flex flex-col min-h-screen">
+        <!-- Top bar sticky forcé (jamais masqué) -->
+        <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200" id="admin-header">
+            <div class="px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <!-- Mobile menu button -->
+                        <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden -ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                        
+                        <div class="flex items-center ml-4 lg:ml-0 min-w-0">
+                            <!-- Icône de page dynamique -->
+                            <div class="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center mr-2 sm:mr-3 header-icon">
+                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    {% block header_icon %}
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 01-2-2z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6a2 2 0 01-2 2H10a2 2 0 01-2-2V5z"/>
+                                    {% endblock %}
+                                </svg>
+                            </div>
+                            <h1 class="text-base sm:text-lg md:text-2xl font-semibold text-gray-900 transition-all duration-300 truncate max-w-[58vw] sm:max-w-none" id="page-title">
+                                {% block page_title %}Dashboard{% endblock %}
+                            </h1>
+                        </div>
+                    </div>
+
+                    <!-- Right side -->
+                    <div class="flex items-center space-x-4">
+                        <!-- Indicateur de statut -->
+                        <div class="hidden md:flex items-center space-x-2 px-3 py-1 bg-green-50 rounded-full">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs font-medium text-green-700">En ligne</span>
+                        </div>
+
+                        <!-- Notifications (masqué en mobile) -->
+                        <div class="relative hidden sm:block">
+                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors relative">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9zM13.73 21a2 2 0 01-3.46 0"/>
+                                </svg>
+                                {% if kycPending is defined and kycPending > 0 %}
+                                <!-- Badge de notification -->
+                                <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">{{ kycPending }}</span>
+                                {% endif %}
+                            </button>
+                        </div>
+
+                        <!-- Messages (masqué en mobile) -->
+                        <div class="relative hidden sm:block">
+                            <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Profile -->
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center ring-2 ring-indigo-100">
+                                <span class="text-white text-sm font-medium">
+                                    {{ app.user.email|slice(0, 1)|upper }}
+                                </span>
+                            </div>
+                            <div class="hidden md:block">
+                                <p class="text-sm font-medium text-gray-900">{{ app.user.firstName ?? 'Admin' }}</p>
+                                <p class="text-xs text-gray-500">{{ app.user.email }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Actions rapides (affichées aussi en mobile) -->
+                        <div class="flex items-center space-x-2">
+                            <a href="{{ path('app_home') }}" class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors block sm:block" title="Voir le site">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                </svg>
+                            </a>
+                            <a href="{{ path('app_logout') }}" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors block sm:block" title="Déconnexion">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main content area -->
+        <main class="flex-1 p-4 sm:p-6 lg:p-8">
+            <div class="fade-in">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+        
+        <!-- Système de Toast Unifié -->
+        {% include 'components/toast_system.html.twig' %}
+    </div>
+
+    <!-- Mobile sidebar overlay -->
+    <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 z-40 lg:hidden" style="display: none;">
+        <div class="absolute inset-0 bg-gray-600 opacity-75" @click="sidebarOpen = false"></div>
+    </div>
+
+    <!-- Scripts -->
+    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('admin_modern') }}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sticky permanent: pas de masquage au scroll
+            const header = document.getElementById('admin-header');
+            header.style.position = 'sticky';
+            header.style.top = '0px';
+            header.style.zIndex = '50';
+        });
+
+        // Turbo integration for smooth navigation
+        document.addEventListener('turbo:visit', function() {
+            document.getElementById('loading').style.display = 'flex';
+        });
+        
+        document.addEventListener('turbo:load', function() {
+            document.getElementById('loading').style.display = 'none';
+        });
+        
+        // Auto-close mobile sidebar on larger screens
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {
+                Alpine.store('sidebar', { open: false });
+            }
+        });
+    </script>
+
+    {# Activation client Mercure (si UX Turbo présent) #}
+    {# Mercure retiré #}
+
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

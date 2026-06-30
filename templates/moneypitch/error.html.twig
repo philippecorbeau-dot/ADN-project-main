@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur de connexion MoneyPitch - ADN Family Office</title>
+    <link rel="icon" href="{{ asset('assets/favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('assets/favicon.ico') }}" sizes="any">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --adn-primary: #1C29A1;
+            --adn-primary-light: #3B82F6;
+            --adn-error: #EF4444;
+            --adn-error-dark: #DC2626;
+            --adn-warning: #F59E0B;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0F1751 0%, #1C29A1 30%, #2D3FDB 70%, #3B82F6 100%);
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo {
+            height: 45px;
+            filter: brightness(0) invert(1);
+            opacity: 0.95;
+        }
+
+        /* Container principal */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        /* Card d'erreur */
+        .error-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Icône d'erreur */
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--adn-error) 0%, var(--adn-error-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.4);
+        }
+
+        .error-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        /* Titre */
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--adn-error);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        /* Message d'erreur */
+        .error-message-box {
+            background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+            border: 1px solid #FECACA;
+            border-left: 4px solid var(--adn-error);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .error-message-box p {
+            color: #991B1B;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Info box */
+        .info-box {
+            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+            border: 1px solid #FDE68A;
+            border-left: 4px solid var(--adn-warning);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: #92400E;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-box p {
+            color: #92400E;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Code erreur */
+        .error-code {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #F3F4F6;
+            color: #6B7280;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Boutons */
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--adn-primary) 0%, var(--adn-primary-light) 100%);
+            color: white;
+            box-shadow: 0 4px 15px -3px rgba(28, 41, 161, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(28, 41, 161, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #64748B;
+            border: 2px solid #E2E8F0;
+        }
+
+        .btn-secondary:hover {
+            background: #F8FAFC;
+            border-color: #CBD5E1;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--adn-primary);
+            border: 2px solid var(--adn-primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(28, 41, 161, 0.05);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .logo {
+                height: 35px;
+            }
+
+            .error-card {
+                padding: 1.5rem;
+                border-radius: 1rem;
+                margin: 0 0.5rem;
+            }
+
+            .error-icon {
+                width: 64px;
+                height: 64px;
+            }
+
+            .error-icon svg {
+                width: 32px;
+                height: 32px;
+            }
+
+            .error-title {
+                font-size: 1.25rem;
+            }
+
+            .error-message-box p,
+            .info-box p {
+                font-size: 0.85rem;
+            }
+
+            .btn {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Particules */
+        .particle {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; top: 60%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 70%; top: 30%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 80%; top: 70%; animation-delay: 6s; }
+        .particle:nth-child(5) { left: 50%; top: 80%; animation-delay: 8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            50% { transform: translateY(-20px) translateX(10px); opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particules -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="{{ path('app_home') }}">
+            <img src="{{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }}" alt="ADN Family Office" class="logo">
+        </a>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-container">
+        <div class="error-card">
+            <div class="error-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+            </div>
+
+            <h1 class="error-title">Erreur de connexion MoneyPitch</h1>
+
+            <div class="error-message-box">
+                <p>{{ error_message }}</p>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-title">
+                    💡 Compte pas encore activé ?
+                </div>
+                <p>
+                    Si vous venez de vous inscrire, votre accès MoneyPitch doit d'abord être activé par notre équipe. 
+                    Vous recevrez un email de MoneyPitch pour définir votre mot de passe une fois votre compte activé.
+                </p>
+            </div>
+
+            <div class="error-code">
+                ⚠️ Code erreur : {{ error_code }}
+            </div>
+
+            <div class="actions">
+                <a href="{{ path('app_moneypitch_redirect') }}" class="btn btn-outline">
+                    🔄 Réessayer la connexion
+                </a>
+                <a href="{{ path('app_logout') }}" class="btn btn-primary">
+                    🚪 Se déconnecter
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© {{ 'now'|date('Y') }} <a href="{{ path('app_home') }}">ADN Family Office</a> — Besoin d'aide ? <a href="mailto:contact@adnfamilyoffice.fr">Contactez-nous</a></p>
+    </footer>
+</body>
+</html>

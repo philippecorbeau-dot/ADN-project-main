@@ -1,0 +1,544 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block page_title %}Comparaison produits{% endblock %}
+
+{% block header_icon %}
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Breadcrumb d'administration -->
+    {% include 'partials/breadcrumb.html.twig' with {
+        'items': [
+            {'label': 'Dashboard Admin', 'path': 'admin_modern_dashboard', 'icon': 'admin'},
+            {'label': 'Gestion du Comparatif'}
+        ]
+    } %}
+
+    <!-- En-tête d'administration moderne -->
+    <div class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 rounded-2xl shadow-2xl overflow-hidden">
+        <div class="px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Gestion du Comparatif</h1>
+                        <p class="text-blue-200 text-sm">Table de comparaison des produits d'investissement</p>
+                    </div>
+                </div>
+                
+                <!-- Statistiques rapides -->
+                <div class="hidden md:flex space-x-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-white" id="total-items">{{ items|length }}</div>
+                        <div class="text-xs text-blue-200">Entrées</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-white" id="unique-products">-</div>
+                        <div class="text-xs text-blue-200">Produits</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-white" id="unique-criteria">-</div>
+                        <div class="text-xs text-blue-200">Critères</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Barre d'outils -->
+        <div class="bg-white/5 backdrop-blur-sm border-t border-white/10 px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <button type="button" id="add-row-btn" class="inline-flex items-center px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm font-medium transition-all duration-200 backdrop-blur-sm" title="Ajouter une ligne">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Ajouter une ligne
+                    </button>
+                    <button type="button" id="preview-btn" class="inline-flex items-center px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm font-medium transition-all duration-200 backdrop-blur-sm" title="Prévisualiser">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        Prévisualiser
+                    </button>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <div class="text-xs text-blue-200">Dernière sauvegarde: <span id="last-save">-</span></div>
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse" id="status-indicator"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulaire principal avec design moderne -->
+    <form method="post" action="{{ path('admin_modern_comparison') }}" class="space-y-6" id="comparison-form">
+        {# Libellés FR pour produits et critères #}
+        {% set productLabel = {
+            'SCPI':'SCPI',
+            'PEA_PME':'PEA‑PME',
+            'ASSURANCE_VIE':'Assurance‑vie',
+            'PER':'PER'
+        } %}
+        {% set criterionLabel = {
+            'yield':'Rendement',
+            'risk':'Risque',
+            'liquidity':'Liquidité',
+            'taxation':'Fiscalité',
+            'min_investment':'Investissement minimum',
+            'minInvestment':'Investissement minimum'
+        } %}
+        <!-- Tableau moderne avec fonctionnalités avancées -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200" id="comparison-table">
+                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                        <tr>
+                            <th class="px-6 py-4 text-left">
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                    <div>
+                                        <span class="text-sm font-bold text-gray-900">Produit</span>
+                                        <div class="text-xs text-gray-500">Nom du produit d'investissement</div>
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="px-6 py-4 text-left">
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                    <div>
+                                        <span class="text-sm font-bold text-gray-900">Critère</span>
+                                        <div class="text-xs text-gray-500">Type de critère (yield, risk, etc.)</div>
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="px-6 py-4 text-left">
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                    </svg>
+                                    <div>
+                                        <span class="text-sm font-bold text-gray-900">Valeur</span>
+                                        <div class="text-xs text-gray-500">Valeur affichée aux utilisateurs</div>
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                    <span class="text-sm font-bold text-gray-900">Actions</span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100" id="table-body">
+                        {% for item in items %}
+                            <tr class="hover:bg-gray-50 transition-colors duration-200 group" data-row-id="{{ item.id }}">
+                                <td class="px-6 py-4">
+                                    <div class="relative">
+                                        <select name="product[{{ item.id }}]" class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                            <option value="{{ item.product }}" selected>{{ productLabel[item.product]|default(item.product) }}</option>
+                                            <option value="SCPI">SCPI</option>
+                                            <option value="PEA_PME">PEA‑PME</option>
+                                            <option value="ASSURANCE_VIE">Assurance‑vie</option>
+                                            <option value="PER">PER</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="relative">
+                                        <select name="criterion[{{ item.id }}]" class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                            <option value="{{ item.criterion }}" selected>{{ criterionLabel[item.criterion]|default(item.criterion) }}</option>
+                                            <option value="yield">Rendement</option>
+                                            <option value="risk">Risque</option>
+                                            <option value="liquidity">Liquidité</option>
+                                            <option value="taxation">Fiscalité</option>
+                                            <option value="min_investment">Investissement minimum</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="flex-1 relative">
+                                            <input type="text" name="value[{{ item.id }}]" value="{{ item.value }}" 
+                                                   class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white shadow-sm transition-all duration-200 hover:shadow-md pl-3 pr-8" 
+                                                   placeholder="Valeur à afficher"/>
+                                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button type="button" class="duplicate-row-btn p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200" title="Dupliquer cette ligne">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <label class="inline-flex items-center text-red-600">
+                                        <input type="checkbox" name="delete[{{ item.id }}]" class="mr-2 form-checkbox text-red-600">
+                                        <span class="text-sm font-medium">Supprimer</span>
+                                    </label>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr id="empty-state">
+                                <td colspan="4" class="px-6 py-12 text-center">
+                                    <div class="flex flex-col items-center space-y-4">
+                                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-medium text-gray-900">Aucune donnée disponible</h3>
+                                            <p class="text-gray-500 mt-1">Commencez par ajouter une nouvelle ligne de comparaison</p>
+                                        </div>
+                                        <button type="button" id="add-first-row" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                            </svg>
+                                            Ajouter la première ligne
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        
+                        <!-- Ligne d'ajout moderne -->
+                        <tr class="bg-gradient-to-r from-blue-50 to-indigo-50 border-t-2 border-blue-200" id="new-row-template" style="display: none;">
+                            <td class="px-6 py-4">
+                                <select name="new[product]" class="w-full border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm">
+                                    <option value="">Sélectionner un produit</option>
+                                    <option value="SCPI">SCPI</option>
+                                    <option value="PEA_PME">PEA‑PME</option>
+                                    <option value="ASSURANCE_VIE">Assurance‑vie</option>
+                                    <option value="PER">PER</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4">
+                                <select name="new[criterion]" class="w-full border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm">
+                                    <option value="">Sélectionner un critère</option>
+                                    <option value="yield">Rendement</option>
+                                    <option value="risk">Risque</option>
+                                    <option value="liquidity">Liquidité</option>
+                                    <option value="taxation">Fiscalité</option>
+                                    <option value="min_investment">Investissement minimum</option>
+                                </select>
+                            </td>
+                            <td class="px-6 py-4">
+                                <input type="text" name="new[value]" placeholder="Valeur à afficher" 
+                                       class="w-full border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm" />
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <button type="button" class="cancel-new-row p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200" title="Annuler">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Actions de formulaire modernes -->
+        <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Sauvegarde automatique activée</span>
+                    </div>
+                    <div class="text-xs text-gray-500" id="save-status">
+                        Prêt à sauvegarder
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <button type="button" id="reset-form" class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Réinitialiser
+                    </button>
+                    
+                    <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                        </svg>
+                        <span class="font-semibold">Enregistrer les modifications</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <!-- Panneau de prévisualisation (masqué par défaut) -->
+    <div id="preview-panel" class="hidden bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <h3 class="text-lg font-bold text-white">Aperçu de la table de comparaison</h3>
+                </div>
+                <button type="button" id="close-preview" class="text-white hover:bg-white/20 p-2 rounded-lg transition-colors duration-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="p-6">
+            <div id="preview-content" class="text-center text-gray-500">
+                Cliquez sur "Prévisualiser" pour voir un aperçu de la table de comparaison
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts JavaScript pour l'administration moderne -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('comparison-form');
+    const tableBody = document.getElementById('table-body');
+    const addRowBtn = document.getElementById('add-row-btn');
+    const previewBtn = document.getElementById('preview-btn');
+    const previewPanel = document.getElementById('preview-panel');
+    const closePreviewBtn = document.getElementById('close-preview');
+    const resetFormBtn = document.getElementById('reset-form');
+    const newRowTemplate = document.getElementById('new-row-template');
+    
+    // Statistiques en temps réel
+    function updateStats() {
+        const rows = tableBody.querySelectorAll('tr:not(#empty-state):not(#new-row-template)');
+        const products = new Set();
+        const criteria = new Set();
+        
+        rows.forEach(row => {
+            const productSelect = row.querySelector('select[name*="product"]');
+            const criterionSelect = row.querySelector('select[name*="criterion"]');
+            
+            if (productSelect && productSelect.value) products.add(productSelect.value);
+            if (criterionSelect && criterionSelect.value) criteria.add(criterionSelect.value);
+        });
+        
+        document.getElementById('total-items').textContent = rows.length;
+        document.getElementById('unique-products').textContent = products.size;
+        document.getElementById('unique-criteria').textContent = criteria.size;
+    }
+    
+    // Ajouter une nouvelle ligne
+    function addNewRow() {
+        const template = newRowTemplate.cloneNode(true);
+        template.id = 'new-row-' + Date.now();
+        template.style.display = '';
+        template.classList.add('animate-fade-in');
+        
+        // Insérer avant le template
+        newRowTemplate.parentNode.insertBefore(template, newRowTemplate);
+        
+        // Focus sur le premier champ
+        const firstSelect = template.querySelector('select');
+        if (firstSelect) firstSelect.focus();
+        
+        // Masquer l'état vide si présent
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) emptyState.style.display = 'none';
+        
+        updateStats();
+        updateSaveStatus('Nouvelle ligne ajoutée');
+    }
+    
+    // Dupliquer une ligne
+    function duplicateRow(button) {
+        const row = button.closest('tr');
+        const newRow = row.cloneNode(true);
+        
+        // Générer de nouveaux noms pour les champs
+        const timestamp = Date.now();
+        newRow.querySelectorAll('[name]').forEach(input => {
+            const name = input.name.replace(/\[(\d+)\]/, '[' + timestamp + ']');
+            input.name = name;
+        });
+        
+        // Insérer après la ligne courante
+        row.parentNode.insertBefore(newRow, row.nextSibling);
+        
+        // Animation
+        newRow.classList.add('animate-fade-in');
+        
+        updateStats();
+        updateSaveStatus('Ligne dupliquée');
+    }
+    
+    // Prévisualisation
+    function showPreview() {
+        const rows = tableBody.querySelectorAll('tr:not(#empty-state):not(#new-row-template):not([id^="new-row"])');
+        let previewHTML = '<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200">';
+        
+        // En-tête de prévisualisation
+        previewHTML += '<thead class="bg-gray-50"><tr>';
+        previewHTML += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produit</th>';
+        previewHTML += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Critère</th>';
+        previewHTML += '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valeur</th>';
+        previewHTML += '</tr></thead><tbody class="bg-white divide-y divide-gray-200">';
+        
+        // Données de prévisualisation
+        rows.forEach((row, index) => {
+            const product = row.querySelector('select[name*="product"]')?.value || '';
+            const criterion = row.querySelector('select[name*="criterion"]')?.value || '';
+            const value = row.querySelector('input[name*="value"]')?.value || '';
+            
+            previewHTML += `<tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">`;
+            previewHTML += `<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${product}</td>`;
+            previewHTML += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${criterion}</td>`;
+            previewHTML += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${value}</td>`;
+            previewHTML += '</tr>';
+        });
+        
+        previewHTML += '</tbody></table></div>';
+        
+        if (rows.length === 0) {
+            previewHTML = '<div class="text-center text-gray-500 py-8">Aucune donnée à prévisualiser</div>';
+        }
+        
+        document.getElementById('preview-content').innerHTML = previewHTML;
+        previewPanel.classList.remove('hidden');
+        previewPanel.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Mise à jour du statut de sauvegarde
+    function updateSaveStatus(message) {
+        const statusEl = document.getElementById('save-status');
+        const indicator = document.getElementById('status-indicator');
+        
+        statusEl.textContent = message;
+        indicator.className = 'w-2 h-2 bg-yellow-400 rounded-full animate-pulse';
+        
+        setTimeout(() => {
+            statusEl.textContent = 'Prêt à sauvegarder';
+            indicator.className = 'w-2 h-2 bg-green-400 rounded-full animate-pulse';
+        }, 2000);
+    }
+    
+    // Mise à jour de la dernière sauvegarde
+    function updateLastSave() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('fr-FR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        document.getElementById('last-save').textContent = timeString;
+    }
+    
+    // Event Listeners
+    addRowBtn.addEventListener('click', addNewRow);
+    
+    document.getElementById('add-first-row')?.addEventListener('click', addNewRow);
+    
+    previewBtn.addEventListener('click', showPreview);
+    closePreviewBtn.addEventListener('click', () => {
+        previewPanel.classList.add('hidden');
+    });
+    
+    resetFormBtn.addEventListener('click', () => {
+        if (confirm('Êtes-vous sûr de vouloir réinitialiser le formulaire ? Toutes les modifications non sauvegardées seront perdues.')) {
+            form.reset();
+            updateStats();
+            updateSaveStatus('Formulaire réinitialisé');
+        }
+    });
+    
+    // Délégation d'événements pour les boutons dynamiques
+    tableBody.addEventListener('click', (e) => {
+        if (e.target.closest('.duplicate-row-btn')) {
+            duplicateRow(e.target.closest('.duplicate-row-btn'));
+        }
+        
+        if (e.target.closest('.cancel-new-row')) {
+            const row = e.target.closest('tr');
+            row.remove();
+            updateStats();
+        }
+    });
+    
+    // Sauvegarde automatique des changements
+    form.addEventListener('change', () => {
+        updateStats();
+        updateSaveStatus('Modifications détectées');
+    });
+    
+    // Soumission du formulaire
+    form.addEventListener('submit', (e) => {
+        updateLastSave();
+        updateSaveStatus('Sauvegarde en cours...');
+        
+        // Simulation d'une sauvegarde
+        setTimeout(() => {
+            updateSaveStatus('Sauvegardé avec succès');
+        }, 1000);
+    });
+    
+    // Animation CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hover-scale {
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Initialisation
+    updateStats();
+    updateLastSave();
+});
+</script>
+
+{% endblock %}
+
+

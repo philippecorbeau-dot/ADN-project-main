@@ -1,0 +1,28 @@
+{% extends "front/layouts/modal.layout.html.twig" %}
+
+{% block modalId %}amf{% endblock %}
+{% block modalStatus %}open{% endblock %}
+{% block modalCloseBtn %}{% endblock %}
+{% block modalImg %}{{ web_image('images/bg-modal-2.png').webp }}{% endblock %}
+{% block title %}{% trans %}Pourquoi ne pouvez-vous pas voir ces informations ?{% endtrans %}{% endblock %}
+{% block description %}{% trans with {'%boldstart%' : '<span class="font-bold">', '%boldend%' : '</span>'} %}Homunity est régulé par l'%boldstart%Autorité des marchés financiers (AMF).%boldend% De ce fait, nous sommes dans l’obligation de vous demander de vous inscrire avant d’avoir accès aux projets immobiliers que nous mettons en avant sur notre site internet.{% endtrans %}{% endblock %}
+
+{% block modalBody %}
+    <div>
+        {% if app.user %}
+            <a class="btn btn-secondary btn-w-ico w-full sm:w-auto justify-center" href="{{ path('user_create_profile') }}" rel="nofollow">
+                {% trans %}Compléter mon profil{% endtrans %}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                </svg>
+            </a>
+        {% else %}
+            <a class="btn btn-secondary btn-w-ico w-full sm:w-auto justify-center" href="{{ path('fos_user_registration_register') }}" rel="nofollow">
+                {% trans %}Je m’inscris{% endtrans %}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                </svg>
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,194 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+
+{% block body %} 
+    <div class="container pb-10 mt-24 md:mt-0">
+        <div class="rounded-xl bg-white p-6 sm:p-10 shadow-md transition-opacity transition-transform">
+            <!-- Header moderne avec icône et sous-titre -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-4">
+                    <i class="fa-solid fa-chart-pie text-white text-2xl"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                    {% trans %}Votre situation financière{% endtrans %}
+                </h1>
+                <p class="text-lg text-gray-600">
+                    {% trans %}Évaluons ensemble votre patrimoine{% endtrans %}
+                </p>
+            </div>
+            
+            {{ alert.success("Pourquoi posons-nous des questions sur vos objectifs ?", "Pour les investisseurs non avertis, le règlement européen n°2020/1503 impose à Homunity d'obtenir des informations sur l'expérience de l'investisseur, ses objectifs d'investissement, sa situation financière et sa compréhension des risques liés à l'investissement.") }}
+            {{ form_start(form, {'attr': {'id': 'form-step3'}}) }}
+                <div class="space-y-6">
+                    <div class="mb-6">
+                        <label class="block text-base font-semibold mb-2">
+                            <i class="fa-solid fa-chart-line text-blue-600 mr-2"></i>
+                            {{ form_label(form.turnover) }}
+                        </label>
+                        <div class="w-full sm:w-1/2 relative">
+                            {{ form_widget(form.turnover, {
+                                'attr': {
+                                    'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 bg-white text-base transition-all duration-200',
+                                    'placeholder': '0',
+                                    'min': '0'
+                                }
+                            }) }}
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                        </div>
+                        {{ form_errors(form.turnover) }}
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-base font-semibold mb-2">
+                            <i class="fa-solid fa-chart-bar text-green-600 mr-2"></i>
+                            {{ form_label(form.oldResult) }}
+                        </label>
+                        <div class="w-full sm:w-1/2 relative">
+                            {{ form_widget(form.oldResult, {
+                                'attr': {
+                                    'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 bg-white text-base transition-all duration-200',
+                                    'placeholder': '0',
+                                    'min': '0'
+                                }
+                            }) }}
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                        </div>
+                        {{ form_errors(form.oldResult) }}
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-base font-semibold mb-2">
+                            <i class="fa-solid fa-chart-area text-purple-600 mr-2"></i>
+                            {{ form_label(form.forecastTurnover) }}
+                        </label>
+                        <div class="w-full sm:w-1/2 relative">
+                            {{ form_widget(form.forecastTurnover, {
+                                'attr': {
+                                    'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 bg-white text-base transition-all duration-200',
+                                    'placeholder': '0',
+                                    'min': '0'
+                                }
+                            }) }}
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                        </div>
+                        {{ form_errors(form.forecastTurnover) }}
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-base font-semibold mb-2">
+                            <i class="fa-solid fa-building text-orange-600 mr-2"></i>
+                            {{ form_label(form.capital) }}
+                        </label>
+                        <div class="w-full sm:w-1/2 relative">
+                            {{ form_widget(form.capital, {
+                                'attr': {
+                                    'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 bg-white text-base transition-all duration-200',
+                                    'placeholder': '0',
+                                    'min': '0'
+                                }
+                            }) }}
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                        </div>
+                        {{ form_errors(form.capital) }}
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-base font-semibold mb-2">
+                            <i class="fa-solid fa-piggy-bank text-red-600 mr-2"></i>
+                            {{ form_label(form.stocks) }}
+                        </label>
+                        <div class="w-full sm:w-1/2 relative">
+                            {{ form_widget(form.stocks, {
+                                'attr': {
+                                    'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:ring-4 focus:ring-red-100 bg-white text-base transition-all duration-200',
+                                    'placeholder': '0',
+                                    'min': '0'
+                                }
+                            }) }}
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                        </div>
+                        {{ form_errors(form.stocks) }}
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <a class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44" href="{{ path('user_create_profile', {'step' : 2 }) }}">
+                        {% trans %}Précédent{% endtrans %}
+                    </a>
+                    <button id="btn-next" type="submit" class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44 ml-auto">
+                        {% trans %}Suivant{% endtrans %}
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction pour nettoyer un nombre (supprimer les espaces, € et caractères non numériques)
+            function cleanNumber(value) {
+                if (!value) return '';
+                return value.toString().replace(/[^\d]/g, '');
+            }
+
+            // Fonction pour formater un nombre avec des espaces
+            function formatNumber(value) {
+                if (!value) return '';
+                const numericValue = cleanNumber(value);
+                if (numericValue === '') return '';
+                return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            }
+
+            // Sélectionner tous les champs de saisie
+            const inputs = document.querySelectorAll('#form-step3 input[type="text"]');
+            
+            inputs.forEach(function(input) {
+                // Nettoyer la valeur initiale si elle contient des caractères non numériques
+                if (input.value && input.value !== '0') {
+                    const cleanedValue = cleanNumber(input.value);
+                    if (cleanedValue !== input.value) {
+                        input.value = cleanedValue;
+                    }
+                }
+
+                // Empêcher la saisie du symbole € et autres caractères non numériques
+                input.addEventListener('input', function(e) {
+                    const cursorPosition = e.target.selectionStart;
+                    const oldValue = e.target.value;
+                    const cleanedValue = cleanNumber(oldValue);
+                    
+                    if (cleanedValue !== oldValue) {
+                        e.target.value = cleanedValue;
+                        // Restaurer la position du curseur
+                        const newPosition = Math.min(cursorPosition, cleanedValue.length);
+                        e.target.setSelectionRange(newPosition, newPosition);
+                    }
+                });
+
+                // Empêcher le collage de caractères non numériques
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    const cleanedText = cleanNumber(pastedText);
+                    if (cleanedText) {
+                        document.execCommand('insertText', false, cleanedText);
+                    }
+                });
+            });
+
+            // Intercepter la soumission du formulaire pour nettoyer les valeurs
+            const form = document.getElementById('form-step3');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    inputs.forEach(function(input) {
+                        if (input.value) {
+                            const cleanedValue = cleanNumber(input.value);
+                            input.value = cleanedValue;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+{% endblock %}
+

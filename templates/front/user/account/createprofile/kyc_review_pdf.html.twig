@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+      h1 { font-size: 18px; margin-bottom: 4px; }
+      h2 { font-size: 14px; margin-top: 16px; margin-bottom: 6px; }
+      table { width: 100%; border-collapse: collapse; }
+      td, th { border: 1px solid #ddd; padding: 6px; }
+      @page { margin: 40px 40px 40px 40px; }
+      .brand { margin-bottom: 10px; }
+      .brand img { height: 28px; }
+      footer { display: none; }
+    </style>
+  </head>
+  <body>
+    <div class="brand">
+      {% if logoDataUrl %}
+        <img src="{{ logoDataUrl }}" alt="ADN Family Office" />
+      {% endif %}
+    </div>
+    <h1>Récapitulatif KYC</h1>
+    <div>Date de génération: {{ generatedAt|date('d/m/Y H:i') }}</div>
+    <h2>Utilisateur</h2>
+    <table>
+      <tr><th>Nom</th><td>{{ user.fullName }}</td></tr>
+      <tr><th>Email</th><td>{{ user.email }}</td></tr>
+      <tr><th>Type</th><td>{{ user.isPro ? 'Professionnel' : 'Particulier' }}</td></tr>
+    </table>
+
+    <h2>Profil investisseur</h2>
+    <table>
+      <tr><th>Profil</th><td>{{ investorProfile ?? '—' }}</td></tr>
+      <tr><th>Score</th><td>{{ investorScore ?? 0 }}</td></tr>
+    </table>
+
+    {% if info %}
+    <h2>Étape 2 — Objectifs et horizon</h2>
+    <table>
+      <tr><th>Objectifs</th><td>{{ (objectiveLabels ?? [])|join(', ') }}</td></tr>
+      <tr><th>Horizon</th><td>{{ (investmentTermLabels ?? [])|join(', ') }}</td></tr>
+      <tr><th>Épargne disponible</th><td>{{ info.liquidity ?? 0 }} €</td></tr>
+      <tr><th>Origine des fonds</th><td>{{ (sourceOfFundsLabels ?? [])|join(', ') }}</td></tr>
+    </table>
+    <h2>Étape 3 — Situation financière</h2>
+    <table>
+      <tr><th>Salaire</th><td>{{ info.salary ?? 0 }} €</td></tr>
+      <tr><th>Capitalisation</th><td>{{ info.capitalisation ?? 0 }} €</td></tr>
+      <tr><th>SCPI</th><td>{{ info.scpi ?? 0 }} €</td></tr>
+      <tr><th>Revenus locatifs</th><td>{{ info.realestateIncome ?? 0 }} €</td></tr>
+      <tr><th>Immobilier total</th><td>{{ info.realestate ?? 0 }} €</td></tr>
+      <tr><th>RP</th><td>{{ info.realestatePrimaryResidence ?? 0 }} €</td></tr>
+      <tr><th>Investissement</th><td>{{ info.realestateInvestment ?? 0 }} €</td></tr>
+      <tr><th>Dépôts/Épargne (total)</th><td>{{ info.depositSavings ?? 0 }} €</td></tr>
+      <tr><th>CC / Livret A / LDD / CSL / Autre</th><td>{{ info.depositSavingsChecking ?? 0 }} / {{ info.depositSavingsLivretA ?? 0 }} / {{ info.depositSavingsLdd ?? 0 }} / {{ info.depositSavingsCsl ?? 0 }} / {{ info.depositSavingsOther ?? 0 }} €</td></tr>
+    </table>
+
+    <h2>Étape 4 — Expérience & MIF</h2>
+    <table>
+      <tr><th>Connaissance MIF</th><td>{{ info.mif ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Employé du secteur financier</th><td>{{ info.financeWorker ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Personne politiquement exposée</th><td>{{ info.political is same as(null) ? '—' : (info.political ? 'Oui' : 'Non') }}</td></tr>
+      <tr><th>Détention de titres financiers</th><td>{{ info.securities ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Types de titres</th><td>{{ info.securitiesOptionsTxt ?: '—' }}</td></tr>
+      <tr><th>Nb d'opérations</th><td>{{ info.securitiesOptionsCount ?: '—' }}</td></tr>
+      <tr><th>Connaissance Montant minimum</th><td>{{ info.awarenessMinimumAmount ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Connaissance Durée minimale</th><td>{{ info.awarenessMinimumTime ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Connaissance Transactions minimales</th><td>{{ info.awarenessTransactions ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Adéquation Q1</th><td>{{ info.adequacy1 ?: '—' }}</td></tr>
+      <tr><th>Adéquation Q2</th><td>{{ info.adequacy2 ?: '—' }}</td></tr>
+      <tr><th>Adéquation Q3</th><td>{{ info.adequacy3 is same as(null) ? '—' : (info.adequacy3 ? 'Oui' : 'Non') }}</td></tr>
+      <tr><th>Adéquation Q4</th><td>{{ info.adequacy4 is same as(null) ? '—' : (info.adequacy4 ? 'Oui' : 'Non') }}</td></tr>
+      <tr><th>Adéquation Q5</th><td>{{ info.adequacy5 ?: '—' }}</td></tr>
+      <tr><th>Attestation revenus suffisants</th><td>{{ info.attestIncome ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Attestation transactions significatives</th><td>{{ info.attestSignificantTransaction ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Attestation compréhension des risques</th><td>{{ info.attestAware ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Attestation sincérité</th><td>{{ info.attestTruth ? 'Oui' : 'Non' }}</td></tr>
+    </table>
+
+    {% if ik %}
+    <h2>Questionnaire — Connaissance des produits financiers</h2>
+    <table>
+      {% for i in 1..8 %}
+        <tr>
+          <th>{{ financialLabels[i-1] }}</th>
+          <td>{{ financialProducts ? (answerMap[attribute(financialProducts, 'getQuestion' ~ i)] ?? '—') : '—' }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <h2>Questionnaire — Connaissance des produits complexes</h2>
+    <table>
+      {% for i in 1..10 %}
+        <tr>
+          <th>{{ complexLabels[i-1] }}</th>
+          <td>{{ complexProducts ? (answerMap[attribute(complexProducts, 'getQuestion' ~ i)] ?? '—') : '—' }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <h2>Expérience des marchés</h2>
+    <table>
+      <tr><th>Actions</th><td>{{ marketExperience and marketExperience.hasStocksExperience ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Obligations</th><td>{{ marketExperience and marketExperience.hasBondsExperience ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>OPCVM</th><td>{{ marketExperience and marketExperience.hasUcitsExperience ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Immobilier</th><td>{{ marketExperience and marketExperience.hasRealEstateExperience ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>Instruments complexes</th><td>{{ marketExperience and marketExperience.hasComplexInstrumentsExperience ? 'Oui' : 'Non' }}</td></tr>
+    </table>
+
+    <h2>Expérience d'investissement</h2>
+    <table>
+      <tr><th>{{ investmentExperienceLabels['hasLostSignificantAmounts'] }}</th><td>{{ investmentExperience and investmentExperience.hasLostSignificantAmounts ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>{{ investmentExperienceLabels['managesOwnPortfolio'] }}</th><td>{{ investmentExperience and investmentExperience.managesOwnPortfolio ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>{{ investmentExperienceLabels['portfolioSecuritiesLines'] }}</th><td>{{ investmentExperience and investmentExperience.portfolioSecuritiesLines ?: '—' }}</td></tr>
+      <tr><th>{{ investmentExperienceLabels['concentratesOnSingleSecurity'] }}</th><td>{{ investmentExperience and investmentExperience.concentratesOnSingleSecurity ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>{{ investmentExperienceLabels['appropriatenessTestPerformed'] }}</th><td>{{ investmentExperience and investmentExperience.appropriatenessTestPerformed ? 'Vrai' : 'Faux' }}</td></tr>
+      <tr><th>{{ investmentExperienceLabels['ordersThroughCif'] }}</th><td>{{ investmentExperience and investmentExperience.ordersThroughCif ? 'Vrai' : 'Faux' }}</td></tr>
+    </table>
+
+    <h2>Abus de marché</h2>
+    <table>
+      <tr><th>{{ marketAbuseLabels['hasOtherSecuritiesAccounts'] }}</th><td>{{ ik and ik.marketAbuse and ik.marketAbuse.hasOtherSecuritiesAccounts ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>{{ marketAbuseLabels['hasFinancialProfession'] }}</th><td>{{ ik and ik.marketAbuse and ik.marketAbuse.hasFinancialProfession ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>{{ marketAbuseLabels['isListedCompanyDirector'] }}</th><td>{{ ik and ik.marketAbuse and ik.marketAbuse.isListedCompanyDirector ? 'Oui' : 'Non' }}</td></tr>
+      <tr><th>{{ marketAbuseLabels['professionDetails'] }}</th><td>{{ ik and ik.marketAbuse and ik.marketAbuse.professionDetails ?: '—' }}</td></tr>
+      <tr><th>{{ marketAbuseLabels['listedCompanyDetails'] }}</th><td>{{ ik and ik.marketAbuse and ik.marketAbuse.listedCompanyDetails ?: '—' }}</td></tr>
+    </table>
+
+    <h2>Niveau d'études</h2>
+    <table>
+      <tr><th>Niveau</th><td>{{ educationLevel and educationLevel.level ? educationLevel.level : '—' }}</td></tr>
+    </table>
+    {% endif %}
+    {% endif %}
+
+    {% if pro %}
+    <h2>Entreprise (PRO)</h2>
+    <table>
+      <tr><th>Capital</th><td>{{ pro.capital ?? 0 }} €</td></tr>
+      <tr><th>CA N-1</th><td>{{ pro.turnover ?? 0 }} €</td></tr>
+      <tr><th>Stocks</th><td>{{ pro.stocks ?? 0 }} €</td></tr>
+    </table>
+    {% endif %}
+  
+  {# Section "Documents" supprimée pour l'utilisateur #}
+  </body>
+  </html>
+
+

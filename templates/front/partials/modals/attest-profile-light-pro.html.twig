@@ -1,0 +1,62 @@
+{% extends "front/layouts/modal.layout.html.twig" %}
+
+{% block modalId %}not-aware{% endblock %}
+{% block modalWidth %}{% endblock %}
+{% block modalImg %}{{ web_image('images/bg-modal-3.png').webp }}{% endblock %}
+{% block title %}
+    <span>
+        {% trans %}Je souhaite être qualifié d’investisseur non averti{% endtrans %}
+    </span>
+{% endblock %}
+{% block description %}{% trans %}Pour vérifier ce statut, veuillez cocher les mentions suivantes :{% endtrans %}{% endblock %}
+
+{% block modalBody %}
+    <fieldset name="attestLight" disabled data-enable-if="fieldset.name=awareness<1&&input.name={{ form.mif.vars.full_name }}=0">
+        <div class="mb-2">
+            <div class="inline-flex items-center">
+                <input
+                    type="checkbox"
+                    id="step4_pro_attestAware"
+                    name="step4_pro[attestAware]"
+                    required="required"
+                    aria-describedby="step4_pro_attestAware_help"
+                    class="mr-2 cursor-pointer"
+                    value="1"
+                >
+                <label
+                    class="block required"
+                    for="step4_pro_attestAware"
+                >
+                    {% trans %}Je suis conscient que l'investissement projeté peut représenter un risque de perte partielle voire totale du capital.{% endtrans %}
+                </label>
+            </div>
+        </div>
+        <div class="mb-2">
+            <div class="inline-flex items-center">
+                <input
+                    type="checkbox"
+                    id="step4_pro_attestTruth"
+                    name="step4_pro[attestTruth]"
+                    required="required"
+                    aria-describedby="step4_pro_attestTruth_help"
+                    class="mr-2 cursor-pointer"
+                    value="1"
+                >
+                <label
+                    class="block required"
+                    for="step4_pro_attestTruth"
+                >
+                    {% trans %}Je suis conscient que l'investissement projeté peut présenter un risque d'illiquidité qui peut vous empêcher de revendre vos titres au moment souhaité.{% endtrans %}
+                </label>
+            </div>
+        </div>
+        <div>
+            <button disabled data-enable-if="form.name={{ form.vars.full_name }}=isValid" type="submit" class="btn btn-secondary btn-w-ico w-full sm:w-auto justify-center">
+                {% trans %}Valider{% endtrans %}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                </svg>
+            </button>
+        </div>
+    </fieldset>
+{% endblock %}

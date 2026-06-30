@@ -1,0 +1,6 @@
+<div id="{{ block('id') }}" class="popover text-base absolute transition-all hidden opacity-0 duration-500 transform -translate-y-6 w-60 sm:w-80 md:w-96 lg:w-80 xl:w-96 z-20 bg-white mt-5 rounded-xl p-4 shadow-pop overflow-auto max-h-60 md:max-h-80 lg:max-h-96 {% block cursor %} after:absolute after:shadow-lg after:left-1/2 after:-top-2.5 after:w-5 after:rotate-135 after:h-5 after:bg-white {% endblock %}">
+    {% if block('title') is defined %}
+        <span class="font-bold mb-1 block">{{ block('title') }}</span>
+    {% endif %}
+    <div>{{ block('content') }}</div>
+</div>

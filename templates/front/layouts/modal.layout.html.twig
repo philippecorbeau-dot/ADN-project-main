@@ -1,0 +1,23 @@
+<dialog {% block modalAttr %}{% endblock%} {% block modalStatus %}{% endblock%} id="dialog-{% block modalId %}{% endblock %}" class="{% block modalContainerWidth %}{% endblock %} {% block modalPosition %}fixed{% endblock%} top-1/2 bottom-1/2 z-50 p-0 bg-transparent{% if block('modalStatus') != 'open' %} invisible opacity-0{% endif %} text-homblue-normal transition-all">
+    <div class="overflow-hidden rounded-xl flex flex-col sm:flex-row m-4 bg-white shadow-lg">
+        <img loading="lazy" class="hidden sm:block" alt="{{ block('title')|striptags }}" src="{% block modalImg %}{{ asset('build/theme/images/bg-modal-1.png') }}{% endblock %}" />
+        <div class="p-4 sm:p-6 {% block modalWidth %}sm:w-96{% endblock %} flex flex-col w-full">
+            {% block modalCloseBtn %}
+                <div class="flex flex-none">
+                    <button data-close aria-label="close" class="ml-auto text-3xl sm:mb-2" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            {% endblock%}
+            {% block modalContent %}
+                {% block titleHtml %}<div class="text-xl sm:text-2xl font-ofelia mb-4">{% block title %}{% endblock %}</div>{% endblock %}
+                {% if block('description') is not empty %}
+                    {% block descriptionHtml %}<p class="mb-8">{% block description %}{% endblock %}</p>{% endblock %}
+                {% endif %}
+                {% block modalBody %}{% endblock %}
+            {% endblock %}
+        </div>
+    </div>
+</dialog>

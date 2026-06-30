@@ -1,0 +1,38 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Validation de votre dossier' %}
+
+{% block content %}
+    <h1>✅ Votre dossier a été validé</h1>
+    
+    <p>Bonjour {{ user.firstname }},</p>
+    
+    <p>Excellente nouvelle ! Votre dossier KYC (Know Your Customer) a été validé avec succès.</p>
+    
+    <div class="info-box">
+        <p><strong>🎉 Félicitations !</strong></p>
+        <p>Vous pouvez désormais accéder à l'ensemble de nos services et produits d'investissement.</p>
+    </div>
+    
+    <h2>Que faire maintenant ?</h2>
+    
+    <p>Vous avez maintenant accès à :</p>
+    
+    <ul style="margin: 20px 0; padding-left: 20px; color: #475569;">
+        <li style="margin-bottom: 10px;">📊 Votre tableau de bord personnalisé</li>
+        <li style="margin-bottom: 10px;">💼 Nos solutions d'investissement adaptées à votre profil</li>
+        <li style="margin-bottom: 10px;">📈 Le suivi en temps réel de vos investissements</li>
+        <li style="margin-bottom: 10px;">💬 La messagerie sécurisée avec votre conseiller</li>
+    </ul>
+    
+    <div class="button-container">
+        <a href="{{ url('user_dashboard') }}" class="button">Accéder à mon espace</a>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p style="text-align: center; font-size: 14px; color: #64748b;">
+        Besoin d'accompagnement ? Votre conseiller est disponible pour répondre à toutes vos questions.
+    </p>
+{% endblock %}
+

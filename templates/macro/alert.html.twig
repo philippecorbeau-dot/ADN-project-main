@@ -1,0 +1,32 @@
+{% macro success(title, content, options) %}
+    {% set bgClass = options.bgClass|default('') %}
+    {% set textClass = options.textClass|default('') %}
+    {% embed "embed/alert.html.twig" with {'type' : 'success', 'bgClass': bgClass, 'textClass': textClass} %}
+        {% block icoColor %}text-homgreen-alternate{% endblock %}
+        {% block title %}{{ title }}{% endblock %}
+        {% block content %}{{ content|trans({'%sbold%' : '<span class="font-bold">', '%ebold%' : '</span>'})|raw }}{% endblock %}
+    {% endembed %}
+{% endmacro %}
+
+{% macro danger(title, content) %}
+    {% embed "embed/alert.html.twig" with {'type' : 'danger'} %}
+        {% block icoColor %}text-red-600{% endblock %}
+        {% block title %}{{ title }}{% endblock %}
+        {% block content %}{{ content|trans({'%sbold%' : '<span class="font-bold">', '%ebold%' : '</span>'})|raw }}{% endblock %}
+    {% endembed %}
+{% endmacro %}
+
+{% macro info(title, content)  %}
+    {% embed "embed/alert.html.twig" with {'type' : 'info'} %}
+        {% block title %}{{ title }}{% endblock %}
+        {% block content %}{{ content|trans({'%sbold%' : '<span class="font-bold">', '%ebold%' : '</span>'})|raw }}{% endblock %}
+    {% endembed %}
+{% endmacro %}
+
+{% macro warning(title, content)  %}
+    {% embed "embed/alert.html.twig" with {'type' : 'warning'} %}
+        {% block icoColor %}text-orange-500{% endblock %}
+        {% block title %}{{ title }}{% endblock %}
+        {% block content %}{{ content|trans({'%sbold%' : '<span class="font-bold">', '%ebold%' : '</span>'})|raw }}{% endblock %}
+    {% endembed %}
+{% endmacro %}

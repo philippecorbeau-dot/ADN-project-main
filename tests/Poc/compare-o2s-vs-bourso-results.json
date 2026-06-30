@@ -1,0 +1,135 @@
+[
+    {
+        "compteId": "OC830110468",
+        "libelle": "HIMALIA (Generali Patrimoine, Assurance Vie)",
+        "client": "Emmanuel D'Estanque",
+        "totalO2S": 91250.91,
+        "totalRecalcule": 91839.6141,
+        "coverageOk": 6,
+        "coverageMissing": 0,
+        "alignedUnder1Pct": 5,
+        "fresher": 2,
+        "details": [
+            {
+                "isin": "FR001400H5L2",
+                "libelle": "Solstice Selection",
+                "qty": 124.48,
+                "navO2S": 117.75,
+                "navDateO2S": "21/05/2026",
+                "valO2S": 14657.44,
+                "bourso": {
+                    "ok": true,
+                    "nav": 118.13,
+                    "ccy": "EUR",
+                    "navDate": "22/05/2026",
+                    "url": "https://www.boursorama.com/bourse/opcvm/cours/0P0001RA29/",
+                    "elapsedMs": 1455
+                },
+                "valBourso": 14704.8224,
+                "deltaAbs": 47.3823999999986,
+                "deltaPct": 0.32326518136863325,
+                "daysFresher": 1
+            },
+            {
+                "isin": "FR0013345709",
+                "libelle": "LBPAM ISR Actions Euro L",
+                "qty": 68.49,
+                "navO2S": 207.34,
+                "navDateO2S": "26/05/2026",
+                "valO2S": 14201.19,
+                "bourso": {
+                    "ok": true,
+                    "nav": 207.34,
+                    "ccy": "EUR",
+                    "navDate": "26/05/2026",
+                    "url": "https://www.boursorama.com/bourse/opcvm/cours/0P0001E0HZ/",
+                    "elapsedMs": 1259
+                },
+                "valBourso": 14200.7166,
+                "deltaAbs": -0.47340000000076543,
+                "deltaPct": -0.0033335234582507903,
+                "daysFresher": 0
+            },
+            {
+                "isin": "LU0336083497",
+                "libelle": "Carmignac Portfolio Global Bond A",
+                "qty": 5.61,
+                "navO2S": 1570.76,
+                "navDateO2S": "26/05/2026",
+                "valO2S": 8817.3,
+                "bourso": {
+                    "ok": true,
+                    "nav": 1570.76,
+                    "ccy": "EUR",
+                    "navDate": "26/05/2026",
+                    "url": "https://www.boursorama.com/bourse/opcvm/cours/MP-191552/",
+                    "elapsedMs": 1129
+                },
+                "valBourso": 8811.963600000001,
+                "deltaAbs": -5.336399999998321,
+                "deltaPct": -0.06052192848148891,
+                "daysFresher": 0
+            },
+            {
+                "isin": "FR0010149302",
+                "libelle": "Carmignac Emergents",
+                "qty": 2.76,
+                "navO2S": 1891.26,
+                "navDateO2S": "26/05/2026",
+                "valO2S": 5218.18,
+                "bourso": {
+                    "ok": true,
+                    "nav": 1891.26,
+                    "ccy": "EUR",
+                    "navDate": "26/05/2026",
+                    "url": "https://www.boursorama.com/bourse/opcvm/cours/MP-802603/",
+                    "elapsedMs": 1075
+                },
+                "valBourso": 5219.8776,
+                "deltaAbs": 1.697599999999511,
+                "deltaPct": 0.03253241551651171,
+                "daysFresher": 0
+            },
+            {
+                "isin": "LU1876459303",
+                "libelle": "Axiom European Banks",
+                "qty": 0.63,
+                "navO2S": 4169.53,
+                "navDateO2S": "26/05/2026",
+                "valO2S": 2610.54,
+                "bourso": {
+                    "ok": true,
+                    "nav": 4169.53,
+                    "ccy": "EUR",
+                    "navDate": "22/05/2026",
+                    "url": "https://www.boursorama.com/bourse/opcvm/cours/0P0001FKPY/",
+                    "elapsedMs": 1031
+                },
+                "valBourso": 2626.8039,
+                "deltaAbs": 16.26389999999992,
+                "deltaPct": 0.6230090326139389,
+                "daysFresher": -4
+            },
+            {
+                "isin": "LU1989766289",
+                "libelle": "CPR Invest Global Gold Mines (USD)",
+                "qty": 13.4,
+                "navO2S": 186.3332,
+                "navDateO2S": "22/05/2026",
+                "valO2S": 2496.55,
+                "bourso": {
+                    "ok": true,
+                    "nav": 225.8,
+                    "ccy": "USD",
+                    "navDate": "26/05/2026",
+                    "url": "https://www.boursorama.com/bourse/opcvm/cours/0P0001KRE7/",
+                    "elapsedMs": 1244
+                },
+                "valBourso": 3025.7200000000003,
+                "deltaAbs": 529.1700000000001,
+                "deltaPct": 21.19605054975867,
+                "daysFresher": 4
+            }
+        ]
+    }
+]

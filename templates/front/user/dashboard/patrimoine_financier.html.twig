@@ -1,0 +1,327 @@
+{% extends 'front/user/dashboard/base.html.twig' %}
+
+{% block title %}Actifs Financiers - ADN Family Office{% endblock %}
+
+{% block page_title %}
+    <span class="text-gray-900">Actifs Financiers</span>
+{% endblock %}
+
+{% block content %}
+{# ─── BREADCRUMB ─── #}
+<div class="mb-6">
+    <nav class="flex items-center gap-2 text-sm text-gray-500">
+        <a href="{{ path('user_dashboard') }}" class="hover:text-cyan-600 transition-colors">Synthèse</a>
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <span class="text-gray-900 font-medium">Actifs Financiers</span>
+    </nav>
+</div>
+
+{# ─── HERO HEADER ─── #}
+<div class="bg-gradient-to-br from-cyan-600 via-teal-600 to-emerald-700 rounded-2xl p-8 mb-8 text-white relative overflow-hidden">
+    {# Decorative background #}
+    <div class="absolute inset-0 opacity-10">
+        <svg class="w-full h-full" viewBox="0 0 800 400"><defs><pattern id="fp" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse"><circle cx="30" cy="30" r="2" fill="white"/></pattern></defs><rect fill="url(#fp)" width="800" height="400"/></svg>
+    </div>
+    <div class="relative z-10">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+            </div>
+            <div>
+                <p class="text-cyan-200 text-sm font-medium">Actifs financiers</p>
+                <h1 class="text-3xl font-bold tracking-tight">{{ patrimoineData.actifs_financiers.montant|number_format(0, ',', ' ') }} €</h1>
+            </div>
+        </div>
+        <div class="flex items-center gap-6 mt-4">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-white/20 backdrop-blur">
+                    {{ patrimoineData.actifs_financiers.pourcentage }}%
+                </span>
+                <span class="text-cyan-200 text-sm">du patrimoine total</span>
+            </div>
+            <div class="text-cyan-200 text-sm">
+                {{ patrimoineData.stocksByCategorie.financier|default([])|length }} actif{{ patrimoineData.stocksByCategorie.financier|default([])|length > 1 ? 's' : '' }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if patrimoineData.isO2S|default(false) %}
+
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+    {# ─── LEFT (2/5): BAR CHART + STATS ─── #}
+    <div class="lg:col-span-2">
+        <div class="bg-white border border-gray-200 rounded-2xl p-6 sticky top-24">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-5">Top actifs financiers</h3>
+            <div class="h-80 mb-6">
+                <canvas id="finBarChart"></canvas>
+            </div>
+
+            {# Résumé rapide #}
+            <div class="border-t border-gray-100 pt-4 space-y-3">
+                {% set totalFinancier = patrimoineData.actifs_financiers.montant %}
+                {% set sortedStocks = patrimoineData.stocksByCategorie.financier|default([]) %}
+                {% if sortedStocks|length > 0 %}
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Plus gros actif</span>
+                    {% set maxStock = null %}
+                    {% set maxVal = 0 %}
+                    {% for stock in sortedStocks %}
+                        {% if (stock.valeurDetenue|default(stock.valeur)) > maxVal %}
+                            {% set maxStock = stock %}
+                            {% set maxVal = stock.valeurDetenue|default(stock.valeur) %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if maxStock %}
+                    <span class="font-semibold text-gray-900">{{ maxVal|number_format(0, ',', ' ') }} €</span>
+                    {% endif %}
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Nombre d'actifs</span>
+                    <span class="font-semibold text-gray-900">{{ sortedStocks|length }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# ─── RIGHT (3/5): LISTE DES ACTIFS (style Harvest accordéon) ─── #}
+    <div class="lg:col-span-3" x-data="{ openSection: 'placements' }">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Détail de vos actifs</h3>
+
+        {% set totalFinancier = patrimoineData.actifs_financiers.montant %}
+        {% set finStocks = patrimoineData.stocksByCategorie.financier|default([]) %}
+
+        {# ─── Sous-catégories financières (comme Harvest) ─── #}
+        {% set finCategories = [
+            {key: 'comptes_courants', label: 'Comptes de dépôts et épargne', montant: (patrimoineData.actifs_financiers.comptes_courants|default(0)) + (patrimoineData.actifs_financiers.epargne_bancaire|default(0)), color: '#64748b', icon: 'card'},
+            {key: 'comptes_titres', label: 'Comptes titres', montant: patrimoineData.actifs_financiers.comptes_titres|default(0), color: '#ef4444', icon: 'chart'},
+            {key: 'assurance_vie', label: 'Assurance vie et capitalisation', montant: patrimoineData.actifs_financiers.assurance_vie|default(0), color: '#3b82f6', icon: 'shield'},
+            {key: 'epargne_retraite', label: 'Épargne retraite et salariale', montant: patrimoineData.actifs_financiers.epargne_retraite|default(0), color: '#10b981', icon: 'calendar'},
+            {key: 'autre_financier', label: 'Prévoyance / Autre', montant: patrimoineData.actifs_financiers.autre|default(0), color: '#8b5cf6', icon: 'dots'}
+        ] %}
+
+        {% for cat in finCategories %}
+        {% set catPct = totalFinancier > 0 ? ((cat.montant / totalFinancier) * 100)|round(0) : 0 %}
+        {# Merge stocks for the category #}
+        {% if cat.key == 'comptes_courants' %}
+            {% set catStocks = (patrimoineData.stocksByFinCategorie.comptes_courants|default([]))|merge(patrimoineData.stocksByFinCategorie.epargne_bancaire|default([])) %}
+        {% elseif cat.key == 'comptes_titres' %}
+            {% set catStocks = patrimoineData.stocksByFinCategorie.comptes_titres|default([]) %}
+        {% elseif cat.key == 'assurance_vie' %}
+            {% set catStocks = patrimoineData.stocksByFinCategorie.assurance_vie|default([]) %}
+        {% elseif cat.key == 'epargne_retraite' %}
+            {% set catStocks = patrimoineData.stocksByFinCategorie.epargne_retraite|default([]) %}
+        {% else %}
+            {% set catStocks = patrimoineData.stocksByFinCategorie.autre_financier|default([]) %}
+        {% endif %}
+
+        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden mb-3">
+            <button @click="openSection = openSection === '{{ cat.key }}' ? '' : '{{ cat.key }}'"
+                    class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center justify-center w-11 h-7 rounded-full text-xs font-bold text-white" style="background-color: {{ cat.color }}">
+                        {{ catPct }}%
+                    </span>
+                    <span class="font-semibold text-gray-900">{{ cat.label }}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="font-bold {{ cat.montant > 0 ? 'text-gray-900' : 'text-gray-400' }}">{{ cat.montant|number_format(0, ',', ' ') }} €</span>
+                    {% if catStocks|length > 0 %}
+                    <svg class="w-5 h-5 text-gray-400 transition-transform duration-200"
+                         :class="openSection === '{{ cat.key }}' ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                    {% endif %}
+                </div>
+            </button>
+
+            {% if catStocks|length > 0 %}
+            <div x-show="openSection === '{{ cat.key }}'" x-collapse>
+                {% for stock in catStocks %}
+                {% set stockVal = stock.valeur %}
+                {% set pctOfCat = cat.montant > 0 ? ((stockVal / cat.montant) * 100)|round(1) : 0 %}
+                <div class="border-t border-gray-100 flex items-center justify-between px-5 py-3 hover:bg-gray-50/50 transition-colors">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-2 h-2 rounded-full flex-shrink-0" style="background-color: {{ cat.color }}"></div>
+                        <div class="min-w-0">
+                            <h4 class="text-sm font-medium text-gray-900 truncate">{{ stock.libelle }}</h4>
+                            {% if stock.part|default(100) < 100 %}
+                            <span class="text-[10px] text-amber-600">{{ stock.part }}% détenu</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-right flex-shrink-0 ml-4">
+                        <span class="text-sm font-bold text-gray-900">{{ stockVal|number_format(0, ',', ' ') }} €</span>
+                        {% if stock.part|default(100) < 100 %}
+                        <p class="text-[10px] text-gray-400">Détenu : {{ stock.valeurDetenue|number_format(0, ',', ' ') }} €</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        {# ─── Passif / Emprunts ─── #}
+        {% if patrimoineData.passif > 0 %}
+        <div class="bg-white border border-red-100 rounded-xl overflow-hidden mt-6">
+            <button @click="openSection = openSection === 'passif' ? '' : 'passif'"
+                    class="w-full flex items-center justify-between p-4 bg-red-50/50 hover:bg-red-50 transition-colors text-left">
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center justify-center w-11 h-7 rounded-full text-xs font-bold text-white bg-red-500">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                    </span>
+                    <span class="font-semibold text-gray-900">Passifs / Emprunts</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="font-bold text-red-600">{{ patrimoineData.passif|number_format(0, ',', ' ') }} €</span>
+                    <svg class="w-5 h-5 text-gray-400 transition-transform duration-200"
+                         :class="openSection === 'passif' ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+            </button>
+            <div x-show="openSection === 'passif'" x-collapse>
+                {% for stock in patrimoineData.stocksByCategorie.passif|default([]) %}
+                <div class="border-t border-red-100 flex items-center justify-between px-5 py-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-2 h-2 rounded-full bg-red-400 flex-shrink-0"></div>
+                        <span class="text-sm text-gray-700 truncate">{{ stock.libelle }}</span>
+                    </div>
+                    <span class="text-sm font-semibold text-red-600 flex-shrink-0 ml-4">{{ (stock.valeurDetenue|default(stock.valeur))|number_format(0, ',', ' ') }} €</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {# ─── Total résumé ─── #}
+        <div class="mt-6 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-xl p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">Patrimoine net du foyer</p>
+                    {% if patrimoineData.passif > 0 %}
+                    <p class="text-[11px] text-gray-400 mt-0.5">Actifs {{ patrimoineData.actif|number_format(0, ',', ' ') }} € — Passifs {{ patrimoineData.passif|number_format(0, ',', ' ') }} €</p>
+                    {% endif %}
+                </div>
+                <span class="inline-flex items-center px-4 py-2 rounded-lg text-lg font-bold text-white bg-emerald-600">
+                    {{ patrimoineData.patrimoine|number_format(0, ',', ' ') }} €
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+{# Fallback KYC #}
+<div class="bg-white border border-gray-200 rounded-2xl p-8">
+    <div class="text-center">
+        <div class="w-16 h-16 rounded-full bg-cyan-100 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Actifs Financiers</h3>
+        <p class="text-3xl font-bold text-gray-900 mb-2">{{ patrimoineData.actifs_financiers.montant|number_format(0, ',', ' ') }} €</p>
+        <p class="text-sm text-gray-500">{{ patrimoineData.actifs_financiers.pourcentage }}% de votre patrimoine total</p>
+        <p class="text-xs text-gray-400 mt-4">Données issues de votre profil investisseur. Le détail par actif sera disponible après synchronisation.</p>
+    </div>
+</div>
+{% endif %}
+
+{# ─── BACK BUTTON ─── #}
+<div class="mt-8">
+    <a href="{{ path('user_dashboard') }}" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-cyan-600 transition-colors group">
+        <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Retour à la synthèse
+    </a>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script>
+{% if patrimoineData.isO2S|default(false) %}
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('finBarChart');
+    if (!ctx) return;
+
+    // Build top 10 data sorted by value
+    const allStocks = [
+        {% for stock in patrimoineData.stocksByCategorie.financier|default([]) %}
+        {% if stock.valeur > 0 %}
+        { label: '{{ stock.libelle|e('js') }}', value: {{ stock.valeur }} },
+        {% endif %}
+        {% endfor %}
+    ].sort((a, b) => b.value - a.value).slice(0, 10);
+
+    if (allStocks.length === 0) return;
+
+    const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n);
+
+    // Gradient colors
+    const gradientColors = [
+        '#06b6d4', '#0891b2', '#0e7490', '#22d3ee', '#67e8f9',
+        '#14b8a6', '#0d9488', '#2dd4bf', '#5eead4', '#99f6e4'
+    ];
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: allStocks.map(s => s.label.length > 22 ? s.label.substring(0, 22) + '…' : s.label),
+            datasets: [{
+                data: allStocks.map(s => s.value),
+                backgroundColor: allStocks.map((_, i) => gradientColors[i % gradientColors.length]),
+                borderRadius: 8,
+                borderSkipped: false,
+                maxBarThickness: 28
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1f2937',
+                    padding: 14,
+                    cornerRadius: 10,
+                    titleFont: { size: 13, weight: 'bold' },
+                    bodyFont: { size: 12 },
+                    displayColors: false,
+                    callbacks: {
+                        title: (items) => items[0] ? allStocks[items[0].dataIndex]?.label : '',
+                        label: (ctx) => `${fmt(ctx.parsed.x)} €`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false },
+                    ticks: {
+                        callback: (v) => fmt(v) + ' €',
+                        font: { size: 11 },
+                        color: '#9ca3af'
+                    }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: {
+                        font: { size: 11 },
+                        padding: 8,
+                        color: '#374151'
+                    }
+                }
+            }
+        }
+    });
+});
+{% endif %}
+</script>
+{% endblock %}

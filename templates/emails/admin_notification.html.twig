@@ -1,0 +1,42 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Notification Admin' %}
+
+{% block content %}
+    <h1>🔔 {{ admin_title|default('Nouvelle notification') }}</h1>
+    
+    <p>Bonjour l'équipe,</p>
+    
+    {{ admin_message|raw }}
+    
+    {% if user_info is defined %}
+    <div class="info-box">
+        <p><strong>👤 Informations client :</strong></p>
+        <p style="margin-top: 10px;">
+            <strong>Nom :</strong> {{ user_info.name|default('—') }}<br>
+            <strong>Email :</strong> {{ user_info.email|default('—') }}<br>
+            {% if user_info.phone is defined %}<strong>Téléphone :</strong> {{ user_info.phone }}{% endif %}
+        </p>
+    </div>
+    {% endif %}
+    
+    {% if action_required is defined and action_required %}
+    <div class="warning-box">
+        <p><strong>⚠️ Action requise :</strong></p>
+        <p>{{ action_message|default('Veuillez traiter cette demande dans les meilleurs délais.') }}</p>
+    </div>
+    {% endif %}
+    
+    {% if admin_url is defined %}
+    <div class="button-container">
+        <a href="{{ admin_url }}" class="button">Accéder au back-office</a>
+    </div>
+    {% endif %}
+    
+    <div class="divider"></div>
+    
+    <p style="font-size: 13px; color: #64748b; text-align: center;">
+        Email automatique envoyé depuis la plateforme ADN Family Office
+    </p>
+{% endblock %}
+

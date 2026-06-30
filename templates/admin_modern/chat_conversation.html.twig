@@ -1,0 +1,145 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block page_title %}Chat avec {{ userInfo.name ?? 'Utilisateur' }}{% endblock %}
+
+{% block content %}
+<div class="flex flex-col h-[calc(100vh-200px)]">
+    <!-- Header de la conversation -->
+    <div class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <a href="{{ path('admin_modern_chat') }}" 
+               class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+            </a>
+            <div class="flex items-center space-x-3">
+                <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                    {% if userInfo %}
+                        <span class="text-sm font-medium text-gray-700">
+                            {{ userInfo.name|slice(0,1)|upper }}{{ userInfo.name|split(' ')|slice(1,1)|first|slice(0,1)|upper }}
+                        </span>
+                    {% else %}
+                        <span class="text-sm font-medium text-gray-700">?</span>
+                    {% endif %}
+                </div>
+                <div>
+                    {% if userInfo %}
+                        <h2 class="text-lg font-semibold text-gray-900">{{ userInfo.name }}</h2>
+                        <p class="text-sm text-gray-500">{{ userInfo.email }}</p>
+                    {% else %}
+                        <h2 class="text-lg font-semibold text-gray-900">Conversation</h2>
+                        <p class="text-sm text-gray-500">{{ conversationId }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        {% if userInfo %}
+        <div class="flex items-center space-x-2">
+            <span class="px-2 py-1 {{ conversationStatus == 'ferme' ? 'bg-gray-200 text-gray-700' : 'bg-green-100 text-green-800' }} text-xs font-medium rounded-full">
+                {{ conversationStatus == 'ferme' ? 'Conversation fermée' : 'Conversation ouverte' }}
+            </span>
+            <form method="post" action="{{ path('admin_modern_chat_toggle', {'conversationId': conversationId}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('toggle_chat_' ~ conversationId) }}">
+                <button class="px-3 py-1 rounded-md text-xs font-medium {{ conversationStatus == 'ferme' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700' }}">
+                    {{ conversationStatus == 'ferme' ? 'Réouvrir' : 'Fermer' }}
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Zone des messages -->
+    <div class="flex-1 overflow-y-auto bg-gray-50 px-6 py-4" id="messages-container" data-admin-chat-fetch-url="{{ path('admin_modern_chat_messages', {'conversationId': conversationId}) }}" data-admin-chat-send-url="{{ path('admin_modern_chat_send', {'conversationId': conversationId}) }}">
+        <div id="messages-list" class="space-y-4">
+            {% if messages is empty %}
+                <div class="flex justify-center">
+                    <div class="bg-white rounded-lg p-4 shadow-sm border max-w-md text-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-900 mb-2">Début de conversation</h3>
+                        <p class="text-sm text-gray-600">Aucun message dans cette conversation pour le moment.</p>
+                    </div>
+                </div>
+            {% else %}
+                {% for message in messages %}
+                    {% include 'admin_modern/_chat_message.html.twig' with {'message': message} %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Zone de saisie -->
+    <div class="bg-white border-t border-gray-200 px-6 py-4">
+        <form action="{{ path('admin_modern_chat_send', {'conversationId': conversationId}) }}" method="POST" class="flex items-end space-x-3" data-admin-chat-form>
+            <div class="flex-1">
+                <textarea 
+                    name="message" 
+                    id="message-input"
+                    placeholder="Tapez votre réponse ici..." 
+                    class="w-full resize-none border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                    rows="1"
+                    maxlength="1000"
+                    required></textarea>
+                <div class="flex justify-between items-center mt-2">
+                    <span class="text-xs text-gray-500">
+                        <span id="char-count">0</span>/1000 caractères
+                    </span>
+                    <span class="text-xs text-gray-500">
+                        Appuyez sur Entrée pour envoyer
+                    </span>
+                </div>
+            </div>
+            <button 
+                type="submit" 
+                id="send-button"
+                class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const messageInput = document.getElementById('message-input');
+    const charCount = document.getElementById('char-count');
+    const messagesContainer = document.getElementById('messages-container');
+    
+    // Auto-resize du textarea et compteur de caractères
+    messageInput.addEventListener('input', function() {
+        // Compteur de caractères
+        charCount.textContent = this.value.length;
+        
+        // Auto-resize
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+    
+    // Envoi avec Entrée
+    messageInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            this.closest('form').submit();
+        }
+    });
+    
+    // Scroll automatique vers le bas
+    function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Scroll initial
+    scrollToBottom();
+    
+    // Focus automatique sur le champ de saisie
+    messageInput.focus();
+});
+</script>
+{% endblock %}

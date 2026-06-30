@@ -1,0 +1,161 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block page_title %}Chat Support{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header avec statistiques -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"/>
+                        </svg>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Conversations totales</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ statistics.total_conversations }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Messages non lus</dt>
+                            <dd class="text-lg font-medium text-orange-600">{{ statistics.total_unread }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Actives aujourd'hui</dt>
+                            <dd class="text-lg font-medium text-green-600">{{ statistics.active_today }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des conversations -->
+    {% if conversations is empty %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"/>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune conversation</h3>
+            <p class="mt-1 text-sm text-gray-500">Aucun utilisateur n'a encore commencé de chat.</p>
+        </div>
+    {% else %}
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul id="admin_chat_conversations" class="divide-y divide-gray-200">
+                {% for conversation in conversations %}
+                <li class="{% if conversation.unreadCount > 0 %}bg-blue-50{% endif %}">
+                    <a href="{{ path('admin_modern_chat_conversation', {'conversationId': conversation.conversationId}) }}" 
+                       class="block hover:bg-gray-50 px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                        <span class="text-sm font-medium text-gray-700">
+                                            {{ conversation.userName|slice(0,1)|upper }}{{ conversation.userName|split(' ')|slice(1,1)|first|slice(0,1)|upper }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ml-4 min-w-0 flex-1">
+                                    <div class="flex items-center">
+                                        <p class="text-sm font-medium text-indigo-600 truncate">
+                                            {{ conversation.userName }}
+                                        </p>
+                                        {% if conversation.unreadCount > 0 %}
+                                            <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                {{ conversation.unreadCount }} nouveau{{ conversation.unreadCount > 1 ? 'x' : '' }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="text-sm text-gray-500">{{ conversation.userEmail }}</p>
+                                    {% if conversation.lastMessage %}
+                                        <p class="text-sm text-gray-600 mt-1 truncate">
+                                            {% if conversation.lastMessage.senderType == 'admin' %}
+                                                <span class="font-medium">Vous:</span>
+                                            {% else %}
+                                                <span class="font-medium">{{ conversation.userName|split(' ')|first }}:</span>
+                                            {% endif %}
+                                            {{ conversation.lastMessage.message|slice(0, 60) }}{% if conversation.lastMessage.message|length > 60 %}...{% endif %}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end space-y-1">
+                                <time class="text-sm text-gray-500">
+                                    {{ conversation.lastMessageAt|date('d/m/Y H:i') }}
+                                </time>
+                                {% if conversation.status == 'ferme' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-700">Fermé</span>
+                                {% endif %}
+                                {% if conversation.unreadCount > 0 %}
+                                    <div class="flex items-center text-sm text-blue-600">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Actif
+                                    </div>
+                                {% else %}
+                                    <div class="flex items-center text-sm text-gray-400">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Lu
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <!-- Aide -->
+    <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">Chat Support</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <p>Gérez les conversations en temps réel avec vos clients. Cliquez sur une conversation pour répondre directement.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

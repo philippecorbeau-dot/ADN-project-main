@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Importer les styles spécifiques de la home pour garantir leur présence dans app.css */
+@import './modern-homepage.css';

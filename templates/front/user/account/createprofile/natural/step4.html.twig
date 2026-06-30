@@ -1,0 +1,345 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+
+{% block body %} 
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header avec titre moderne -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-600 to-red-600 rounded-full mb-4">
+                <i class="fa-solid fa-graduation-cap text-white text-2xl"></i>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                {% trans %}Votre expertise{% endtrans %}
+            </h1>
+            <p class="text-lg text-gray-600">
+                {% trans %}Définissons ensemble votre profil d'investisseur{% endtrans %}
+            </p>
+        </div>
+
+        <!-- Carte principale -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <!-- Header de la carte -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-shield-check text-white text-xl"></i>
+                        <h2 class="text-white font-semibold text-lg">
+                            {% trans %}Profil d'investisseur{% endtrans %}
+                        </h2>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-blue-100 text-sm">{% trans %}Étape 4 sur 5{% endtrans %}</span>
+                        <div class="w-2 h-2 bg-blue-200 rounded-full"></div>
+                    </div>
+                </div>
+                            </div>
+
+            <!-- Contenu de la carte -->
+            <div class="p-6 md:p-8">
+                {{ form_start(form, {'attr': {'id': 'form-step4', 'class': 'space-y-8'}}) }}
+                
+                <!-- Section 1: Question MIF2 claire -->
+                <div class="space-y-6">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-certificate text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">
+                                {% trans %}Statut professionnel{% endtrans %}
+                            </h3>
+                            <p class="text-gray-600 text-sm">
+                                {% trans %}Êtes-vous un investisseur professionnel selon la réglementation MIF2 ?{% endtrans %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tooltip MIF2 -->
+                    <div class="mb-4">
+                        <span data-popover="mif" class="inline-flex items-center px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 hover:border-blue-300 transition-all cursor-pointer text-sm font-medium rounded-lg" id="mif-tooltip">
+                            <i class="fa-solid fa-info-circle mr-2 text-blue-500"></i>
+                            {% trans %}Qu'est-ce que la réglementation MIF2 ?{% endtrans %}
+                            <i class="fa-solid fa-chevron-down ml-2 text-xs text-blue-400"></i>
+                        </span>
+                    </div>
+
+                    <!-- Aide contextuelle -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <i class="fa-solid fa-lightbulb text-blue-500 text-lg"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-blue-800 mb-2">{% trans %}Aide à la décision{% endtrans %}</h4>
+                                <div class="text-sm text-blue-700 space-y-2">
+                                    <p>
+                                        <strong>{% trans %}Choisissez "Oui" si :{% endtrans %}</strong>
+                                        {% trans %}Vous avez une expérience significative en investissement, un portefeuille important, ou vous travaillez dans la finance.{% endtrans %}
+                                    </p>
+                                    <p>
+                                        <strong>{% trans %}Choisissez "Non" si :{% endtrans %}</strong>
+                                        {% trans %}Vous êtes un investisseur particulier, vous débutez en investissement, ou vous préférez bénéficier de la protection maximale.{% endtrans %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Options radio modernisées -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="mif-options">
+                        {% block mif_choice_widget %}
+                            {% for child in form.mif %}
+                                <div class="relative">
+                                    {{- form_widget(child, {'attr': {'class': 'sr-only peer'}}) -}}
+                                    <label for="{{ child.vars.id }}" class="block p-6 border-2 border-gray-200 rounded-xl cursor-pointer transition-all duration-200 hover:border-blue-300 hover:shadow-md peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:shadow-lg">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500 transition-all">
+                                                    <i class="fa-solid fa-check text-white text-xs opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                                </div>
+                                                <span class="font-semibold text-gray-800">{{ child.vars.label }}</span>
+                                            </div>
+                                            <i class="fa-solid {% if loop.first %}fa-check-circle text-blue-500{% else %}fa-times-circle text-gray-500{% endif %} text-xl opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                        </div>
+                                        <p class="text-gray-600 text-sm">
+                                            {% if loop.first %}
+                                                {% trans %}Je suis un investisseur professionnel selon la réglementation MIF2{% endtrans %}
+                                                <br><span class="text-xs text-gray-500 mt-1 block">{% trans %}(Expérience significative, portefeuille important, expertise financière){% endtrans %}</span>
+                                            {% else %}
+                                                {% trans %}Je ne suis pas un investisseur professionnel{% endtrans %}
+                                                <br><span class="text-xs text-gray-500 mt-1 block">{% trans %}(Investisseur particulier, protection maximale){% endtrans %}</span>
+                                            {% endif %}
+                                        </p>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        {% endblock %}
+                    </div>
+                    {{ form_errors(form.mif) }}
+                </div>
+
+                <!-- Section 2: Attestations (visible seulement si "Oui" MIF2) -->
+                <div class="hidden border-t border-gray-200 pt-8" id="attestations-section">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-shield-check text-white text-lg"></i>
+                        </div>
+                            <div>
+                            <h3 class="text-xl font-bold text-gray-800">
+                                {% trans %}Attestations requises{% endtrans %}
+                            </h3>
+                            <p class="text-gray-600 text-sm">
+                                {% trans %}Veuillez confirmer les mentions suivantes{% endtrans %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Attestation MIF2 -->
+                        <div class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-all">
+                            <div class="flex items-center h-5">
+                                {{ form_widget(form.attestMif, {'attr': {'class': 'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'}}) }}
+                            </div>
+                            <div class="flex-1">
+                                <label for="{{ form.attestMif.vars.id }}" class="text-sm font-medium text-gray-700 cursor-pointer">
+                                    {{ form.attestMif.vars.label }}
+                                </label>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    {% trans %}Je confirme avoir lu et compris les informations relatives à la réglementation MIF2{% endtrans %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Attestation Awareness -->
+                        <div class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-all">
+                            <div class="flex items-center h-5">
+                                {{ form_widget(form.attestAware, {'attr': {'class': 'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'}}) }}
+                            </div>
+                            <div class="flex-1">
+                                <label for="{{ form.attestAware.vars.id }}" class="text-sm font-medium text-gray-700 cursor-pointer">
+                                    {{ form.attestAware.vars.label }}
+                                </label>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    {% trans %}Je confirme être conscient des risques liés aux investissements{% endtrans %}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Attestation Truth -->
+                        <div class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-all">
+                            <div class="flex items-center h-5">
+                                {{ form_widget(form.attestTruth, {'attr': {'class': 'w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'}}) }}
+                            </div>
+                            <div class="flex-1">
+                                <label for="{{ form.attestTruth.vars.id }}" class="text-sm font-medium text-gray-700 cursor-pointer">
+                                    {{ form.attestTruth.vars.label }}
+                                </label>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    {% trans %}Je certifie que les informations fournies sont exactes et complètes{% endtrans %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex justify-between items-center pt-8 border-t border-gray-200">
+                    <a href="{{ path('user_create_profile', {'step' : 3 }) }}" class="inline-flex items-center px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-all duration-200">
+                        <i class="fa-solid fa-arrow-left mr-2"></i>
+                        {% trans %}Précédent{% endtrans %}
+                    </a>
+                    
+                    <button id="btn-next" type="submit" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                        {% trans %}Suivant{% endtrans %}
+                        <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+
+            {{ form_row(form._token) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tooltip pour MIF2 -->
+<div id="mif-tooltip-content" class="fixed z-50 bg-gray-900 text-white text-sm rounded-lg shadow-xl p-4 max-w-lg opacity-0 invisible transition-all duration-200" style="pointer-events: none;">
+    <div class="relative">
+        <h4 class="font-semibold mb-3 text-blue-300">{% trans %}Qu'est-ce que la réglementation MIF2 ?{% endtrans %}</h4>
+        
+        <div class="space-y-3 text-xs leading-relaxed">
+            <p class="text-gray-300">
+                <strong class="text-white">MIF2</strong> (Markets in Financial Instruments Directive 2) est une directive européenne qui définit les critères pour être considéré comme <strong class="text-white">investisseur professionnel</strong>.
+            </p>
+            
+            <div class="bg-gray-800 p-3 rounded border-l-4 border-blue-400">
+                <h5 class="font-semibold text-blue-300 mb-2">{% trans %}Vous êtes considéré comme investisseur professionnel si :{% endtrans %}</h5>
+                <ul class="space-y-1 text-gray-300">
+                    <li class="flex items-start">
+                        <span class="text-blue-400 mr-2">•</span>
+                        {% trans %}Vous avez réalisé des transactions d'une taille significative (≥ 600 000€) sur les marchés financiers{% endtrans %}
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-400 mr-2">•</span>
+                        {% trans %}Vous travaillez dans le secteur financier depuis plus d'un an{% endtrans %}
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-400 mr-2">•</span>
+                        {% trans %}Vous avez un portefeuille financier > 500 000€{% endtrans %}
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-400 mr-2">•</span>
+                        {% trans %}Vous avez une expertise en matière d'investissement{% endtrans %}
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="bg-gray-800 p-3 rounded border-l-4 border-orange-400">
+                <h5 class="font-semibold text-orange-300 mb-2">{% trans %}Conséquences du statut professionnel :{% endtrans %}</h5>
+                <ul class="space-y-1 text-gray-300">
+                    <li class="flex items-start">
+                        <span class="text-orange-400 mr-2">•</span>
+                        {% trans %}Accès à des produits financiers plus risqués{% endtrans %}
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-orange-400 mr-2">•</span>
+                        {% trans %}Moins de protection réglementaire{% endtrans %}
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-orange-400 mr-2">•</span>
+                        {% trans %}Responsabilité accrue dans vos décisions d'investissement{% endtrans %}
+                    </li>
+                </ul>
+            </div>
+            
+            <p class="text-gray-400 italic">
+                {% trans %}En cas de doute, choisissez "Non" pour bénéficier de la protection maximale.{% endtrans %}
+            </p>
+        </div>
+        
+        <div class="absolute -top-2 left-4 w-4 h-4 bg-gray-900 transform rotate-45"></div>
+    </div>
+</div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Gestion du tooltip MIF2
+    const mifTooltip = document.getElementById('mif-tooltip');
+    const tooltipContent = document.getElementById('mif-tooltip-content');
+    
+    if (mifTooltip && tooltipContent) {
+        mifTooltip.addEventListener('mouseenter', function(e) {
+            const rect = this.getBoundingClientRect();
+            tooltipContent.style.left = rect.left + 'px';
+            tooltipContent.style.top = (rect.bottom + 10) + 'px';
+            tooltipContent.style.opacity = '1';
+            tooltipContent.style.visibility = 'visible';
+        });
+        
+        mifTooltip.addEventListener('mouseleave', function() {
+            tooltipContent.style.opacity = '0';
+            tooltipContent.style.visibility = 'hidden';
+        });
+    }
+
+    // Gestion de la logique du formulaire
+    const btnNext = document.getElementById('btn-next');
+    const mifRadios = document.querySelectorAll('input[name$="[mif]"]');
+    const attestationsSection = document.getElementById('attestations-section');
+
+        function updateBtnNext() {
+            let mifOui = mifRadios[0] && mifRadios[0].checked;
+            let mifNon = mifRadios[1] && mifRadios[1].checked;
+        
+        // Vérifier les attestations (seulement si "Oui" MIF2)
+        const attestMif = document.querySelector('input[name$="[attestMif]"]');
+        const attestAware = document.querySelector('input[name$="[attestAware]"]');
+        const attestTruth = document.querySelector('input[name$="[attestTruth]"]');
+        
+        const attestationsComplete = attestMif && attestMif.checked && 
+                                   attestAware && attestAware.checked && 
+                                   attestTruth && attestTruth.checked;
+        
+            if (mifOui) {
+            btnNext.disabled = !attestationsComplete;
+            } else if (mifNon) {
+            btnNext.disabled = false; // Pas de critères d'expérience pour les non-professionnels
+            } else {
+                btnNext.disabled = true;
+            }
+        }
+
+        // Initialisation
+        btnNext.disabled = true;
+
+    // Event listeners
+        mifRadios.forEach(radio => radio.addEventListener('change', function() {
+            updateBtnNext();
+        
+        // Gérer l'affichage des attestations
+        if (attestationsSection) {
+            if (mifRadios[0] && mifRadios[0].checked) {
+                // "Oui" sélectionné - afficher les attestations
+                attestationsSection.classList.remove('hidden');
+            } else {
+                // "Non" sélectionné - masquer les attestations
+                attestationsSection.classList.add('hidden');
+                // Décocher les attestations quand on passe à "Non"
+                const attestInputs = document.querySelectorAll('input[name$="[attestMif]"], input[name$="[attestAware]"], input[name$="[attestTruth]"]');
+                attestInputs.forEach(input => input.checked = false);
+            }
+        }
+    }));
+
+    // Event listeners pour les attestations
+    const attestInputs = document.querySelectorAll('input[name$="[attestMif]"], input[name$="[attestAware]"], input[name$="[attestTruth]"]');
+    attestInputs.forEach(input => input.addEventListener('change', function() {
+        updateBtnNext();
+    }));
+
+    updateBtnNext();
+    });
+    </script>
+
+{% endblock %}

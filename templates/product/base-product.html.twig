@@ -1,0 +1,455 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+    /* Variables CSS pour cohérence */
+    :root {
+        --primary-color: #1C29A1;
+        --primary-light: #3B82F6;
+        --secondary-color: #64748b;
+        --accent-color: #f59e0b;
+        --success-color: #10b981;
+        --error-color: #ef4444;
+        --white: #ffffff;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-600: #475569;
+        --gray-800: #1e293b;
+        --gray-900: #0f172a;
+    }
+
+    /* Reset et base */
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.6;
+    }
+
+    /* Container principal */
+    .product-page {
+        padding-top: 80px;
+        min-height: 100vh;
+    }
+
+    .product-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        font-size: 0.875rem;
+        color: var(--gray-600);
+    }
+
+    .breadcrumb a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .breadcrumb a:hover {
+        color: var(--primary-light);
+    }
+
+    .breadcrumb-separator {
+        margin: 0 0.5rem;
+        color: var(--gray-400);
+    }
+
+    /* Hero Section */
+    .product-hero {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        border-radius: 2rem;
+        padding: 4rem 3rem;
+        margin-bottom: 3rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.1;
+    }
+
+    .product-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .product-hero h1 {
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        font-weight: 800;
+        margin-bottom: 1rem;
+        line-height: 1.1;
+    }
+
+    .product-hero p {
+        font-size: 1.125rem;
+        opacity: 0.9;
+        line-height: 1.6;
+        max-width: 600px;
+    }
+
+    /* Content Layout */
+    .product-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 3rem;
+        margin-bottom: 3rem;
+    }
+
+    .content-section {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        margin-bottom: 2rem;
+    }
+
+    .content-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .content-section h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .content-section h2 span {
+        font-size: 1.25rem;
+    }
+
+    .content-section h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin: 1.5rem 0 1rem 0;
+    }
+
+    .content-section p {
+        color: var(--gray-600);
+        margin-bottom: 1rem;
+        line-height: 1.7;
+    }
+
+    .content-section ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .content-section li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--gray-100);
+        color: var(--gray-600);
+        line-height: 1.6;
+    }
+
+    .content-section li:last-child {
+        border-bottom: none;
+    }
+
+    .content-section strong {
+        color: var(--gray-800);
+        font-weight: 600;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--gray-50);
+        border-radius: 1rem;
+        border: 1px solid var(--gray-200);
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+        font-weight: 500;
+    }
+
+    /* Sidebar */
+    .product-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .sidebar-card {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .sidebar-card h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .sidebar-card h3 span {
+        font-size: 1rem;
+    }
+
+    /* Caractéristiques */
+    .characteristics-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .characteristics-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .characteristics-list li:last-child {
+        border-bottom: none;
+    }
+
+    .characteristics-label {
+        font-weight: 500;
+        color: var(--gray-700);
+    }
+
+    .characteristics-value {
+        font-weight: 600;
+        color: var(--gray-800);
+    }
+
+    /* Badges */
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge.blue {
+        background: rgba(59, 130, 246, 0.1);
+        color: #1d4ed8;
+    }
+
+    .badge.red {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+    }
+
+    .badge.green {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+    }
+
+    .badge.yellow {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        border-radius: 2rem;
+        padding: 3rem;
+        text-align: center;
+        color: white;
+        margin-top: 3rem;
+    }
+
+    .cta-section h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+        font-size: 1.125rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 1rem 2rem;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: white;
+        color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-secondary {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+    }
+
+    .btn-secondary:hover {
+        background: white;
+        color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .product-content {
+            grid-template-columns: 1fr;
+        }
+        
+        .product-hero {
+            padding: 3rem 2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .product-page {
+            padding-top: 70px;
+        }
+        
+        .product-container {
+            padding: 1rem;
+        }
+        
+        .product-hero {
+            padding: 2rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .content-section,
+        .sidebar-card {
+            padding: 1.5rem;
+        }
+        
+        .product-content {
+            gap: 2rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .product-page {
+            padding-top: 60px;
+        }
+        
+        .product-container {
+            padding: 0.75rem;
+        }
+        
+        .product-hero {
+            padding: 1.5rem 1rem;
+            border-radius: 1rem;
+        }
+        
+        .content-section,
+        .sidebar-card {
+            padding: 1rem;
+            border-radius: 1rem;
+        }
+        
+        .product-content {
+            gap: 1.5rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .cta-section {
+            padding: 2rem 1.5rem;
+        }
+    }
+    </style>
+{% endblock %}
+
+{% block body %}
+<!-- Header moderne pour les pages produits -->
+{% include 'partials/modern-header-module.html.twig' %}
+
+<div class="product-page">
+    <div class="product-container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            {% for item in breadcrumb %}
+                {% if item.path %}
+                    <a href="{{ path(item.path) }}">{{ item.label }}</a>
+                {% else %}
+                    <span>{{ item.label }}</span>
+                {% endif %}
+                {% if not loop.last %}
+                    <span class="breadcrumb-separator">›</span>
+                {% endif %}
+            {% endfor %}
+        </nav>
+
+        {% block product_content %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

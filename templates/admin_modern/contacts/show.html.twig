@@ -1,0 +1,674 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Détail du contact - {{ contact.firstname }} {{ contact.lastname }}{% endblock %}
+
+{% block content %}
+<div class="contact-detail">
+    <!-- En-tête moderne -->
+    <div class="page-header gradient">
+        <div class="header-content">
+            <div class="header-left">
+                <a href="{{ path('admin_modern_contacts_index') }}" class="back-link">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Retour à la liste
+                </a>
+                <h1 class="page-title">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-9 5l-9-6m18 0l-9 6m9-6v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8" />
+                    </svg>
+                    Message de {{ contact.firstname }} {{ contact.lastname }}
+                </h1>
+                <p class="page-subtitle">Reçu le {{ contact.createdAt|date('d/m/Y à H:i') }}</p>
+            </div>
+            <div class="header-actions">
+                <form action="{{ path('admin_modern_contacts_toggle_read', {id: contact.id}) }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('toggle_read' ~ contact.id) }}">
+                    <button type="submit" 
+                            class="{% if contact.isRead %}btn-secondary{% else %}btn-success{% endif %}">
+                        {% if contact.isRead %}
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L12 12l-4.242-4.242M9.878 9.878L7.636 7.636"/>
+                            </svg>
+                            Marquer non lu
+                        {% else %}
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Marquer comme lu
+                        {% endif %}
+                    </button>
+                </form>
+                <button type="button" 
+                        class="btn-danger" 
+                        onclick="deleteContact({{ contact.id }})">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0V5a2 2 0 012-2h2a2 2 0 012 2v2" />
+                    </svg>
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="contact-content">
+        <div class="contact-grid">
+            <!-- Informations personnelles -->
+            <div class="info-card">
+                <h3 class="card-title">
+                    <i class="fas fa-user"></i>
+                    Informations personnelles
+                </h3>
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">Nom complet :</span>
+                        <span class="info-value">{{ contact.firstname }} {{ contact.lastname }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email :</span>
+                        <span class="info-value">
+                            <a href="mailto:{{ contact.email }}" class="email-link">
+                                {{ contact.email }}
+                            </a>
+                        </span>
+                    </div>
+                    {% if contact.phone %}
+                        <div class="info-item">
+                            <span class="info-label">Téléphone :</span>
+                            <span class="info-value">
+                                <a href="tel:{{ contact.phone }}" class="phone-link">
+                                    {{ contact.phone }}
+                                </a>
+                            </span>
+                        </div>
+                    {% endif %}
+                    {% if contact.function %}
+                        <div class="info-item">
+                            <span class="info-label">Fonction :</span>
+                            <span class="info-value">{{ contact.function }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Informations du message -->
+            <div class="info-card">
+                <h3 class="card-title">
+                    <i class="fas fa-tag"></i>
+                    Détails du message
+                </h3>
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">Sujet :</span>
+                        <span class="info-value">
+                            <span class="subject-badge subject-{{ contact.subject }}">
+                                {{ contact.subjectName }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Date de réception :</span>
+                        <span class="info-value">{{ contact.createdAt|date('d/m/Y à H:i:s') }}</span>
+                    </div>
+                    {% if contact.rdvDate %}
+                        <div class="info-item">
+                            <span class="info-label">Date de RDV souhaitée :</span>
+                            <span class="info-value">{{ contact.rdvDate|date('d/m/Y à H:i') }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Message complet -->
+        <div class="message-card">
+            <h3 class="card-title">
+                <i class="fas fa-comment-alt"></i>
+                Message complet
+            </h3>
+            <div class="message-content">
+                {{ contact.message|nl2br }}
+            </div>
+        </div>
+
+        <!-- Actions rapides -->
+        <div class="quick-actions">
+            <h3 class="card-title">
+                <i class="fas fa-bolt"></i>
+                Actions rapides
+            </h3>
+            <div class="actions-grid">
+                <a href="mailto:{{ contact.email }}?subject=Re: {{ contact.subjectName }}" 
+                   class="action-btn action-email">
+                    <i class="fas fa-reply"></i>
+                    <span>Répondre par email</span>
+                </a>
+                
+                {% if contact.phone %}
+                    <a href="tel:{{ contact.phone }}" 
+                       class="action-btn action-phone">
+                        <i class="fas fa-phone"></i>
+                        <span>Appeler</span>
+                    </a>
+                {% endif %}
+                
+                <button type="button" 
+                        class="action-btn action-copy"
+                        onclick="copyContactInfo()">
+                    <i class="fas fa-copy"></i>
+                    <span>Copier les infos</span>
+                </button>
+                
+                <button type="button" 
+                        class="action-btn action-print"
+                        onclick="window.print()">
+                    <i class="fas fa-print"></i>
+                    <span>Imprimer</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Confirmer la suppression</h3>
+            <button type="button" class="modal-close" onclick="closeDeleteModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Êtes-vous sûr de vouloir supprimer ce message de contact ? Cette action est irréversible.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Annuler</button>
+            <form id="deleteForm" method="POST" style="display: inline;">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
+                <button type="submit" class="btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles pour la page de détail contact */
+.contact-detail {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header.gradient {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 35%, #3b82f6 100%);
+    border-radius: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    color: white;
+    box-shadow: 0 10px 20px rgba(30, 58, 138, .15);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.header-left {
+    flex: 1;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255,255,255,.85);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #ffffff;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: rgba(255,255,255,.8);
+    font-size: 1rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Grille de contenu */
+.contact-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+/* Cartes d'information */
+.info-card,
+.message-card,
+.quick-actions {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.card-title i {
+    color: #3b82f6;
+}
+
+/* Liste d'informations */
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.info-value {
+    color: #374151;
+    font-weight: 500;
+}
+
+.email-link,
+.phone-link {
+    color: #3b82f6;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.email-link:hover,
+.phone-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* Badge de sujet */
+.subject-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.subject-0 { background: #dbeafe; color: #1e40af; }
+.subject-1 { background: #dcfce7; color: #166534; }
+.subject-2 { background: #fef3c7; color: #92400e; }
+.subject-3 { background: #f3e8ff; color: #7c3aed; }
+.subject-4 { background: #fecaca; color: #dc2626; }
+.subject-5 { background: #e0e7ff; color: #4338ca; }
+
+/* Message */
+.message-content {
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border-left: 4px solid #3b82f6;
+    line-height: 1.6;
+    color: #374151;
+    white-space: pre-wrap;
+    font-size: 1rem;
+}
+
+/* Actions rapides */
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    background: white;
+    color: #374151;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.action-email:hover {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.action-phone:hover {
+    border-color: #f59e0b;
+    color: #f59e0b;
+}
+
+.action-copy:hover {
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+}
+
+.action-print:hover {
+    border-color: #6b7280;
+    color: #6b7280;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 1rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+}
+
+.modal-close:hover {
+    background: #f3f4f6;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+/* Boutons */
+.btn-danger,
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    font-size: 0.875rem;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+.btn-success {
+    background: #10b981;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+/* Styles d'impression */
+@media print {
+    .header-actions,
+    .quick-actions,
+    .back-link {
+        display: none !important;
+    }
+    
+    .contact-detail {
+        padding: 0;
+    }
+    
+    .info-card,
+    .message-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contact-detail {
+        padding: 1rem;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .info-card,
+    .message-card,
+    .quick-actions {
+        padding: 1.5rem;
+    }
+    
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Animation d'entrée */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.info-card,
+.message-card,
+.quick-actions {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.message-card {
+    animation-delay: 0.1s;
+}
+
+.quick-actions {
+    animation-delay: 0.2s;
+}
+</style>
+
+<script>
+// Fonction de suppression
+function deleteContact(contactId) {
+    const modal = document.getElementById('deleteModal');
+    const form = document.getElementById('deleteForm');
+    
+    form.action = `{{ path('admin_modern_contacts_delete', {'id': contact.id}) }}`;
+    modal.classList.add('show');
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    modal.classList.remove('show');
+}
+
+// Fonction pour copier les informations de contact
+function copyContactInfo() {
+    const contactInfo = `
+Nom: {{ contact.firstname }} {{ contact.lastname }}
+Email: {{ contact.email }}
+{% if contact.phone %}Téléphone: {{ contact.phone }}{% endif %}
+{% if contact.function %}Fonction: {{ contact.function }}{% endif %}
+Sujet: {{ contact.subjectName }}
+Date: {{ contact.createdAt|date('d/m/Y à H:i') }}
+
+Message:
+{{ contact.message }}
+    `.trim();
+
+    navigator.clipboard.writeText(contactInfo).then(function() {
+        // Feedback visuel
+        const btn = event.target.closest('.action-btn');
+        const originalText = btn.querySelector('span').textContent;
+        btn.querySelector('span').textContent = 'Copié !';
+        btn.style.borderColor = '#10b981';
+        btn.style.color = '#10b981';
+        
+        setTimeout(() => {
+            btn.querySelector('span').textContent = originalText;
+            btn.style.borderColor = '';
+            btn.style.color = '';
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Erreur lors de la copie:', err);
+        alert('Impossible de copier les informations');
+    });
+}
+
+// Gestion des modals
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeDeleteModal();
+    }
+});
+</script>
+{% endblock %}

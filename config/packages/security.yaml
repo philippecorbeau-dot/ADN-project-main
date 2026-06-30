@@ -1,0 +1,81 @@
+security:
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        App\Entity\User\User: 'auto'
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User\User
+                property: email
+    
+    # Hiérarchie des rôles - permet l'héritage des permissions
+    role_hierarchy:
+        # Super Admin hérite de tous les rôles admin
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ADMIN_OPERATOR, ROLE_ADMIN_KYC, ROLE_ADMIN_SUPPORT, ROLE_ADMIN_MARKETING]
+        # Administrateur hérite des rôles opérationnels
+        ROLE_ADMIN: [ROLE_ADMIN_OPERATOR, ROLE_ADMIN_KYC, ROLE_ADMIN_SUPPORT, ROLE_ADMIN_MARKETING]
+        # Opérateur a des capacités de base
+        ROLE_ADMIN_OPERATOR: [ROLE_USER]
+        # Rôles spécialisés héritent de USER
+        ROLE_ADMIN_KYC: [ROLE_USER]
+        ROLE_ADMIN_SUPPORT: [ROLE_USER]
+        ROLE_ADMIN_MARKETING: [ROLE_USER]
+        # Utilisateur identifié hérite de USER
+        ROLE_USER_IDENTIFIED: [ROLE_USER]
+    
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            provider: app_user_provider
+            user_checker: App\Security\UserChecker
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                username_parameter: email
+                password_parameter: _password
+                default_target_path: user_dashboard
+                enable_csrf: true
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 2592000 # 30 jours
+                path: '/'
+                samesite: lax
+                always_remember_me: true
+            logout:
+                path: app_logout
+                target: app_home
+                # where to redirect after logout
+                # target: app_any_route
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#the-firewall
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            switch_user: { role: ROLE_SUPER_ADMIN, parameter: _switch_user }
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        # Endpoints cron : accès public (sécurisé par token CRON_SECRET dans le contrôleur)
+        - { path: ^/cron/, roles: PUBLIC_ACCESS }
+        # Back-office accessible à tous les rôles admin (le contrôle granulaire est fait dans les contrôleurs)
+        - { path: ^/admin, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_ADMIN_OPERATOR, ROLE_ADMIN_KYC, ROLE_ADMIN_SUPPORT, ROLE_ADMIN_MARKETING] }
+        - { path: ^/user, roles: ROLE_USER }
+        - { path: ^/register/kyc, roles: ROLE_USER }
+
+when@test:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon

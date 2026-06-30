@@ -1,0 +1,596 @@
+{# Menu circulaire moderne ADN Family Office #}
+<div class="modern-circle-menu-container" id="modernCircleMenu">
+    <!-- Bouton central moderne -->
+    <div class="modern-circle-center" id="modernCircleToggle">
+        <div class="center-content">
+            <div class="center-logo">
+                <img src="{{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }}" alt="ADN Family Office" class="logo-img" decoding="async">
+            </div>
+        </div>
+        <div class="ripple-effect"></div>
+    </div>
+
+    <!-- Services en cercle -->
+    {% set services = [
+        {
+            'title': 'Gestion de patrimoine',
+            'icon': 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+            'color': 'from-blue-500 to-cyan-400',
+            'delay': '100ms',
+            'url': path('service_category', {category: 'gestion-de-patrimoine'})
+        },
+        {
+            'title': 'Gestion immobilière',
+            'icon': 'M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9',
+            'color': 'from-green-500 to-emerald-400',
+            'delay': '200ms',
+            'url': path('service_category', {category: 'gestion-immobiliere'})
+        },
+        {
+            'title': 'Transmission & succession',
+            'icon': 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z',
+            'color': 'from-purple-500 to-purple-400',
+            'delay': '300ms',
+            'url': path('service_category', {category: 'transmission-succession'})
+        },
+        {
+            'title': 'Conseil stratégique du dirigeant',
+            'icon': 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
+            'color': 'from-purple-500 to-purple-400',
+            'delay': '400ms',
+            'url': path('service_category', {category: 'conseil-strategique-du-dirigeant'})
+        },
+        {
+            'title': 'Private equity',
+            'icon': 'M13 10V3L4 14h7v7l9-11h-7z',
+            'color': 'from-blue-500 to-blue-400',
+            'delay': '500ms',
+            'url': path('service_category', {category: 'private-equity'})
+        },
+        {
+            'title': 'Investissements financiers',
+            'icon': 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+            'color': 'from-green-500 to-green-400',
+            'delay': '600ms',
+            'url': path('service_category', {category: 'investissements-financiers'})
+        }
+    ] %}
+
+    {% for service in services %}
+        <div class="modern-service-node" 
+             data-index="{{ loop.index }}" 
+             style="--delay: {{ service.delay }};">
+            <a class="service-card bg-gradient-to-br {{ service.color }}" href="{{ service.url }}" title="{{ service.title }}">
+                <div class="service-icon">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ service.icon }}"></path>
+                    </svg>
+                </div>
+                <div class="service-title">
+                    {{ service.title }}
+                </div>
+                <div class="service-line"></div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+
+<style>
+.modern-circle-menu-container {
+    position: relative;
+    width: 480px;
+    height: 480px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modern-circle-center {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    background: linear-gradient(135deg, #f5f7ff 0%, #e6ebff 50%, #dde5ff 100%);
+    border: 2px solid rgba(28, 41, 161, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 20px 50px rgba(28, 41, 161, 0.12);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    z-index: 10;
+}
+
+.modern-circle-center:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12), 0 25px 60px rgba(28, 41, 161, 0.18);
+    background: linear-gradient(135deg, #dce5ff 0%, #c8d6ff 100%);
+    border-color: rgba(28, 41, 161, 0.3);
+}
+
+.center-content {
+    text-align: center;
+    color: #1C29A1;
+    z-index: 2;
+    position: relative;
+}
+
+.modern-circle-menu-container .logo-img {
+    width: 130px;
+    height: auto;
+    margin: 0;
+}
+
+.center-title {
+    display: block;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.center-subtitle {
+    display: block;
+    font-weight: 500;
+    font-size: 10px;
+    opacity: 0.9;
+}
+
+.ripple-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(28, 41, 161, 0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.6s ease;
+}
+
+.modern-circle-center:hover .ripple-effect {
+    width: 200px;
+    height: 200px;
+}
+
+.modern-service-node {
+    position: absolute;
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition-delay: var(--delay);
+}
+
+.modern-circle-menu-container.active .modern-service-node {
+    opacity: 1;
+    transform: scale(1) rotate(360deg);
+}
+
+.service-card {
+    width: 140px;
+    height: 140px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.service-card:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.service-card:hover::before {
+    left: 100%;
+}
+
+.service-icon {
+    margin-bottom: 8px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.service-title {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 0 8px;
+}
+
+.service-line {
+    position: absolute;
+    width: 2px;
+    height: 50px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), transparent);
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modern-circle-menu-container.active .service-line {
+    opacity: 1;
+}
+
+/* Positionnement des services en cercle */
+.modern-service-node[data-index="1"] {
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+}
+
+.modern-service-node[data-index="2"] {
+    top: 70px;
+    right: 10px;
+    transform: translateX(50%) scale(0);
+}
+
+.modern-service-node[data-index="3"] {
+    bottom: 70px;
+    right: 10px;
+    transform: translateX(50%) scale(0);
+}
+
+.modern-service-node[data-index="4"] {
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+}
+
+.modern-service-node[data-index="5"] {
+    bottom: 70px;
+    left: 10px;
+    transform: translateX(-50%) scale(0);
+}
+
+.modern-service-node[data-index="6"] {
+    top: 70px;
+    left: 10px;
+    transform: translateX(-50%) scale(0);
+}
+
+.modern-circle-menu-container.active .modern-service-node[data-index="1"] {
+    transform: translateX(-50%) scale(1) rotate(360deg);
+}
+
+.modern-circle-menu-container.active .modern-service-node[data-index="2"] {
+    transform: translateX(50%) scale(1) rotate(360deg);
+}
+
+.modern-circle-menu-container.active .modern-service-node[data-index="3"] {
+    transform: translateX(50%) scale(1) rotate(360deg);
+}
+
+.modern-circle-menu-container.active .modern-service-node[data-index="4"] {
+    transform: translateX(-50%) scale(1) rotate(360deg);
+}
+
+.modern-circle-menu-container.active .modern-service-node[data-index="5"] {
+    transform: translateX(-50%) scale(1) rotate(360deg);
+}
+
+.modern-circle-menu-container.active .modern-service-node[data-index="6"] {
+    transform: translateX(-50%) scale(1) rotate(360deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modern-circle-menu-container {
+        width: 320px;
+        height: 320px;
+        margin: 2rem auto;
+    }
+    
+    .service-card {
+        width: 100px;
+        height: 100px;
+        border-radius: 15px;
+    }
+    
+    .service-title {
+        font-size: 10px;
+        padding: 0 6px;
+        line-height: 1.1;
+    }
+    
+    .service-icon {
+        margin-bottom: 6px;
+        padding: 6px;
+        border-radius: 8px;
+    }
+    
+    .service-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .modern-circle-center {
+        width: 100px;
+        height: 100px;
+        border-width: 2px;
+    }
+    
+    .modern-circle-menu-container .logo-img {
+        width: 85px;
+        margin-bottom: 3px;
+    }
+    
+    .center-title {
+        font-size: 12px;
+    }
+    
+    .center-subtitle {
+        font-size: 8px;
+    }
+    
+    /* Ajustement des positions pour éviter les superpositions */
+    .modern-service-node[data-index="1"] {
+        top: 10px;
+        left: 50%;
+    }
+    
+    .modern-service-node[data-index="2"] {
+        top: 60px;
+        right: 10px;
+    }
+    
+    .modern-service-node[data-index="3"] {
+        bottom: 60px;
+        right: 10px;
+    }
+    
+    .modern-service-node[data-index="4"] {
+        bottom: 10px;
+        left: 50%;
+    }
+    
+    .modern-service-node[data-index="5"] {
+        bottom: 60px;
+        left: 10px;
+    }
+    
+    .modern-service-node[data-index="6"] {
+        top: 60px;
+        left: 10px;
+    }
+}
+
+@media (max-width: 640px) {
+    .modern-circle-menu-container {
+        width: 280px;
+        height: 280px;
+        margin: 1.5rem auto;
+    }
+    
+    .service-card {
+        width: 85px;
+        height: 85px;
+        border-radius: 12px;
+    }
+    
+    .service-title {
+        font-size: 9px;
+        padding: 0 4px;
+    }
+    
+    .service-icon {
+        margin-bottom: 4px;
+        padding: 5px;
+        border-radius: 6px;
+    }
+    
+    .service-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .modern-circle-center {
+        width: 85px;
+        height: 85px;
+        border-width: 2px;
+    }
+    
+    .modern-circle-menu-container .logo-img {
+        width: 70px;
+        margin-bottom: 2px;
+    }
+    
+    .center-title {
+        font-size: 11px;
+    }
+    
+    .center-subtitle {
+        font-size: 7px;
+    }
+    
+    /* Repositionnement plus serré */
+    .modern-service-node[data-index="1"] {
+        top: 5px;
+        left: 50%;
+    }
+    
+    .modern-service-node[data-index="2"] {
+        top: 50px;
+        right: 5px;
+    }
+    
+    .modern-service-node[data-index="3"] {
+        bottom: 50px;
+        right: 5px;
+    }
+    
+    .modern-service-node[data-index="4"] {
+        bottom: 5px;
+        left: 50%;
+    }
+    
+    .modern-service-node[data-index="5"] {
+        bottom: 50px;
+        left: 5px;
+    }
+    
+    .modern-service-node[data-index="6"] {
+        top: 50px;
+        left: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modern-circle-menu-container {
+        width: 250px;
+        height: 250px;
+        margin: 1rem auto;
+    }
+    
+    .service-card {
+        width: 70px;
+        height: 70px;
+        border-radius: 10px;
+    }
+    
+    .service-title {
+        font-size: 8px;
+        padding: 0 3px;
+        line-height: 1;
+    }
+    
+    .service-icon {
+        margin-bottom: 3px;
+        padding: 4px;
+        border-radius: 5px;
+    }
+    
+    .service-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .modern-circle-center {
+        width: 75px;
+        height: 75px;
+        border-width: 1px;
+    }
+    
+    .modern-circle-menu-container .logo-img {
+        width: 60px;
+        margin-bottom: 2px;
+    }
+    
+    .center-title {
+        font-size: 10px;
+    }
+    
+    .center-subtitle {
+        font-size: 6px;
+    }
+    
+    /* Positionnement optimisé pour très petits écrans */
+    .modern-service-node[data-index="1"] {
+        top: 0px;
+        left: 50%;
+    }
+    
+    .modern-service-node[data-index="2"] {
+        top: 40px;
+        right: 0px;
+    }
+    
+    .modern-service-node[data-index="3"] {
+        bottom: 40px;
+        right: 0px;
+    }
+    
+    .modern-service-node[data-index="4"] {
+        bottom: 0px;
+        left: 50%;
+    }
+    
+    .modern-service-node[data-index="5"] {
+        bottom: 40px;
+        left: 0px;
+    }
+    
+    .modern-service-node[data-index="6"] {
+        top: 40px;
+        left: 0px;
+    }
+    
+    /* Désactiver les lignes de connexion sur très petits écrans */
+    .service-line {
+        display: none;
+    }
+}
+
+/* Amélioration tactile mobile */
+@media (max-width: 768px) {
+    .service-card {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    
+    .service-card:active {
+        transform: translateY(-2px) scale(0.95);
+    }
+    
+    .modern-circle-center {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    
+    .modern-circle-center:active {
+        transform: scale(0.95);
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const circleMenu = document.getElementById('modernCircleMenu');
+    const toggleButton = document.getElementById('modernCircleToggle');
+    let isActive = false;
+
+    toggleButton.addEventListener('click', function() {
+        isActive = !isActive;
+        circleMenu.classList.toggle('active', isActive);
+    });
+
+    // Animation automatique au scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !isActive) {
+                setTimeout(() => {
+                    isActive = true;
+                    circleMenu.classList.add('active');
+                }, 500);
+            }
+        });
+    });
+
+    observer.observe(circleMenu);
+});
+</script>

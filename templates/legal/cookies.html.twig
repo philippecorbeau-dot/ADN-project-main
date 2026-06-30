@@ -1,0 +1,419 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de Cookies - ADN Family Office{% endblock %}
+
+{% block body %}
+<style>
+    .legal-page {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 100vh;
+        padding: 4rem 0;
+    }
+    
+    .legal-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 2rem;
+        padding: 3rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    }
+    
+    .legal-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .legal-header h1 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+    
+    .legal-header .subtitle {
+        color: #64748b;
+        font-size: 1.125rem;
+    }
+    
+    .legal-section {
+        margin-bottom: 2.5rem;
+    }
+    
+    .legal-section h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1C29A1;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .legal-section h2::before {
+        content: '';
+        width: 4px;
+        height: 1.5rem;
+        background: linear-gradient(135deg, #3B82F6, #1C29A1);
+        border-radius: 2px;
+    }
+    
+    .legal-section h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #374151;
+        margin: 1.5rem 0 0.75rem 0;
+    }
+    
+    .legal-section p {
+        color: #4b5563;
+        line-height: 1.75;
+        margin-bottom: 1rem;
+    }
+    
+    .legal-section ul {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+    }
+    
+    .legal-section ul li {
+        padding: 0.5rem 0 0.5rem 2rem;
+        position: relative;
+        color: #4b5563;
+    }
+    
+    .legal-section ul li::before {
+        content: '🍪';
+        position: absolute;
+        left: 0;
+        font-size: 1.125rem;
+    }
+    
+    .cookie-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+        overflow: hidden;
+        border-radius: 0.75rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .cookie-table thead {
+        background: linear-gradient(135deg, #3B82F6, #1C29A1);
+        color: white;
+    }
+    
+    .cookie-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+    }
+    
+    .cookie-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .cookie-table tbody tr:hover {
+        background: #f8fafc;
+    }
+    
+    .cookie-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .cookie-type {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .cookie-type.essential {
+        background: #dcfce7;
+        color: #166534;
+    }
+    
+    .cookie-type.analytics {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .cookie-type.marketing {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    
+    .info-box {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border-left: 4px solid #3B82F6;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .info-box p {
+        margin: 0.5rem 0;
+        color: #1e40af;
+    }
+    
+    .info-box strong {
+        color: #1e3a8a;
+    }
+    
+    .control-box {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border-left: 4px solid #10b981;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .control-box p {
+        margin: 0.5rem 0;
+        color: #065f46;
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #3B82F6;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid #3B82F6;
+        border-radius: 0.75rem;
+        transition: all 0.2s;
+        margin-top: 2rem;
+    }
+    
+    .back-link:hover {
+        background: #3B82F6;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+        .legal-page {
+            padding: 2rem 1rem;
+        }
+        
+        .legal-container {
+            padding: 2rem 1.5rem;
+            border-radius: 1.5rem;
+        }
+        
+        .legal-header h1 {
+            font-size: 2rem;
+        }
+        
+        .legal-section h2 {
+            font-size: 1.25rem;
+        }
+        
+        .cookie-table {
+            font-size: 0.875rem;
+        }
+        
+        .cookie-table th,
+        .cookie-table td {
+            padding: 0.75rem 0.5rem;
+        }
+    }
+</style>
+
+<div class="legal-page">
+    <div class="legal-container">
+        <div class="legal-header">
+            <h1>🍪 Politique de Cookies</h1>
+            <p class="subtitle">Gestion et utilisation des cookies sur notre site</p>
+        </div>
+        
+        <div class="legal-content">
+            <div class="info-box">
+                <p><strong>Dernière mise à jour :</strong> Novembre 2025</p>
+                <p>Cette politique explique comment ADN Family Office utilise les cookies et technologies similaires sur son site web.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Qu'est-ce qu'un cookie ?</h2>
+                <p>Un cookie est un petit fichier texte déposé sur votre terminal (ordinateur, smartphone, tablette) lors de la visite d'un site web. Les cookies permettent de :</p>
+                <ul>
+                    <li>Mémoriser vos préférences et paramètres</li>
+                    <li>Faciliter votre navigation</li>
+                    <li>Analyser l'utilisation du site</li>
+                    <li>Améliorer nos services</li>
+                </ul>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Types de cookies utilisés</h2>
+                
+                <h3>🔒 Cookies essentiels (obligatoires)</h3>
+                <p>Ces cookies sont indispensables au fonctionnement du site et ne peuvent pas être désactivés. Ils ne stockent aucune information personnelle identifiable.</p>
+                
+                <table class="cookie-table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Finalité</th>
+                            <th>Durée</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>PHPSESSID</code></td>
+                            <td>Gestion de la session utilisateur</td>
+                            <td>Session (fin de navigation)</td>
+                        </tr>
+                        <tr>
+                            <td><code>_csrf_token</code></td>
+                            <td>Sécurité contre les attaques CSRF</td>
+                            <td>Session</td>
+                        </tr>
+                        <tr>
+                            <td><code>adn_cookie_consent</code></td>
+                            <td>Enregistrement de vos choix cookies</td>
+                            <td>13 mois</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>📊 Cookies analytiques (optionnels)</h3>
+                <p>Ces cookies nous aident à comprendre comment les visiteurs interagissent avec notre site, afin de l'améliorer.</p>
+                
+                <table class="cookie-table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Fournisseur</th>
+                            <th>Finalité</th>
+                            <th>Durée</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>_ga</code></td>
+                            <td>Google Analytics</td>
+                            <td>Analyse d'audience et statistiques</td>
+                            <td>13 mois</td>
+                        </tr>
+                        <tr>
+                            <td><code>_ga_*</code></td>
+                            <td>Google Analytics</td>
+                            <td>Statistiques de navigation</td>
+                            <td>13 mois</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Cookies tiers</h2>
+                <p>Nous utilisons des services tiers qui peuvent déposer des cookies :</p>
+                
+                <h3>Google Analytics</h3>
+                <p>Pour analyser l'audience de notre site. Les données collectées sont anonymisées et utilisées uniquement à des fins statistiques. <a href="https://policies.google.com/privacy" target="_blank" style="color: #3B82F6;">Politique de confidentialité Google</a></p>
+                
+                <h3>Google reCAPTCHA</h3>
+                <p>Pour protéger nos formulaires contre le spam et les robots. <a href="https://policies.google.com/privacy" target="_blank" style="color: #3B82F6;">Politique de confidentialité Google</a></p>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Gestion de vos préférences</h2>
+                <p>Vous pouvez à tout moment modifier vos préférences concernant les cookies :</p>
+                
+                <div class="control-box">
+                    <p><strong>✅ Via notre bandeau cookies</strong></p>
+                    <p>Lors de votre première visite, un bandeau vous permet d'accepter ou refuser les cookies non essentiels.</p>
+                </div>
+                
+                <h3>🌐 Via votre navigateur</h3>
+                <p>Vous pouvez configurer votre navigateur pour :</p>
+                <ul>
+                    <li>Refuser tous les cookies</li>
+                    <li>Accepter uniquement certains cookies</li>
+                    <li>Être averti avant l'enregistrement d'un cookie</li>
+                    <li>Supprimer les cookies déjà enregistrés</li>
+                </ul>
+                
+                <h3>Guides par navigateur :</h3>
+                <ul>
+                    <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" style="color: #3B82F6;">Google Chrome</a></li>
+                    <li><a href="https://support.mozilla.org/fr/kb/activer-desactiver-cookies" target="_blank" style="color: #3B82F6;">Mozilla Firefox</a></li>
+                    <li><a href="https://support.apple.com/fr-fr/guide/safari/sfri11471/mac" target="_blank" style="color: #3B82F6;">Safari</a></li>
+                    <li><a href="https://support.microsoft.com/fr-fr/microsoft-edge/supprimer-les-cookies-dans-microsoft-edge" target="_blank" style="color: #3B82F6;">Microsoft Edge</a></li>
+                </ul>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Durée de conservation</h2>
+                <p>Les cookies sont conservés pour une durée maximale de <strong>13 mois</strong> conformément aux recommandations de la CNIL.</p>
+                <p>Au-delà de cette période, votre consentement sera à nouveau demandé.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Conséquences du refus des cookies</h2>
+                <p>Le refus des cookies non essentiels n'empêche pas la navigation sur le site, mais peut limiter certaines fonctionnalités :</p>
+                <ul>
+                    <li>Impossibilité de mémoriser vos préférences</li>
+                    <li>Statistiques de visite moins précises</li>
+                    <li>Expérience utilisateur potentiellement dégradée</li>
+                </ul>
+                
+                <div class="info-box">
+                    <p><strong>⚠️ Important :</strong> Les cookies essentiels ne peuvent pas être refusés car ils sont nécessaires au bon fonctionnement du site et à sa sécurité.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Cookies et données personnelles</h2>
+                <p>Certains cookies peuvent collecter des données personnelles. Le traitement de ces données est encadré par notre <a href="{{ path('legal_privacy') }}" style="color: #3B82F6; font-weight: 600;">Politique de confidentialité</a> et le RGPD.</p>
+                <p>Vous disposez d'un droit d'accès, de rectification, d'effacement et d'opposition sur vos données personnelles.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Technologies similaires</h2>
+                <p>En plus des cookies, nous utilisons :</p>
+                <ul>
+                    <li><strong>Local Storage :</strong> pour mémoriser vos préférences localement</li>
+                    <li><strong>Session Storage :</strong> pour des données temporaires pendant votre session</li>
+                </ul>
+                <p>Ces technologies sont soumises aux mêmes règles que les cookies.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Modifications</h2>
+                <p>ADN Family Office se réserve le droit de modifier cette politique cookies à tout moment. La date de dernière mise à jour est indiquée en haut de cette page.</p>
+                <p>En cas de modification substantielle, nous vous en informerons via un nouveau bandeau cookies.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Contact</h2>
+                <p>Pour toute question concernant notre utilisation des cookies :</p>
+                <div class="info-box">
+                    <p><strong>ADN Family Office</strong><br>
+                    140 bis rue de Rennes, 75006 Paris<br>
+                    Email : <a href="mailto:contact@adnfamilyoffice.fr" style="color: #1e40af; text-decoration: underline;">contact@adnfamilyoffice.fr</a><br>
+                    Téléphone : +33 6 26 48 25 91</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="{{ path('app_home') }}" class="back-link">
+                ← Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

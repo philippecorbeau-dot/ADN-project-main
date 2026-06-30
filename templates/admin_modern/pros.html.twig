@@ -1,0 +1,88 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Professionnels{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .card-hover { transition: transform .2s ease, box-shadow .2s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,.08); }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="sm:flex sm:items-center sm:justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">💼 Professionnels</h1>
+            <p class="mt-1 text-sm text-gray-500">Liste des personnes morales inscrites et informations clés</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+        <form method="GET" action="{{ path('admin_modern_pros') }}" class="space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:space-x-4 space-y-4 lg:space-y-0">
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Rechercher</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </div>
+                        <input type="text" name="search" value="{{ currentFilters.search }}" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Société, email, nom...">
+                    </div>
+                </div>
+                <div class="w-full lg:w-48">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+                    <select name="status" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                        <option value="">Tous</option>
+                        <option value="active" {% if currentFilters.status=='active' %}selected{% endif %}>Actifs</option>
+                        <option value="inactive" {% if currentFilters.status=='inactive' %}selected{% endif %}>Inactifs</option>
+                    </select>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Filtrer</button>
+                    <a href="{{ path('admin_modern_pros') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Réinitialiser</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+        {% for u in pros %}
+        <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-100 card-hover">
+            <div class="p-6 h-full flex flex-col space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sm font-semibold text-gray-900">{{ u.pro.companyName ?? '—' }}</div>
+                        <div class="text-xs text-gray-500">SIREN: {{ u.pro.siren ?? '—' }}</div>
+                    </div>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ u.isVerified ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700' }}">
+                        {{ u.isVerified ? 'Vérifié' : 'Non vérifié' }}
+                    </span>
+                </div>
+
+                <div class="text-sm text-gray-700">
+                    <div class="flex justify-between"><span class="text-gray-500">Représentant:</span><span>{{ u.pro.legalRepresentativeFirstname ~ ' ' ~ u.pro.legalRepresentativeLastname }}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Email:</span><span>{{ u.email }}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">Ville:</span><span>{{ u.pro.city ?? '—' }}</span></div>
+                </div>
+
+                <div class="mt-auto">
+                    <a href="{{ path('admin_modern_pro_view', {id: u.id}) }}" class="w-full inline-flex justify-center items-center px-3 py-2 bg-blue-600 text-white rounded-md text-xs font-medium hover:bg-blue-700">Voir la fiche</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full">
+            <div class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-5l-4 4L9 8"/></svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun professionnel trouvé</h3>
+                <p class="mt-1 text-sm text-gray-500">Essayez de modifier vos filtres</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+

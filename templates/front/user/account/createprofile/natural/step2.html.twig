@@ -1,0 +1,179 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+
+{% block body %} 
+    <div class="container pb-10 mt-24 md:mt-0">
+        <div class="rounded-xl bg-white p-6 sm:p-10 shadow-md transition-opacity transition-transform">
+            <!-- Header moderne avec icône et sous-titre -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full mb-4">
+                    <i class="fa-solid fa-bullseye text-white text-2xl"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                    {% trans %}Vos ambitions{% endtrans %}
+                </h1>
+                <p class="text-lg text-gray-600">
+                    {% trans %}Définissons ensemble votre stratégie d'investissement{% endtrans %}
+                </p>
+            </div>
+            
+            {{ form_start(form, {
+                'method': 'POST',
+                'attr' : {
+                    'id' : 'form-step2',
+                }
+            }) }}
+                <div id="form-step-2">
+                    {% if user.isPro %}
+                        {{ alert.success("Pourquoi posons-nous des questions sur vos objectifs ?", "Pour les investisseurs non avertis, le règlement européen n°2020/1503 impose à Homunity d'obtenir des informations sur l'expérience de l'investisseur, ses objectifs d'investissement, sa situation financière et sa compréhension des risques liés à l'investissement.", {'bgClass': 'bg-[#eaf1fb]', 'textClass': 'text-[#185abd]'}) }}
+                    {% else %}
+                        {{ alert.success('',"Afin de déterminer les investissements les plus adaptés à votre situation, décrivez vos objectifs.", {'bgClass': 'bg-[#eaf1fb]', 'textClass': 'text-[#185abd]'}) }}
+                    {% endif %}
+                    <div id="step2_objective" class="xl:w-9/12 mb-10">
+                        <label class="mb-2 required block">{{ form.objective.vars.label }}</label>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {% set objectifs_icons = [
+                                '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-homblue-normal mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12a8.25 8.25 0 1116.5 0 8.25 8.25 0 01-16.5 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h.008v.008H9V12zm3 0h.008v.008H12V12z" /></svg>',
+                                '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-homblue-normal mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25v-2.25m0 0V9.75m0 2.25h2.25m-2.25 0H6.75m6.75 0v2.25m0-2.25V9.75m0 2.25h2.25m-2.25 0H9.75" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 6.75V21a.75.75 0 00.75.75h16.5A.75.75 0 0021 21V6.75" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 6.75A2.25 2.25 0 015.25 4.5h13.5A2.25 2.25 0 0121 6.75" /></svg>',
+                                '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-homblue-normal mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3.75 7.5h16.5M4.5 21h15a1.5 1.5 0 001.5-1.5V7.5a1.5 1.5 0 00-1.5-1.5h-15A1.5 1.5 0 003 7.5v12A1.5 1.5 0 004.5 21z" /></svg>',
+                                '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-homblue-normal mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 17.25V21h3.75V17.25H3zm6.75-6.75V21h3.75V10.5h-3.75zm6.75-4.5V21h3.75V6h-3.75z" /></svg>',
+                                '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-homblue-normal mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 21v-2.25A2.25 2.25 0 0015 16.5h-6a2.25 2.25 0 00-2.25 2.25V21" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 12a3 3 0 100-6 3 3 0 000 6z" /></svg>',
+                                '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-homblue-normal mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M4.5 10.5V21h15V10.5" /></svg>'
+                            ] %}
+                            {% for objective in form.objective %}
+                                <div>
+                                    {{ form_widget(objective, {'attr' : {'class' : 'hidden peer'}}) }}
+                                    <label for="{{ objective.vars.id }}" class="flex gap-x-2 md:flex-col md:justify-center items-center border border-homblue-normal rounded-xl w-full md:h-28 transition-all duration-200 cursor-pointer hover:border-homblue-alternate hover:bg-blue-50 peer-checked:bg-blue-50 peer-checked:border-2 peer-checked:border-homblue-normal peer-checked:shadow-sm p-3 md:p-0">
+                                        {{ objectifs_icons[loop.index0]|raw }}
+                                        <span class="font-bold md:mb-2">{{ objective.vars.label }}</span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {{ form_errors(form.objective) }}
+                    </div>
+                    
+                    <div id="step2_investmentTerm" class="mb-10">
+                        <label class="block text-base font-semibold mb-2">
+                            <i class="fa-solid fa-calendar-alt text-blue-600 mr-2"></i>
+                            Sur combien de temps souhaitez-vous investir ?
+                        </label>
+                        <div class="flex flex-col gap-3 sm:flex-row">
+                            {% for investTerm in form.investmentTerm %}
+                                <div class="flex-1">
+                                    {{ form_widget(investTerm, {
+                                        'attr' : {
+                                            'class' : 'hidden peer',
+                                            'data-field': 'investmentTerm',
+                                            'data-step': '2'
+                                        }
+                                    }) }}
+                                    <label for="{{ investTerm.vars.id }}"
+                                      class="flex items-center gap-3 cursor-pointer transition-all rounded-xl border-2 border-gray-200 hover:border-blue-400 hover:shadow-lg px-4 py-3
+                                        peer-checked:border-blue-600 peer-checked:bg-blue-50">
+                                        <i class="fa-solid fa-clock text-blue-500 text-lg"></i>
+                                        <span class="font-medium">{{ investTerm.vars.label }}</span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {{ form_errors(form.investmentTerm) }}
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-base font-semibold mb-2">
+                            <i class="fa-solid fa-piggy-bank text-green-600 mr-2"></i>
+                            Quelle est votre épargne disponible ?
+                        </label>
+                        <div class="w-full sm:w-1/2 relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                <span class="text-gray-500 font-medium text-lg">€</span>
+                            </div>
+                            {{ form_widget(form.liquidity, {
+                                'attr': {
+                                    'class': 'w-full pl-8 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 bg-white text-base transition-all duration-200',
+                                    'placeholder': '10 000',
+                                    'data-field': 'liquidity',
+                                    'data-step': '2'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_errors(form.liquidity) }}
+                    </div>
+                    <div id="step2_sourceOfFunds" class="mb-10">
+                        <label class="block text-base font-semibold mb-2">
+                            <i class="fa-solid fa-coins text-yellow-600 mr-2"></i>
+                            D'où provient le montant que vous souhaitez investir ?
+                        </label>
+                        <div class="flex flex-wrap gap-3">
+                            {% set icons = {
+                                'Épargne': 'fa-piggy-bank text-green-500',
+                                'Donation': 'fa-gift text-pink-500',
+                                'Salaire': 'fa-briefcase text-blue-500',
+                                'Gains': 'fa-coins text-yellow-500',
+                                'Autre': 'fa-question-circle text-gray-400'
+                            } %}
+                            {% for value in form.sourceOfFunds %}
+                                <div class="flex-1 min-w-[140px]">
+                                    {{ form_widget(value, {
+                                        'attr' : {
+                                            'class' : 'hidden peer',
+                                            'data-field': 'sourceOfFunds',
+                                            'data-step': '2'
+                                        }
+                                    }) }}
+                                    <label for="{{ value.vars.id }}"
+                                      class="flex items-center gap-3 cursor-pointer transition-all rounded-xl border-2 border-gray-200 hover:border-blue-400 hover:shadow-lg px-4 py-3
+                                        peer-checked:border-blue-600 peer-checked:bg-blue-50">
+                                        <i class="fa-solid {{ icons[value.vars.label|default('Autre')] }} text-lg"></i>
+                                        <span class="font-medium">{{ value.vars.label }}</span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {{ form_errors(form.sourceOfFunds) }}
+                    </div>
+                </div>
+                <div class="flex">
+                    <a class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44" href="{{ path('user_create_profile', {'step' : 1 }) }}">
+                        {% trans %}Précédent{% endtrans %}
+                    </a>
+                    <button id="btn-next" type="submit" class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44 ml-auto">
+                        {% trans %}Suivant{% endtrans %}
+                    </button>
+                </div>
+            {% if form is defined and form._token is defined %}{{ form_row(form._token) }}{% endif %}
+            {% if form is defined %}{{ form_end(form, {'render_rest': false}) }}{% endif %}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+        var form = document.getElementById('form-step2');
+        var btn = document.getElementById('btn-next');
+        if (!form || !btn) return;
+        var nextUrl = '{{ path('user_create_profile', {'step': 3}) }}';
+        var postUrl = '{{ path('user_create_profile', {'step': 2}) }}';
+
+        // Gestion uniquement via l'événement submit pour cohérence
+        btn.addEventListener('click', function(e){
+            // Laisser le submit déclencher l'event ci-dessous
+        });
+
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            if (form.dataset.submitting === '1') return;
+            form.dataset.submitting = '1';
+            var fd = new FormData(form);
+            fd.append('_save_only', '1');
+            fetch(postUrl, {
+                method: 'POST',
+                body: fd,
+                credentials: 'same-origin',
+                keepalive: true,
+                headers: { 'X-Requested-With': 'fetch' }
+            }).then(function(){ window.location.href = nextUrl; })
+              .catch(function(){ window.location.href = nextUrl; });
+        });
+    });
+    </script>
+        </div>
+    </div>
+{% endblock %}

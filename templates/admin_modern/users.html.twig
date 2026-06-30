@@ -1,0 +1,375 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Gestion des Utilisateurs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .kyc-progress-step {
+            transition: all 0.3s ease;
+        }
+        .kyc-progress-step:hover {
+            transform: scale(1.1);
+        }
+        .kyc-progress-bar {
+            /* Ombre légère; la couleur est fixée inline pour éviter tout override */
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        .user-card {
+            transition: all 0.2s ease;
+        }
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Indicateur de chargement (recherche live) */
+        .users-search-loading #users-results { opacity: 0.55; transition: opacity .15s ease; }
+        .users-search-loading [data-search-spinner] { opacity: 1; }
+        [data-search-spinner] {
+            opacity: 0;
+            transition: opacity .15s ease;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner-icon { animation: spin .8s linear infinite; }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto" id="users-page">
+    <!-- Header -->
+    <div class="sm:flex sm:items-center sm:justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">👥 Gestion des Utilisateurs</h1>
+            <p class="mt-1 text-sm text-gray-500">Gérez tous les comptes utilisateurs et leurs statuts KYC</p>
+        </div>
+
+        <!-- Stats rapides -->
+        <div class="mt-4 sm:mt-0 flex space-x-4">
+            <div class="text-center">
+                <p class="text-2xl font-bold text-blue-600" data-stat="total">{{ totalUsers }}</p>
+                <p class="text-xs text-gray-500">Total</p>
+            </div>
+            <div class="text-center">
+                <p class="text-2xl font-bold text-green-600" data-stat="active">{{ activeUsers }}</p>
+                <p class="text-xs text-gray-500">Actifs</p>
+            </div>
+            <div class="text-center">
+                <p class="text-2xl font-bold text-red-600" data-stat="inactive">{{ inactiveUsers }}</p>
+                <p class="text-xs text-gray-500">Inactifs</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+        <form id="users-filter-form" method="GET" action="{{ path('admin_modern_users') }}" class="space-y-4" autocomplete="off">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:space-x-4 space-y-4 lg:space-y-0">
+                <!-- Search -->
+                <div class="flex-1">
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">
+                        Rechercher
+                        <span data-search-spinner class="inline-flex items-center ml-2 text-blue-600 align-middle" aria-hidden="true">
+                            <svg class="spinner-icon w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                        </span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <input type="text" id="search" name="search" value="{{ currentFilters.search }}" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Nom, email...">
+                    </div>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="w-full lg:w-48">
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+                    <select name="status" id="status" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                        <option value="">Tous les statuts</option>
+                        <option value="active" {% if currentFilters.status == 'active' %}selected{% endif %}>Actifs</option>
+                        <option value="inactive" {% if currentFilters.status == 'inactive' %}selected{% endif %}>Inactifs</option>
+                    </select>
+                </div>
+
+                <!-- KYC Step Filter -->
+                <div class="w-full lg:w-64">
+                    <label for="kyc_step" class="block text-sm font-medium text-gray-700 mb-1">Étape KYC</label>
+                    <select name="kyc_step" id="kyc_step" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                        <option value="">Toutes les étapes</option>
+                        {% for key, label in kycSteps %}
+                            <option value="{{ key }}" {% if currentFilters.kyc_step == key %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Profile Type Filter -->
+                <div class="w-full lg:w-48">
+                    <label for="profile_type" class="block text-sm font-medium text-gray-700 mb-1">Profil</label>
+                    <select name="profile_type" id="profile_type" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                        <option value="">Tous les profils</option>
+                        {% for key, label in profileTypes %}
+                            <option value="{{ key }}" {% if currentFilters.profile_type == key %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex space-x-2">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
+                        </svg>
+                        Filtrer
+                    </button>
+                    <a href="{{ path('admin_modern_users') }}" id="users-filter-reset" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Réinitialiser
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {# Conteneur rafraîchi en AJAX par la recherche live #}
+    <div id="users-results">
+        {% include 'admin_modern/_users_results.html.twig' %}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    (function () {
+        'use strict';
+
+        const form        = document.getElementById('users-filter-form');
+        const resultsZone = document.getElementById('users-results');
+        const page        = document.getElementById('users-page');
+        const resetLink   = document.getElementById('users-filter-reset');
+        if (!form || !resultsZone || !page) return;
+
+        const inputs = {
+            search:       form.querySelector('#search'),
+            status:       form.querySelector('#status'),
+            kyc_step:     form.querySelector('#kyc_step'),
+            profile_type: form.querySelector('#profile_type'),
+        };
+
+        const baseUrl = form.getAttribute('action');
+        let currentRequest = null;
+        let debounceTimer  = null;
+
+        /* ---------- Helpers ---------- */
+
+        function buildParams(extra) {
+            const p = new URLSearchParams();
+            const vals = {
+                search:       inputs.search.value.trim(),
+                status:       inputs.status.value,
+                kyc_step:     inputs.kyc_step.value,
+                profile_type: inputs.profile_type.value,
+            };
+            Object.keys(vals).forEach(function (k) {
+                if (vals[k] !== '' && vals[k] !== null) p.set(k, vals[k]);
+            });
+            if (extra && extra.page && extra.page > 1) p.set('page', String(extra.page));
+            return p;
+        }
+
+        function animateKycBars(scope) {
+            (scope || document).querySelectorAll('.js-kyc-bar').forEach(function (bar) {
+                const target = parseInt(bar.getAttribute('data-progress') || '0', 10);
+                requestAnimationFrame(function () {
+                    bar.style.width = Math.max(0, Math.min(100, target)) + '%';
+                });
+            });
+            (scope || document).querySelectorAll('.js-kyc-percent').forEach(function (elt) {
+                const target = parseInt(elt.getAttribute('data-target') || '0', 10);
+                let current = 0;
+                const step = Math.max(1, Math.round(target / 20));
+                const tick = function () {
+                    current += step;
+                    if (current >= target) { elt.textContent = target + '%'; return; }
+                    elt.textContent = current + '%';
+                    requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+            });
+        }
+
+        function updateStats(data) {
+            const map = { total: 'total', active: 'active', inactive: 'inactive' };
+            Object.keys(map).forEach(function (k) {
+                const el = document.querySelector('[data-stat="' + map[k] + '"]');
+                if (!el) return;
+                const next = data[k === 'total' ? 'totalUsers' : (k === 'active' ? 'activeUsers' : 'inactiveUsers')];
+                if (typeof next === 'number') el.textContent = String(next);
+            });
+        }
+
+        /* ---------- Fetch ---------- */
+
+        function fetchResults(options) {
+            options = options || {};
+            const params = buildParams({ page: options.page || 1 });
+            const url = baseUrl + (params.toString() ? '?' + params.toString() : '');
+
+            // Annule la requête précédente si encore en cours
+            if (currentRequest && typeof currentRequest.abort === 'function') {
+                currentRequest.abort();
+            }
+            const controller = new AbortController();
+            currentRequest = controller;
+
+            page.classList.add('users-search-loading');
+
+            const reqUrl = url + (url.includes('?') ? '&' : '?') + 'ajax=1';
+
+            fetch(reqUrl, {
+                method:  'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+                credentials: 'same-origin',
+                signal: controller.signal,
+            })
+            .then(function (resp) {
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                return resp.json();
+            })
+            .then(function (data) {
+                if (typeof data.html === 'string') {
+                    resultsZone.innerHTML = data.html;
+                    animateKycBars(resultsZone);
+                }
+                updateStats(data);
+
+                // Mise à jour de l'URL (back/forward navigateur fonctionnels)
+                const historyUrl = baseUrl + (params.toString() ? '?' + params.toString() : '');
+                if (options.replaceHistory) {
+                    window.history.replaceState({ users: true }, '', historyUrl);
+                } else {
+                    window.history.pushState({ users: true }, '', historyUrl);
+                }
+            })
+            .catch(function (err) {
+                if (err.name === 'AbortError') return;
+                console.error('[users-search] fetch error:', err);
+            })
+            .finally(function () {
+                if (currentRequest === controller) currentRequest = null;
+                page.classList.remove('users-search-loading');
+            });
+        }
+
+        /* ---------- Debounce sur la saisie ---------- */
+
+        function scheduleFetch(delay) {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function () {
+                fetchResults({ page: 1 });
+            }, delay);
+        }
+
+        /* ---------- Listeners ---------- */
+
+        // Recherche : debounce 250ms sur input
+        inputs.search.addEventListener('input', function () { scheduleFetch(250); });
+        // Entrée : déclenche immédiatement
+        inputs.search.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (debounceTimer) clearTimeout(debounceTimer);
+                fetchResults({ page: 1 });
+            }
+        });
+
+        // Selects : déclenche immédiatement
+        ['status', 'kyc_step', 'profile_type'].forEach(function (k) {
+            inputs[k].addEventListener('change', function () {
+                if (debounceTimer) clearTimeout(debounceTimer);
+                fetchResults({ page: 1 });
+            });
+        });
+
+        // Submit du form (bouton Filtrer ou Entrée) : intercepté en AJAX
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (debounceTimer) clearTimeout(debounceTimer);
+            fetchResults({ page: 1 });
+        });
+
+        // Bouton Réinitialiser : vide les filtres puis fetch
+        if (resetLink) {
+            resetLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                inputs.search.value = '';
+                inputs.status.value = '';
+                inputs.kyc_step.value = '';
+                inputs.profile_type.value = '';
+                fetchResults({ page: 1 });
+                inputs.search.focus();
+            });
+        }
+
+        // Pagination : délégation sur les liens .js-page-link (rerendus à chaque fetch)
+        resultsZone.addEventListener('click', function (e) {
+            const link = e.target.closest('.js-page-link');
+            if (!link) return;
+            e.preventDefault();
+            const page = parseInt(link.getAttribute('data-page') || '1', 10);
+            fetchResults({ page: page });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Back/Forward navigateur : recharge les résultats à partir de l'URL courante
+        window.addEventListener('popstate', function () {
+            const url = new URL(window.location.href);
+            inputs.search.value       = url.searchParams.get('search') || '';
+            inputs.status.value       = url.searchParams.get('status') || '';
+            inputs.kyc_step.value     = url.searchParams.get('kyc_step') || '';
+            inputs.profile_type.value = url.searchParams.get('profile_type') || '';
+            const page = parseInt(url.searchParams.get('page') || '1', 10);
+            fetchResults({ page: page, replaceHistory: true });
+        });
+
+        // Animation initiale (SSR) — déjà câblée par le bloc js historique au DOMContentLoaded.
+    })();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Anime la largeur des barres
+            document.querySelectorAll('.js-kyc-bar').forEach(function (bar) {
+                const target = parseInt(bar.getAttribute('data-progress') || '0', 10);
+                requestAnimationFrame(function () {
+                    bar.style.width = Math.max(0, Math.min(100, target)) + '%';
+                });
+            });
+
+            // Fait grimper le pourcentage affiché
+            document.querySelectorAll('.js-kyc-percent').forEach(function (elt) {
+                const target = parseInt(elt.getAttribute('data-target') || '0', 10);
+                let current = 0;
+                const step = Math.max(1, Math.round(target / 20));
+                const tick = function () {
+                    current += step;
+                    if (current >= target) {
+                        current = target;
+                        elt.textContent = current + '%';
+                        return;
+                    }
+                    elt.textContent = current + '%';
+                    requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+            });
+        });
+    </script>
+{% endblock %}

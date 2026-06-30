@@ -1,0 +1,350 @@
+{% extends 'front/user/dashboard/base.html.twig' %}
+
+{% block title %}Patrimoine Immobilier - ADN Family Office{% endblock %}
+
+{% block page_title %}
+    <span class="text-gray-900">Patrimoine Immobilier</span>
+{% endblock %}
+
+{% block content %}
+{# ─── BREADCRUMB ─── #}
+<div class="mb-6">
+    <nav class="flex items-center gap-2 text-sm text-gray-500">
+        <a href="{{ path('user_dashboard') }}" class="hover:text-blue-600 transition-colors">Synthèse</a>
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <span class="text-gray-900 font-medium">Patrimoine Immobilier</span>
+    </nav>
+</div>
+
+{# ─── HERO HEADER ─── #}
+<div class="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-8 mb-8 text-white relative overflow-hidden">
+    {# Decorative background #}
+    <div class="absolute inset-0 opacity-10">
+        <svg class="w-full h-full" viewBox="0 0 800 400"><defs><pattern id="p" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M0 40L40 0M-10 10L10-10M30 50L50 30" stroke="white" stroke-width="1"/></pattern></defs><rect fill="url(#p)" width="800" height="400"/></svg>
+    </div>
+    <div class="relative z-10">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            </div>
+            <div>
+                <p class="text-blue-200 text-sm font-medium">Patrimoine immobilier</p>
+                <h1 class="text-3xl font-bold tracking-tight">{{ patrimoineData.immobilier.montant|number_format(0, ',', ' ') }} €</h1>
+            </div>
+        </div>
+        <div class="flex items-center gap-6 mt-4">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-white/20 backdrop-blur">
+                    {{ patrimoineData.immobilier.pourcentage }}%
+                </span>
+                <span class="text-blue-200 text-sm">du patrimoine total</span>
+            </div>
+            <div class="text-blue-200 text-sm">
+                Patrimoine net : <span class="font-semibold text-white">{{ patrimoineData.patrimoine|number_format(0, ',', ' ') }} €</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if patrimoineData.isO2S|default(false) %}
+
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+    {# ─── LEFT (2/5): DONUT + LÉGENDE ─── #}
+    <div class="lg:col-span-2">
+        <div class="bg-white border border-gray-200 rounded-2xl p-6 sticky top-24">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-6">Répartition</h3>
+            <div class="flex justify-center mb-6">
+                <div class="relative w-48 h-48">
+                    <canvas id="immoDonutChart"></canvas>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span class="text-[10px] uppercase tracking-wider text-gray-400">Total</span>
+                        <span class="text-lg font-bold text-gray-900">{{ patrimoineData.immobilier.montant|number_format(0, ',', ' ') }} €</span>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-3">
+                {% set immoCategories = [
+                    {label: 'Résidence principale', value: patrimoineData.immobilier.residencePrincipale|default(0), color: '#2563eb', icon: 'home'},
+                    {label: 'Résidence secondaire', value: patrimoineData.immobilier.residenceSecondaire|default(0), color: '#3b82f6', icon: 'building'},
+                    {label: 'Immobilier de rapport', value: patrimoineData.immobilier.locatif|default(0), color: '#818cf8', icon: 'key'},
+                    {label: 'Parts de SCPI', value: patrimoineData.immobilier.scpi|default(0), color: '#f59e0b', icon: 'chart'},
+                    {label: 'Autres biens', value: patrimoineData.immobilier.autre|default(0), color: '#a78bfa', icon: 'star'}
+                ] %}
+                {% for cat in immoCategories %}
+                {% if cat.value > 0 %}
+                {% set pct = patrimoineData.immobilier.montant > 0 ? ((cat.value / patrimoineData.immobilier.montant) * 100)|round(0) : 0 %}
+                <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: {{ cat.color }}"></div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">{{ cat.label }}</span>
+                            <span class="text-sm font-bold text-gray-900">{{ pct }}%</span>
+                        </div>
+                        <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-700" style="width: {{ pct }}%; background-color: {{ cat.color }}"></div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1">{{ cat.value|number_format(0, ',', ' ') }} €</p>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# ─── RIGHT (3/5): ACCORDÉONS PAR CATÉGORIE (style Harvest) ─── #}
+    <div class="lg:col-span-3" x-data="{ openCat: 'principale' }">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Détail des biens</h3>
+
+        {% set categories = [
+            {key: 'principale', label: 'Résidence principale', value: patrimoineData.immobilier.residencePrincipale|default(0), color: 'blue', colorHex: '#2563eb'},
+            {key: 'secondaire', label: 'Résidences secondaires', value: patrimoineData.immobilier.residenceSecondaire|default(0), color: 'blue', colorHex: '#3b82f6'},
+            {key: 'locatif', label: 'Immobilier de rapport', value: patrimoineData.immobilier.locatif|default(0), color: 'indigo', colorHex: '#818cf8'},
+            {key: 'scpi', label: 'Parts de SCPI', value: patrimoineData.immobilier.scpi|default(0), color: 'amber', colorHex: '#f59e0b'},
+            {key: 'autre', label: 'Autres biens immobiliers', value: patrimoineData.immobilier.autre|default(0), color: 'violet', colorHex: '#a78bfa'}
+        ] %}
+
+        <div class="space-y-3">
+            {% for cat in categories %}
+            {% set pct = patrimoineData.immobilier.montant > 0 ? ((cat.value / patrimoineData.immobilier.montant) * 100)|round(0) : 0 %}
+            {% set hasStocks = false %}
+
+            {# Trouver les stocks de cette catégorie via leurs codes famille #}
+            {% set catStocks = [] %}
+            {% for stock in patrimoineData.stocksByCategorie.immobilier|default([]) %}
+                {% set stockFamilles = stock.familles|default([])|join(',') %}
+                {% if cat.key == 'principale' and ('ResidencePrincipale' in stockFamilles) %}
+                    {% set catStocks = catStocks|merge([stock]) %}
+                    {% set hasStocks = true %}
+                {% elseif cat.key == 'secondaire' and ('ResidenceSecondaire' in stockFamilles) %}
+                    {% set catStocks = catStocks|merge([stock]) %}
+                    {% set hasStocks = true %}
+                {% elseif cat.key == 'locatif' and ('ImmobilierLocatif' in stockFamilles or 'ImmeubleLocatif' in stockFamilles) %}
+                    {% set catStocks = catStocks|merge([stock]) %}
+                    {% set hasStocks = true %}
+                {% elseif cat.key == 'scpi' and ('SCPI' in stockFamilles or 'PartsDeSCPI' in stockFamilles) %}
+                    {% set catStocks = catStocks|merge([stock]) %}
+                    {% set hasStocks = true %}
+                {% elseif cat.key == 'autre' %}
+                    {# Fallback: stocks not caught by specific categories #}
+                    {% set found = false %}
+                    {% if 'ResidencePrincipale' in stockFamilles or 'ResidenceSecondaire' in stockFamilles or 'ImmobilierLocatif' in stockFamilles or 'ImmeubleLocatif' in stockFamilles or 'SCPI' in stockFamilles or 'PartsDeSCPI' in stockFamilles %}
+                        {% set found = true %}
+                    {% endif %}
+                    {% if not found %}
+                        {% set catStocks = catStocks|merge([stock]) %}
+                        {% set hasStocks = true %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                {# Accordion header #}
+                <button @click="openCat = openCat === '{{ cat.key }}' ? '' : '{{ cat.key }}'"
+                        class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left">
+                    <div class="flex items-center gap-3">
+                        <span class="inline-flex items-center justify-center w-11 h-7 rounded-full text-xs font-bold text-white" style="background-color: {{ cat.colorHex }}">
+                            {{ pct }}%
+                        </span>
+                        <span class="font-semibold text-gray-900">{{ cat.label }}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-gray-900">{{ cat.value|number_format(0, ',', ' ') }} €</span>
+                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200"
+                             :class="openCat === '{{ cat.key }}' ? 'rotate-180' : ''"
+                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </button>
+
+                {# Accordion body — detail of stocks #}
+                <div x-show="openCat === '{{ cat.key }}'" x-collapse>
+                    {% if catStocks|length > 0 %}
+                        {% for stock in catStocks %}
+                        <div class="border-t border-gray-100 flex items-center justify-between px-5 py-4 hover:bg-blue-50/30 transition-colors">
+                            <div class="flex items-center gap-4 min-w-0">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background-color: {{ cat.colorHex }}15">
+                                    {% if cat.key == 'principale' %}
+                                    <svg class="w-5 h-5" style="color: {{ cat.colorHex }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                    {% elseif cat.key == 'secondaire' %}
+                                    <svg class="w-5 h-5" style="color: {{ cat.colorHex }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                    {% elseif cat.key == 'locatif' %}
+                                    <svg class="w-5 h-5" style="color: {{ cat.colorHex }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                                    {% elseif cat.key == 'scpi' %}
+                                    <svg class="w-5 h-5" style="color: {{ cat.colorHex }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                    {% else %}
+                                    <svg class="w-5 h-5" style="color: {{ cat.colorHex }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+                                    {% endif %}
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-medium text-gray-900 truncate">{{ stock.libelle }}</h4>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        {% if stock.part < 100 %}
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                            {{ stock.part }}% détenu
+                                        </span>
+                                        {% endif %}
+                                        {% if stock.valeur != stock.valeurDetenue %}
+                                        <span class="text-[11px] text-gray-400">Valeur brute : {{ stock.valeur|number_format(0, ',', ' ') }} €</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right flex-shrink-0 ml-4">
+                                <p class="text-lg font-bold text-gray-900">{{ stock.valeur|number_format(0, ',', ' ') }} €</p>
+                                {% if stock.part < 100 %}
+                                <p class="text-xs text-gray-400">Détenu : {{ stock.valeurDetenue|number_format(0, ',', ' ') }} €</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% elseif cat.value > 0 %}
+                        <div class="border-t border-gray-100 px-5 py-4 text-center">
+                            <p class="text-sm text-gray-400">Détail non disponible</p>
+                        </div>
+                    {% else %}
+                        <div class="border-t border-gray-100 px-5 py-4 text-center">
+                            <p class="text-sm text-gray-400">Aucun bien dans cette catégorie</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+            {# Passif associé #}
+            {% if patrimoineData.passif > 0 %}
+            <div class="bg-white border border-red-100 rounded-xl overflow-hidden mt-6">
+                <div class="flex items-center justify-between p-4 bg-red-50/50">
+                    <div class="flex items-center gap-3">
+                        <span class="inline-flex items-center justify-center w-11 h-7 rounded-full text-xs font-bold text-white bg-red-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                        </span>
+                        <span class="font-semibold text-gray-900">Passifs / Emprunts</span>
+                    </div>
+                    <span class="font-bold text-red-600">{{ patrimoineData.passif|number_format(0, ',', ' ') }} €</span>
+                </div>
+                {% for stock in patrimoineData.stocksByCategorie.passif|default([]) %}
+                <div class="border-t border-red-100 flex items-center justify-between px-5 py-3">
+                    <span class="text-sm text-gray-700">{{ stock.libelle }}</span>
+                    <span class="text-sm font-semibold text-red-600">{{ (stock.valeurDetenue|default(stock.valeur))|number_format(0, ',', ' ') }} €</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% else %}
+{# Fallback KYC — pas de détails par stock #}
+<div class="bg-white border border-gray-200 rounded-2xl p-8">
+    <div class="text-center">
+        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Patrimoine Immobilier</h3>
+        <p class="text-3xl font-bold text-gray-900 mb-2">{{ patrimoineData.immobilier.montant|number_format(0, ',', ' ') }} €</p>
+        <p class="text-sm text-gray-500">{{ patrimoineData.immobilier.pourcentage }}% de votre patrimoine total</p>
+        <p class="text-xs text-gray-400 mt-4">Données issues de votre profil investisseur. Le détail par bien sera disponible après synchronisation.</p>
+    </div>
+</div>
+{% endif %}
+
+{# ─── BACK BUTTON ─── #}
+<div class="mt-8">
+    <a href="{{ path('user_dashboard') }}" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors group">
+        <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Retour à la synthèse
+    </a>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script>
+{% if patrimoineData.isO2S|default(false) %}
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('immoDonutChart');
+    if (!ctx) return;
+
+    const data = [];
+    const labels = [];
+    const colors = [];
+
+    {% if patrimoineData.immobilier.residencePrincipale|default(0) > 0 %}
+    data.push({{ patrimoineData.immobilier.residencePrincipale }});
+    labels.push('Résidence principale');
+    colors.push('#2563eb');
+    {% endif %}
+    {% if patrimoineData.immobilier.residenceSecondaire|default(0) > 0 %}
+    data.push({{ patrimoineData.immobilier.residenceSecondaire }});
+    labels.push('Résidence secondaire');
+    colors.push('#3b82f6');
+    {% endif %}
+    {% if patrimoineData.immobilier.locatif|default(0) > 0 %}
+    data.push({{ patrimoineData.immobilier.locatif }});
+    labels.push('Immobilier de rapport');
+    colors.push('#818cf8');
+    {% endif %}
+    {% if patrimoineData.immobilier.scpi|default(0) > 0 %}
+    data.push({{ patrimoineData.immobilier.scpi }});
+    labels.push('Parts de SCPI');
+    colors.push('#f59e0b');
+    {% endif %}
+    {% if patrimoineData.immobilier.autre|default(0) > 0 %}
+    data.push({{ patrimoineData.immobilier.autre }});
+    labels.push('Autres biens');
+    colors.push('#a78bfa');
+    {% endif %}
+
+    if (data.length === 0) return;
+
+    const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n);
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors,
+                borderWidth: 4,
+                borderColor: '#fff',
+                hoverOffset: 10,
+                hoverBorderWidth: 0,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: '68%',
+            animation: { animateRotate: true, duration: 1200, easing: 'easeOutQuart' },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1f2937',
+                    padding: 14,
+                    cornerRadius: 10,
+                    titleFont: { size: 13, weight: 'bold' },
+                    bodyFont: { size: 12 },
+                    displayColors: true,
+                    boxPadding: 4,
+                    callbacks: {
+                        label: (ctx) => {
+                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                            const pct = total > 0 ? Math.round((ctx.parsed / total) * 100) : 0;
+                            return ` ${fmt(ctx.parsed)} € (${pct}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+{% endif %}
+</script>
+{% endblock %}

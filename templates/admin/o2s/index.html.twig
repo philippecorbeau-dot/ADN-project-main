@@ -1,0 +1,1261 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Dashboard O2S - Harvest{% endblock %}
+{% block page_title %}🌾 Intégration O2S - Harvest{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Header avec actions -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+        <div>
+            <p class="text-gray-600 mt-1">Gestion des comptes clients synchronisés depuis Harvest O2S</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+            <!-- Sync incrémentale (rapide) -->
+            <button type="button" 
+                    id="syncIncrBtn"
+                    onclick="startIncrementalSync()"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover-lift shadow-lg hover:shadow-xl transition-all duration-300"
+                    title="Rapide (~10s) : détecte et synchronise uniquement les nouveaux contacts">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                Sync rapide
+            </button>
+            <!-- MAJ Valorisations -->
+            <button type="button" 
+                    id="syncValuBtn"
+                    onclick="startValuationSync()"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover-lift shadow-lg hover:shadow-xl transition-all duration-300"
+                    title="Met à jour les valorisations de tous les comptes (~2-5min)">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1"></path>
+                </svg>
+                MAJ Valorisations
+            </button>
+            <!-- Sync complète -->
+            <button type="button" 
+                    id="syncButton"
+                    onclick="startSync()"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold hover-lift shadow-lg hover:shadow-xl transition-all duration-300"
+                    title="Complète (~15min) : resynchronise tous les contacts et comptes">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Sync complète
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de synchronisation -->
+    <div id="syncModal" class="fixed inset-0 z-50 hidden">
+        <!-- Backdrop avec flou -->
+        <div class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm" onclick="closeSyncModal()"></div>
+        
+        <!-- Contenu de la modale -->
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all duration-500 scale-95 opacity-0" id="syncModalContent">
+                <!-- Header avec gradient animé -->
+                <div class="relative h-32 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 animate-pulse opacity-50"></div>
+                    
+                    <!-- Particules animées -->
+                    <div class="absolute inset-0 overflow-hidden">
+                        <div class="sync-particle sync-particle-1"></div>
+                        <div class="sync-particle sync-particle-2"></div>
+                        <div class="sync-particle sync-particle-3"></div>
+                        <div class="sync-particle sync-particle-4"></div>
+                        <div class="sync-particle sync-particle-5"></div>
+                    </div>
+                    
+                    <!-- Icône centrale -->
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div id="syncIcon" class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                            <svg id="syncSpinner" class="w-10 h-10 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <svg id="syncSuccess" class="w-10 h-10 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <svg id="syncError" class="w-10 h-10 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Corps de la modale -->
+                <div class="p-8">
+                    <h3 id="syncTitle" class="text-2xl font-bold text-center text-gray-900 mb-2">
+                        Synchronisation en cours...
+                    </h3>
+                    <p id="syncSubtitle" class="text-center text-gray-500 mb-6">
+                        Récupération des données depuis Harvest O2S
+                    </p>
+                    
+                    <!-- Barre de progression -->
+                    <div class="mb-6">
+                        <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                            <div id="syncProgress" class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between mt-2 text-xs text-gray-500">
+                            <span id="syncProgressText">Initialisation...</span>
+                            <span id="syncProgressPercent">0%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Étapes de progression -->
+                    <div class="space-y-3 mb-6" id="syncSteps">
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 transition-all duration-300" id="step1">
+                            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                                <span class="step-number text-gray-600 font-bold text-sm">1</span>
+                                <svg class="step-check w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <svg class="step-spinner w-4 h-4 text-white hidden animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-700">Connexion API O2S</p>
+                                <p class="step-subtitle text-xs text-gray-500 truncate" data-default="Authentification sécurisée">Authentification sécurisée</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 transition-all duration-300" id="step2">
+                            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                                <span class="step-number text-gray-600 font-bold text-sm">2</span>
+                                <svg class="step-check w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <svg class="step-spinner w-4 h-4 text-white hidden animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-700">Synchronisation des contacts</p>
+                                <p class="step-subtitle text-xs text-gray-500 truncate" data-default="Mise à jour des profils clients">Mise à jour des profils clients</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 transition-all duration-300" id="step3">
+                            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                                <span class="step-number text-gray-600 font-bold text-sm">3</span>
+                                <svg class="step-check w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <svg class="step-spinner w-4 h-4 text-white hidden animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-gray-700">Synchronisation des comptes</p>
+                                <p class="step-subtitle text-xs text-gray-500 truncate" data-default="Valorisations et patrimoine">Valorisations et patrimoine</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Message fun pendant l'attente -->
+                    <div id="funMessage" class="text-center text-sm text-gray-400 italic mb-6">
+                        ☕ C'est le moment de prendre un café...
+                    </div>
+                    
+                    <!-- Résultats (caché par défaut) -->
+                    <div id="syncResults" class="hidden">
+                        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-5 border border-emerald-200">
+                            <h4 class="font-bold text-emerald-800 mb-3 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Résultats de la synchronisation
+                            </h4>
+                            <div class="grid grid-cols-2 gap-3 text-sm">
+                                <div class="bg-white rounded-xl p-3 text-center">
+                                    <p class="text-2xl font-bold text-blue-600" id="resultContacts">0</p>
+                                    <p class="text-gray-500 text-xs">Contacts</p>
+                                </div>
+                                <div class="bg-white rounded-xl p-3 text-center">
+                                    <p class="text-2xl font-bold text-emerald-600" id="resultComptes">0</p>
+                                    <p class="text-gray-500 text-xs">Comptes</p>
+                                </div>
+                                <div class="bg-white rounded-xl p-3 text-center">
+                                    <p class="text-2xl font-bold text-green-600" id="resultCreated">0</p>
+                                    <p class="text-gray-500 text-xs">Créés</p>
+                                </div>
+                                <div class="bg-white rounded-xl p-3 text-center">
+                                    <p class="text-2xl font-bold text-amber-600" id="resultUpdated">0</p>
+                                    <p class="text-gray-500 text-xs">Mis à jour</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bouton fermer -->
+                    <button id="closeSyncBtn" onclick="closeSyncModal()" class="hidden w-full mt-6 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300">
+                        Fermer et actualiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash messages -->
+    {% for message in app.flashes('success') %}
+        <div class="mb-4 p-4 bg-green-100 border border-green-300 text-green-800 rounded-xl flex items-center gap-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="mb-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-xl flex items-center gap-3">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <!-- Encours géré — carte principale (comme O2S) -->
+    <div class="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-3xl p-6 sm:p-8 mb-6 text-white shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 right-0 -mt-8 -mr-8 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
+        <div class="absolute bottom-0 left-0 -mb-6 -ml-6 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+        <div class="relative">
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+                <div>
+                    <p class="text-sm font-bold text-blue-300 uppercase tracking-wider mb-1">💼 Encours géré</p>
+                    <p class="text-4xl sm:text-5xl font-extrabold tracking-tight">{{ categories.gere.valuation|number_format(0, ',', ' ') }} €</p>
+                    <p class="text-blue-300 mt-2 text-sm">{{ categories.gere.count }} comptes sous gestion directe CGP (Assurance Vie, PER, PEA, SCPI…)</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-3 text-center">
+                        <p class="text-xl font-bold">{{ categories.epargne.valuation|number_format(0, ',', ' ') }} €</p>
+                        <p class="text-xs text-blue-200">🏢 Épargne salariale</p>
+                        <p class="text-xs text-blue-300/60">{{ categories.epargne.count }} comptes</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-3 text-center">
+                        <p class="text-xl font-bold">{{ categories.agrege.valuation|number_format(0, ',', ' ') }} €</p>
+                        <p class="text-xs text-blue-200">🏦 Comptes agrégés</p>
+                        <p class="text-xs text-blue-300/60">{{ categories.agrege.count }} comptes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5 pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-blue-300/80">
+                <span>Total tous comptes : <strong class="text-white">{{ stats.totalValuation|number_format(0, ',', ' ') }} €</strong> ({{ stats.o2sProducts }} comptes)</span>
+                <span>{{ stats.linkedUsers }} clients liés à O2S sur {{ stats.totalUsers }} utilisateurs</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Détail par catégorie de comptes -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+        <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Répartition des comptes par catégorie
+        </h3>
+        <p class="text-sm text-gray-500 mb-6">
+            Les {{ stats.o2sProducts }} comptes synchronisés depuis O2S sont répartis en 3 catégories selon le type de produit financier.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+            {% for key, cat in categories %}
+            <div class="rounded-2xl border-2 p-5 transition-all duration-200 hover:shadow-md
+                {% if key == 'gere' %}border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50
+                {% elseif key == 'epargne' %}border-cyan-200 bg-gradient-to-br from-cyan-50 to-sky-50
+                {% else %}border-gray-200 bg-gradient-to-br from-gray-50 to-slate-50{% endif %}">
+                
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center
+                        {% if key == 'gere' %}bg-gradient-to-br from-blue-500 to-indigo-600
+                        {% elseif key == 'epargne' %}bg-gradient-to-br from-cyan-500 to-sky-600
+                        {% else %}bg-gradient-to-br from-gray-500 to-slate-600{% endif %}">
+                        {% if key == 'gere' %}
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        {% elseif key == 'epargne' %}
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        {% else %}
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                        </svg>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900">{{ cat.label }}</h4>
+                        <p class="text-xs text-gray-500">{{ cat.description }}</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="text-center bg-white/70 rounded-xl p-3">
+                        <p class="text-2xl font-bold {% if key == 'gere' %}text-blue-700{% elseif key == 'epargne' %}text-cyan-700{% else %}text-gray-700{% endif %}">{{ cat.count }}</p>
+                        <p class="text-xs text-gray-500">comptes</p>
+                    </div>
+                    <div class="text-center bg-white/70 rounded-xl p-3">
+                        <p class="text-lg font-bold {% if key == 'gere' %}text-blue-700{% elseif key == 'epargne' %}text-cyan-700{% else %}text-gray-700{% endif %}">{{ cat.valuation|number_format(0, ',', ' ') }} €</p>
+                        <p class="text-xs text-gray-500">encours</p>
+                    </div>
+                </div>
+
+                {% if cat.types|length > 0 %}
+                <div class="space-y-1">
+                    {% for t in cat.types %}
+                    <div class="flex items-center justify-between text-xs px-2 py-1.5 rounded-lg bg-white/50">
+                        <span class="text-gray-700 font-medium">{{ t.type|replace({'_': ' '}) }}</span>
+                        <span class="flex items-center gap-2">
+                            <span class="text-gray-500">{{ t.count }} compte{{ t.count > 1 ? 's' : '' }}</span>
+                            {% if t.valuation > 0 %}
+                            <span class="font-semibold {% if key == 'gere' %}text-blue-600{% elseif key == 'epargne' %}text-cyan-600{% else %}text-gray-600{% endif %}">{{ t.valuation|number_format(0, ',', ' ') }} €</span>
+                            {% else %}
+                            <span class="text-gray-400">—</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Barre de répartition visuelle -->
+        {% set total_comptes = categories.gere.count + categories.epargne.count + categories.agrege.count %}
+        {% if total_comptes > 0 %}
+        <div class="mb-4">
+            <p class="text-sm font-medium text-gray-700 mb-2">Répartition des {{ total_comptes }} comptes :</p>
+            <div class="h-6 flex rounded-full overflow-hidden">
+                {% if categories.gere.count > 0 %}
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold" style="width: {{ (categories.gere.count / total_comptes * 100)|round(1) }}%">
+                    {% if (categories.gere.count / total_comptes * 100) > 10 %}{{ categories.gere.count }}{% endif %}
+                </div>
+                {% endif %}
+                {% if categories.epargne.count > 0 %}
+                <div class="bg-gradient-to-r from-cyan-500 to-sky-500 flex items-center justify-center text-white text-xs font-bold" style="width: {{ (categories.epargne.count / total_comptes * 100)|round(1) }}%">
+                    {% if (categories.epargne.count / total_comptes * 100) > 10 %}{{ categories.epargne.count }}{% endif %}
+                </div>
+                {% endif %}
+                {% if categories.agrege.count > 0 %}
+                <div class="bg-gradient-to-r from-gray-400 to-slate-500 flex items-center justify-center text-white text-xs font-bold" style="width: {{ (categories.agrege.count / total_comptes * 100)|round(1) }}%">
+                    {% if (categories.agrege.count / total_comptes * 100) > 10 %}{{ categories.agrege.count }}{% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="flex items-center gap-6 mt-2 text-xs text-gray-500">
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500"></span> Gestion directe ({{ ((categories.gere.count / total_comptes) * 100)|round(1) }}%)</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-500 to-sky-500"></span> Épargne salariale ({{ ((categories.epargne.count / total_comptes) * 100)|round(1) }}%)</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-gradient-to-r from-gray-400 to-slate-500"></span> Agrégés ({{ ((categories.agrege.count / total_comptes) * 100)|round(1) }}%)</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Légende explicative -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4">
+            <h4 class="font-semibold text-amber-800 text-sm mb-2 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Comment lire ces chiffres ?
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-amber-700">
+                <div>
+                    <p class="font-bold mb-0.5">💼 Gestion directe</p>
+                    <p>Comptes placés et gérés par le CGP : assurance vie, PER, PEA, SCPI, compte-titres, capitalisation, etc. Ce sont les encours sous mandat de gestion.</p>
+                </div>
+                <div>
+                    <p class="font-bold mb-0.5">🏢 Épargne salariale</p>
+                    <p>Comptes d'épargne entreprise (PEE, PERCO) gérés via le CGP dans le cadre de dispositifs collectifs.</p>
+                </div>
+                <div>
+                    <p class="font-bold mb-0.5">🏦 Comptes agrégés</p>
+                    <p>Comptes bancaires externes importés via agrégation (comptes courants, livrets, PEL…). Souvent sans valorisation car non gérés directement.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation rapide -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Contacts O2S -->
+        <a href="{{ path('admin_o2s_contacts') }}" 
+           class="block bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-blue-300 transition-all duration-200 group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Contacts O2S</h3>
+                    <p class="text-sm text-gray-500">Voir tous les contacts Harvest</p>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+            <p class="text-gray-600 text-sm">
+                Parcourez la liste complète des contacts O2S, visualisez leurs informations et leurs comptes associés.
+            </p>
+        </a>
+
+        <!-- Comptes avec valorisations -->
+        <a href="{{ path('admin_o2s_comptes') }}" 
+           class="block bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-emerald-300 transition-all duration-200 group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">Comptes & Valorisations</h3>
+                    <p class="text-sm text-gray-500">{{ stats.totalValuation|number_format(0, ',', ' ') }} € sous gestion</p>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+            <p class="text-gray-600 text-sm">
+                Vue complète de tous les comptes avec leurs valorisations actuelles et dates de mise à jour.
+            </p>
+        </a>
+
+        <!-- Produits synchronisés -->
+        <a href="{{ path('admin_o2s_products') }}" 
+           class="block bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-purple-300 transition-all duration-200 group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-900 group-hover:text-purple-600 transition-colors">Produits locaux</h3>
+                    <p class="text-sm text-gray-500">{{ stats.o2sProducts }} compte(s) synchronisé(s)</p>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-purple-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+            <p class="text-gray-600 text-sm">
+                Gérez les comptes clients synchronisés depuis O2S avec leurs valorisations en temps réel.
+            </p>
+        </a>
+    </div>
+
+    <!-- Référentiels O2S -->
+    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+        Référentiels O2S
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Institutions -->
+        <a href="{{ path('admin_o2s_institutions') }}" 
+           class="block bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-amber-300 transition-all duration-200 group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-900 group-hover:text-amber-600 transition-colors">Institutions</h3>
+                    <p class="text-sm text-gray-500">Établissements financiers</p>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-amber-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+            <p class="text-gray-600 text-sm">
+                Generali, AXA, La Mondiale, etc. Liste des établissements partenaires O2S.
+            </p>
+        </a>
+
+        <!-- Types de produits O2S -->
+        <a href="{{ path('admin_o2s_o2s_products') }}" 
+           class="block bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-pink-300 transition-all duration-200 group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-900 group-hover:text-pink-600 transition-colors">Types de contrats</h3>
+                    <p class="text-sm text-gray-500">Produits O2S disponibles</p>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-pink-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+            <p class="text-gray-600 text-sm">
+                Assurance Vie, PEA, PER, Compte-Titres... Tous les types de contrats O2S.
+            </p>
+        </a>
+
+        <!-- Gestion des doublons -->
+        <a href="{{ path('admin_o2s_duplicates') }}" 
+           class="block bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-amber-300 transition-all duration-200 group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-900 group-hover:text-red-600 transition-colors">Doublons</h3>
+                    <p class="text-sm text-gray-500">Détecter et fusionner</p>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-red-500 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+            <p class="text-gray-600 text-sm">
+                Détecte les comptes manuels dupliqués avec les comptes O2S et permet de les fusionner.
+            </p>
+        </a>
+
+        <!-- Documentation API -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-lg hover:border-gray-300 transition-all duration-200 group">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-900">API O2S</h3>
+                    <p class="text-sm text-gray-500">Informations techniques</p>
+                </div>
+            </div>
+            <div class="space-y-2 text-sm text-gray-600">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span>API connectée</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                    </svg>
+                    <span>api.office2s.com</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-gray-400">
+                    <span>Endpoints: /contacts, /comptes, /accounts, /assets, /institutions, /products</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Planification automatique (CRON) -->
+    <h3 class="text-lg font-bold text-gray-900 mb-4 mt-8 flex items-center gap-2">
+        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Planification automatique (CRON)
+    </h3>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+        <p class="text-gray-600 text-sm mb-4">
+            La synchronisation fonctionne automatiquement via des tâches CRON. Aucune intervention manuelle nécessaire au quotidien.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span class="font-bold text-blue-800">Toutes les 15 min</span>
+                </div>
+                <p class="text-sm text-blue-700 font-medium mb-1">Sync incrémentale</p>
+                <p class="text-xs text-blue-600">Détecte les nouveaux contacts et synchronise leurs comptes (~10s)</p>
+                <code class="block mt-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono">o2s:sync-incremental</code>
+            </div>
+            <div class="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 1v8m0 0v1"></path>
+                    </svg>
+                    <span class="font-bold text-amber-800">Toutes les 2h</span>
+                </div>
+                <p class="text-sm text-amber-700 font-medium mb-1">Mise à jour valorisations</p>
+                <p class="text-xs text-amber-600">Met à jour les montants pour 50 comptes par lot (~2-3min)</p>
+                <code class="block mt-2 text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded font-mono">o2s:sync-incremental --valuations -b 50</code>
+            </div>
+            <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <span class="font-bold text-green-800">1x / jour à 3h</span>
+                </div>
+                <p class="text-sm text-green-700 font-medium mb-1">Sync complète</p>
+                <p class="text-xs text-green-600">Resynchronise tout (contacts + comptes + valorisations) (~15min)</p>
+                <code class="block mt-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded font-mono">o2s:sync --comptes</code>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification pour sync incrémentale -->
+<div id="incrToast" class="fixed bottom-4 right-4 z-50 hidden transform transition-all duration-300 translate-y-4 opacity-0">
+    <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 max-w-sm">
+        <div class="flex items-start gap-3">
+            <div id="incrToastIcon" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p id="incrToastTitle" class="font-bold text-gray-900 text-sm">Sync rapide en cours...</p>
+                <p id="incrToastMessage" class="text-xs text-gray-500 mt-0.5">Détection des nouveaux contacts</p>
+            </div>
+            <button onclick="hideIncrToast()" class="text-gray-400 hover:text-gray-600 ml-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Particules animées */
+.sync-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.4;
+}
+
+.sync-particle-1 {
+    top: 20%;
+    left: 10%;
+    animation: float 3s ease-in-out infinite;
+}
+
+.sync-particle-2 {
+    top: 60%;
+    left: 80%;
+    animation: float 2.5s ease-in-out infinite 0.5s;
+}
+
+.sync-particle-3 {
+    top: 80%;
+    left: 30%;
+    animation: float 4s ease-in-out infinite 1s;
+}
+
+.sync-particle-4 {
+    top: 30%;
+    left: 70%;
+    animation: float 3.5s ease-in-out infinite 1.5s;
+}
+
+.sync-particle-5 {
+    top: 50%;
+    left: 50%;
+    animation: float 2s ease-in-out infinite 0.2s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.4;
+    }
+    50% {
+        transform: translateY(-20px) scale(1.5);
+        opacity: 0.8;
+    }
+}
+
+/* Animation d'entrée */
+.modal-enter {
+    animation: modalEnter 0.4s ease-out forwards;
+}
+
+@keyframes modalEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Step actif */
+.step-active {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border: 1px solid #6ee7b7;
+}
+
+.step-active .w-8 {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+}
+
+.step-completed {
+    background: #ecfdf5;
+}
+
+.step-completed .w-8 {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+}
+
+/* Pulsation du bouton pendant sync */
+.sync-pulse {
+    animation: syncPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes syncPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+    }
+}
+
+/* Succès animation */
+.success-bounce {
+    animation: successBounce 0.6s ease-out;
+}
+
+@keyframes successBounce {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Header gradient selon état */
+.header-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%) !important;
+}
+
+.header-error {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%) !important;
+}
+
+/* Progress bar animation */
+.progress-animated {
+    background-size: 200% 100%;
+    animation: progressShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes progressShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+</style>
+
+<script>
+const funMessages = {
+    contacts: [
+        "☕ C'est le moment de prendre un café...",
+        "🚀 Connexion aux serveurs O2S...",
+        "📊 Récupération des profils clients...",
+        "👤 Analyse des contacts Harvest...",
+        "🔗 Liaison des comptes...",
+        "✉️ Vérification des emails...",
+    ],
+    comptes: [
+        "💰 Récupération des valorisations...",
+        "📈 Calcul des performances...",
+        "🏦 Synchronisation des portefeuilles...",
+        "📋 Mise à jour des contrats...",
+        "🎯 Presque terminé, patience...",
+        "✨ Finalisation en cours...",
+    ]
+};
+
+const CSRF_TOKEN = '{{ csrf_token('o2s_sync') }}';
+let syncInProgress = false;
+let funMessageInterval;
+let elapsedInterval;
+let startTime;
+
+// Données de résultats globales
+let syncResults = { contacts: null, comptes: null };
+
+function startSync() {
+    if (syncInProgress) return;
+    syncInProgress = true;
+    syncResults = { contacts: null, comptes: null };
+    startTime = Date.now();
+    
+    // Afficher la modale
+    const modal = document.getElementById('syncModal');
+    const modalContent = document.getElementById('syncModalContent');
+    modal.classList.remove('hidden');
+    
+    setTimeout(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('modal-enter');
+    }, 10);
+    
+    // Réinitialiser l'état
+    resetSyncModal();
+    
+    // Timer du temps écoulé
+    elapsedInterval = setInterval(updateElapsedTime, 1000);
+    
+    // Lancer les étapes séquentiellement
+    performMultiStepSync();
+}
+
+function updateElapsedTime() {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const min = Math.floor(elapsed / 60);
+    const sec = elapsed % 60;
+    const timeStr = min > 0 ? `${min}m ${sec}s` : `${sec}s`;
+    document.getElementById('syncProgressPercent').textContent = timeStr;
+}
+
+function resetSyncModal() {
+    document.getElementById('syncSpinner').classList.remove('hidden');
+    document.getElementById('syncSuccess').classList.add('hidden');
+    document.getElementById('syncError').classList.add('hidden');
+    
+    document.getElementById('syncTitle').textContent = 'Synchronisation en cours...';
+    document.getElementById('syncSubtitle').textContent = 'Récupération des données depuis Harvest O2S';
+    
+    document.getElementById('syncProgress').style.width = '0%';
+    document.getElementById('syncProgressText').textContent = 'Initialisation...';
+    document.getElementById('syncProgressPercent').textContent = '0s';
+    
+    ['step1', 'step2', 'step3'].forEach(stepId => {
+        const step = document.getElementById(stepId);
+        step.classList.remove('step-active', 'step-completed');
+        step.querySelector('.step-number').classList.remove('hidden');
+        step.querySelector('.step-check').classList.add('hidden');
+        step.querySelector('.step-spinner').classList.add('hidden');
+        // Enlever les sous-textes de résultats
+        const subtitle = step.querySelector('.step-subtitle');
+        if (subtitle) subtitle.textContent = subtitle.dataset.default || subtitle.textContent;
+    });
+    
+    document.getElementById('syncResults').classList.add('hidden');
+    document.getElementById('closeSyncBtn').classList.add('hidden');
+    document.getElementById('closeSyncBtn').textContent = 'Fermer et actualiser';
+    document.getElementById('closeSyncBtn').classList.remove('from-red-500', 'to-rose-500');
+    document.getElementById('closeSyncBtn').classList.add('from-emerald-500', 'to-teal-500');
+    document.getElementById('funMessage').classList.remove('hidden');
+    
+    const header = document.querySelector('#syncModalContent > div:first-child');
+    header.classList.remove('header-success', 'header-error');
+}
+
+function updateProgress(percent, text) {
+    document.getElementById('syncProgress').style.width = percent + '%';
+    if (text) document.getElementById('syncProgressText').textContent = text;
+}
+
+function setStepActive(stepId) {
+    const step = document.getElementById(stepId);
+    step.classList.add('step-active');
+    step.querySelector('.step-number').classList.add('hidden');
+    step.querySelector('.step-spinner').classList.remove('hidden');
+}
+
+function setStepCompleted(stepId, subtitle) {
+    const step = document.getElementById(stepId);
+    step.classList.remove('step-active');
+    step.classList.add('step-completed');
+    step.querySelector('.step-spinner').classList.add('hidden');
+    step.querySelector('.step-check').classList.remove('hidden');
+    if (subtitle) {
+        const sub = step.querySelector('.step-subtitle');
+        if (sub) sub.textContent = subtitle;
+    }
+}
+
+function setStepError(stepId, errorText) {
+    const step = document.getElementById(stepId);
+    step.classList.remove('step-active');
+    step.style.background = 'linear-gradient(135deg, #fef2f2, #fee2e2)';
+    step.style.border = '1px solid #fca5a5';
+    step.querySelector('.step-spinner').classList.add('hidden');
+    step.querySelector('.step-number').classList.remove('hidden');
+    step.querySelector('.step-number').textContent = '✗';
+    step.querySelector('.step-number').style.color = '#ef4444';
+    if (errorText) {
+        const sub = step.querySelector('.step-subtitle');
+        if (sub) { sub.textContent = errorText; sub.style.color = '#ef4444'; }
+    }
+}
+
+function startFunMessages(phase) {
+    let msgIndex = 0;
+    const msgs = funMessages[phase] || funMessages.contacts;
+    clearInterval(funMessageInterval);
+    document.getElementById('funMessage').textContent = msgs[0];
+    funMessageInterval = setInterval(() => {
+        msgIndex = (msgIndex + 1) % msgs.length;
+        document.getElementById('funMessage').textContent = msgs[msgIndex];
+    }, 2500);
+}
+
+async function apiCall(url, body) {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: body
+    });
+    return await response.json();
+}
+
+async function performMultiStepSync() {
+    let hasError = false;
+
+    // ═══════ ÉTAPE 1 : Connexion & info ═══════
+    setStepActive('step1');
+    updateProgress(5, 'Connexion à l\'API O2S...');
+    startFunMessages('contacts');
+
+    try {
+        const info = await fetch('{{ path('admin_o2s_sync_info') }}').then(r => r.json());
+        setStepCompleted('step1', `${info.linkedUsers} utilisateurs liés, ${info.totalProducts} produits`);
+        updateProgress(10, 'Connexion établie ✓');
+    } catch (e) {
+        setStepCompleted('step1', 'Connexion OK');
+        updateProgress(10, 'Connexion établie ✓');
+    }
+
+    // ═══════ ÉTAPE 2 : Sync contacts ═══════
+    setStepActive('step2');
+    updateProgress(15, 'Synchronisation des contacts...');
+    document.getElementById('syncSubtitle').textContent = 'Étape 1/2 - Contacts clients';
+
+    try {
+        const contactsData = await apiCall('{{ path('admin_o2s_sync_contacts') }}', '_token=' + CSRF_TOKEN);
+        
+        if (contactsData.success) {
+            syncResults.contacts = contactsData;
+            const errInfo = contactsData.errorCount > 0 ? ` (${contactsData.errorCount} erreurs)` : '';
+            setStepCompleted('step2', `${contactsData.total} contacts — ${contactsData.created} créés, ${contactsData.updated} mis à jour${errInfo}`);
+            updateProgress(45, 'Contacts synchronisés ✓');
+        } else {
+            setStepError('step2', contactsData.error || 'Erreur inconnue');
+            hasError = true;
+        }
+    } catch (e) {
+        setStepError('step2', e.message);
+        hasError = true;
+    }
+
+    // ═══════ ÉTAPE 3 : Sync comptes (par lots) ═══════
+    if (!hasError) {
+        setStepActive('step3');
+        updateProgress(50, 'Synchronisation des comptes...');
+        document.getElementById('syncSubtitle').textContent = 'Étape 2/2 - Comptes & valorisations';
+        startFunMessages('comptes');
+
+        const BATCH_SIZE = 10;
+        let offset = 0;
+        let totalUsers = 0;
+        let totalCreated = 0;
+        let totalUpdated = 0;
+        let totalSkipped = 0;
+        let totalErrors = 0;
+        let allErrors = [];
+        let batchHasError = false;
+
+        try {
+            // Boucle de lots : on appelle /sync/comptes avec offset+batch_size
+            while (true) {
+                const batchData = await apiCall(
+                    '{{ path('admin_o2s_sync_comptes') }}',
+                    '_token=' + CSRF_TOKEN + '&offset=' + offset + '&batch_size=' + BATCH_SIZE
+                );
+
+                if (!batchData.success) {
+                    // Erreur sur ce lot, mais on continue avec le suivant
+                    allErrors.push(batchData.error || 'Erreur lot offset=' + offset);
+                    totalErrors++;
+                    offset += BATCH_SIZE;
+                    // Si on ne sait pas le total, on arrête
+                    if (!batchData.total && totalUsers === 0) {
+                        batchHasError = true;
+                        break;
+                    }
+                    if (totalUsers === 0) totalUsers = batchData.total || 0;
+                    if (offset >= totalUsers) break;
+                    continue;
+                }
+
+                totalUsers = batchData.total || totalUsers;
+                totalCreated += batchData.batchCreated || 0;
+                totalUpdated += batchData.batchUpdated || 0;
+                totalSkipped += batchData.batchSkipped || 0;
+                totalErrors += batchData.errorCount || 0;
+                if (batchData.errors) allErrors = allErrors.concat(batchData.errors);
+
+                offset = batchData.processed || (offset + BATCH_SIZE);
+
+                // Mettre à jour la progression (50% → 98%)
+                const progressPct = totalUsers > 0 
+                    ? 50 + Math.round((offset / totalUsers) * 48)
+                    : 50;
+                updateProgress(
+                    Math.min(progressPct, 98),
+                    `Comptes : ${offset}/${totalUsers} utilisateurs traités...`
+                );
+                
+                // Mettre à jour le sous-titre de l'étape 3 en temps réel
+                const step3Sub = document.querySelector('#step3 .step-subtitle');
+                if (step3Sub) {
+                    step3Sub.textContent = `${totalCreated} créés, ${totalUpdated} mis à jour (lot ${Math.ceil(offset/BATCH_SIZE)}/${Math.ceil(totalUsers/BATCH_SIZE)})`;
+                }
+
+                // Si plus de lots à traiter, on arrête
+                if (!batchData.hasMore) break;
+            }
+
+            // Résultat final
+            syncResults.comptes = {
+                total: totalCreated + totalUpdated + totalSkipped,
+                created: totalCreated,
+                updated: totalUpdated,
+                skipped: totalSkipped,
+                errorCount: totalErrors,
+            };
+
+            if (batchHasError || totalErrors > totalUsers * 0.5) {
+                setStepError('step3', `${totalErrors} erreurs sur ${totalUsers} utilisateurs`);
+                hasError = true;
+            } else {
+                const errInfo = totalErrors > 0 ? ` (${totalErrors} erreurs)` : '';
+                setStepCompleted('step3', `${totalCreated + totalUpdated} comptes — ${totalCreated} créés, ${totalUpdated} mis à jour${errInfo}`);
+                updateProgress(100, 'Synchronisation terminée ✓');
+            }
+        } catch (e) {
+            setStepError('step3', e.message);
+            hasError = true;
+        }
+    }
+
+    // ═══════ FINALISATION ═══════
+    clearInterval(funMessageInterval);
+    clearInterval(elapsedInterval);
+
+    if (!hasError) {
+        showSyncSuccess();
+    } else {
+        showSyncError('La synchronisation a rencontré des erreurs. Voir les détails ci-dessus.');
+    }
+}
+
+function showSyncSuccess() {
+    document.getElementById('syncSpinner').classList.add('hidden');
+    document.getElementById('syncSuccess').classList.remove('hidden');
+    document.getElementById('syncSuccess').classList.add('success-bounce');
+    
+    const header = document.querySelector('#syncModalContent > div:first-child');
+    header.classList.add('header-success');
+    
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const min = Math.floor(elapsed / 60);
+    const sec = elapsed % 60;
+    const timeStr = min > 0 ? `${min}m ${sec}s` : `${sec}s`;
+    
+    document.getElementById('syncTitle').textContent = 'Synchronisation terminée !';
+    document.getElementById('syncSubtitle').textContent = `Toutes les données ont été mises à jour en ${timeStr}`;
+    document.getElementById('funMessage').classList.add('hidden');
+    
+    // Résultats
+    const c = syncResults.contacts || {};
+    const p = syncResults.comptes || {};
+    document.getElementById('resultContacts').textContent = c.total || 0;
+    document.getElementById('resultComptes').textContent = p.total || 0;
+    document.getElementById('resultCreated').textContent = (c.created || 0) + (p.created || 0);
+    document.getElementById('resultUpdated').textContent = (c.updated || 0) + (p.updated || 0);
+    document.getElementById('syncResults').classList.remove('hidden');
+    
+    document.getElementById('closeSyncBtn').classList.remove('hidden');
+    syncInProgress = false;
+}
+
+function showSyncError(errorMessage) {
+    document.getElementById('syncSpinner').classList.add('hidden');
+    document.getElementById('syncError').classList.remove('hidden');
+    
+    const header = document.querySelector('#syncModalContent > div:first-child');
+    header.classList.add('header-error');
+    
+    document.getElementById('syncTitle').textContent = 'Synchronisation partielle';
+    document.getElementById('syncSubtitle').textContent = errorMessage;
+    document.getElementById('funMessage').classList.add('hidden');
+
+    // Afficher quand même les résultats partiels
+    const c = syncResults.contacts || {};
+    const p = syncResults.comptes || {};
+    if (c.total || p.total) {
+        document.getElementById('resultContacts').textContent = c.total || 0;
+        document.getElementById('resultComptes').textContent = p.total || 0;
+        document.getElementById('resultCreated').textContent = (c.created || 0) + (p.created || 0);
+        document.getElementById('resultUpdated').textContent = (c.updated || 0) + (p.updated || 0);
+        document.getElementById('syncResults').classList.remove('hidden');
+    }
+    
+    document.getElementById('closeSyncBtn').textContent = 'Fermer et actualiser';
+    document.getElementById('closeSyncBtn').classList.remove('hidden');
+    document.getElementById('closeSyncBtn').classList.remove('from-emerald-500', 'to-teal-500');
+    document.getElementById('closeSyncBtn').classList.add('from-red-500', 'to-rose-500');
+    
+    syncInProgress = false;
+}
+
+function closeSyncModal() {
+    if (syncInProgress) return;
+    
+    const modal = document.getElementById('syncModal');
+    const modalContent = document.getElementById('syncModalContent');
+    
+    modalContent.classList.add('scale-95', 'opacity-0');
+    
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        window.location.reload();
+    }, 300);
+}
+
+// ═══════════════════════════════════════════════
+// SYNC INCRÉMENTALE RAPIDE (Toast notification)
+// ═══════════════════════════════════════════════
+
+function showIncrToast() {
+    const toast = document.getElementById('incrToast');
+    toast.classList.remove('hidden');
+    setTimeout(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+    }, 10);
+}
+
+function hideIncrToast() {
+    const toast = document.getElementById('incrToast');
+    toast.classList.add('translate-y-4', 'opacity-0');
+    setTimeout(() => toast.classList.add('hidden'), 300);
+}
+
+function updateIncrToast(icon, title, message, autoHide = false) {
+    document.getElementById('incrToastIcon').innerHTML = icon;
+    document.getElementById('incrToastTitle').textContent = title;
+    document.getElementById('incrToastMessage').textContent = message;
+    if (autoHide) {
+        setTimeout(hideIncrToast, 5000);
+    }
+}
+
+async function startIncrementalSync() {
+    const btn = document.getElementById('syncIncrBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Sync...';
+    
+    showIncrToast();
+
+    try {
+        const data = await apiCall('{{ path('admin_o2s_sync_incremental') }}', '_token=' + CSRF_TOKEN);
+        
+        if (data.success) {
+            const successIcon = '<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+            updateIncrToast(
+                successIcon,
+                'Sync rapide terminée !',
+                data.message || `${data.created} créé(s), ${data.updated} mis à jour`,
+                true
+            );
+            document.getElementById('incrToastIcon').className = 'w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0';
+            
+            // Recharger après un court délai pour mettre à jour les stats
+            if (data.created > 0 || data.updated > 0) {
+                setTimeout(() => window.location.reload(), 3000);
+            }
+        } else {
+            const errorIcon = '<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            updateIncrToast(errorIcon, 'Erreur', data.error || 'Erreur inconnue', true);
+            document.getElementById('incrToastIcon').className = 'w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0';
+        }
+    } catch (e) {
+        const errorIcon = '<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+        updateIncrToast(errorIcon, 'Erreur réseau', e.message, true);
+        document.getElementById('incrToastIcon').className = 'w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Sync rapide';
+    }
+}
+
+// ═══════════════════════════════════════════════
+// MISE À JOUR DES VALORISATIONS (multi-batch AJAX)
+// ═══════════════════════════════════════════════
+
+async function startValuationSync() {
+    const btn = document.getElementById('syncValuBtn');
+    btn.disabled = true;
+    const origHTML = btn.innerHTML;
+    
+    showIncrToast();
+    document.getElementById('incrToastIcon').className = 'w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0';
+    document.getElementById('incrToastIcon').innerHTML = '<svg class="w-5 h-5 text-amber-600 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
+    
+    const BATCH = 30;
+    const ROUNDS = Math.ceil({{ stats.o2sProducts }} / BATCH);
+    let totalUpdated = 0;
+    let totalErrors = 0;
+    let round = 0;
+    let hasError = false;
+
+    try {
+        for (round = 0; round < ROUNDS; round++) {
+            btn.innerHTML = `<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Lot ${round+1}/${ROUNDS}`;
+            
+            updateIncrToast(
+                document.getElementById('incrToastIcon').innerHTML,
+                `MAJ Valorisations — Lot ${round+1}/${ROUNDS}`,
+                `${totalUpdated} mise(s) à jour...`
+            );
+
+            const data = await apiCall('{{ path('admin_o2s_sync_valuations') }}', '_token=' + CSRF_TOKEN + '&batch_size=' + BATCH);
+
+            if (data.success) {
+                totalUpdated += data.updated || 0;
+                totalErrors += data.errorCount || 0;
+            } else {
+                hasError = true;
+                break;
+            }
+        }
+
+        const successIcon = '<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        document.getElementById('incrToastIcon').className = 'w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0';
+        const errMsg = totalErrors > 0 ? ` (${totalErrors} erreur(s))` : '';
+        updateIncrToast(successIcon, 'Valorisations mises à jour !', `${totalUpdated} comptes actualisés${errMsg}`, false);
+        
+        // Recharger après délai pour voir les nouveaux montants
+        setTimeout(() => window.location.reload(), 3000);
+    } catch (e) {
+        const errorIcon = '<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+        document.getElementById('incrToastIcon').className = 'w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0';
+        updateIncrToast(errorIcon, 'Erreur', e.message + ` (${totalUpdated} mis à jour avant l'erreur)`, true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHTML;
+    }
+}
+</script>
+{% endblock %}
+

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}ADN Family Office{% endblock %}</title>
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style>
+        /* Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
+        table { border-collapse: collapse; border-spacing: 0; }
+        img { border: 0; height: auto; max-width: 100%; outline: none; text-decoration: none; display: block; }
+        a { color: #1C29A1; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        /* Email Wrapper */
+        .email-wrapper {
+            width: 100%;
+            background-color: #f1f5f9;
+            padding: 40px 20px;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+        
+        /* Header */
+        .email-header {
+            background: linear-gradient(135deg, #1C29A1 0%, #3B82F6 100%);
+            padding: 40px 40px 50px;
+            text-align: center;
+        }
+        
+        .email-header.header-green {
+            background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+        }
+        
+        .email-logo {
+            max-width: 160px;
+            margin: 0 auto 24px;
+        }
+        
+        .email-header-title {
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.3;
+        }
+        
+        .email-header-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            font-weight: 400;
+            margin-top: 10px;
+        }
+        
+        /* Body */
+        .email-body {
+            padding: 40px;
+        }
+        
+        .email-body h1 {
+            color: #1e293b;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .email-body h2 {
+            color: #1e293b;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 28px 0 16px;
+        }
+        
+        .email-body p {
+            color: #475569;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        
+        .email-body strong {
+            color: #1e293b;
+        }
+        
+        /* Greeting */
+        .greeting {
+            font-size: 20px;
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        
+        /* Message Box */
+        .message-box {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        
+        .message-box p {
+            margin: 0;
+            color: #334155;
+        }
+        
+        /* Info Box (pour les alertes) */
+        .info-box {
+            background-color: #EEF2FF;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 24px 0;
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: #1e293b;
+        }
+        
+        /* Warning Box */
+        .warning-box {
+            background-color: #FEF9C3;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 24px 0;
+        }
+        
+        .warning-box p {
+            margin: 0;
+            color: #854D0E;
+        }
+        
+        /* Feature Grid */
+        .feature-grid {
+            display: table;
+            width: 100%;
+            margin: 28px 0;
+            border-spacing: 12px;
+        }
+        
+        .feature-row {
+            display: table-row;
+        }
+        
+        .feature-item {
+            display: table-cell;
+            width: 33.33%;
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 20px 16px;
+            text-align: center;
+            vertical-align: top;
+        }
+        
+        .feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0 0 6px;
+        }
+        
+        .feature-desc {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0;
+        }
+        
+        /* CTA Button */
+        .cta-container {
+            text-align: center;
+            margin: 32px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1C29A1 0%, #3B82F6 100%);
+            color: #ffffff !important;
+            text-decoration: none !important;
+            padding: 16px 40px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .cta-button:hover {
+            opacity: 0.95;
+        }
+        
+        .cta-secondary {
+            background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+        }
+        
+        .cta-hint {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 12px;
+        }
+        
+        /* Expiry Badge */
+        .expiry-text {
+            text-align: center;
+            font-size: 13px;
+            color: #92400E;
+            background-color: #FEF9C3;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 24px 0;
+        }
+        
+        /* User Card (pour admin) */
+        .user-card {
+            background-color: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        
+        .user-card-header {
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .user-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 4px;
+        }
+        
+        .user-subtitle {
+            font-size: 14px;
+            color: #64748b;
+            margin: 0;
+        }
+        
+        .user-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .user-detail:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        .detail-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+        
+        /* Action Steps */
+        .action-steps {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0;
+        }
+        
+        .action-step {
+            padding: 12px 0;
+            font-size: 14px;
+            color: #334155;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background-color: #1C29A1;
+            color: #ffffff;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        /* Divider */
+        .divider {
+            height: 1px;
+            background-color: #e2e8f0;
+            margin: 32px 0;
+        }
+        
+        /* Help Section */
+        .help-section {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 12px;
+        }
+        
+        .help-section p {
+            font-size: 14px;
+            color: #64748b;
+            margin: 0 0 8px;
+        }
+        
+        .help-section a {
+            font-size: 15px;
+            color: #1C29A1;
+            font-weight: 500;
+        }
+        
+        /* Footer */
+        .email-footer {
+            background-color: #1e293b;
+            padding: 32px 40px;
+            text-align: center;
+        }
+        
+        .footer-brand {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+        
+        .footer-tagline {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+        
+        .footer-divider {
+            height: 1px;
+            background-color: #334155;
+            margin: 20px 0;
+        }
+        
+        .footer-legal {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.8;
+        }
+        
+        .footer-copyright {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 16px;
+        }
+        
+        .footer-link {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+        
+        .footer-link:hover {
+            color: #ffffff;
+        }
+        
+        /* Responsive */
+        @media only screen and (max-width: 640px) {
+            .email-wrapper { padding: 20px 12px; }
+            .email-container { border-radius: 12px; }
+            .email-header { padding: 32px 24px 40px; }
+            .email-header-title { font-size: 22px; }
+            .email-body { padding: 28px 24px; }
+            .feature-grid { display: block; }
+            .feature-item { display: block; width: 100%; margin-bottom: 12px; }
+            .cta-button { display: block; padding: 16px 24px; }
+            .email-footer { padding: 28px 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-wrapper">
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+            <tr>
+                <td align="center">
+                    <div class="email-container">
+                        <!-- Header -->
+                        <div class="email-header {% block header_class %}{% endblock %}">
+                            <img src="{{ absolute_url(asset('build/theme/images/ADN_Logo_enlarged_x5.png')) }}" alt="ADN Family Office" class="email-logo">
+                            {% block header %}
+                            <h1 class="email-header-title">{% block header_title %}{% endblock %}</h1>
+                            {% if block('header_subtitle') is defined and block('header_subtitle')|trim is not empty %}
+                            <p class="email-header-subtitle">{% block header_subtitle %}{% endblock %}</p>
+                            {% endif %}
+                            {% endblock %}
+                        </div>
+                        
+                        <!-- Body -->
+                        <div class="email-body">
+                            {% block content %}{% endblock %}
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="email-footer">
+                            <p class="footer-brand">ADN Family Office</p>
+                            <p class="footer-tagline">Premier family office ouvert à toutes les familles</p>
+                            
+                            <div class="footer-divider"></div>
+                            
+                            <p class="footer-legal">
+                                Le site www.adnfamilyoffice.fr présente les activités de la société ADN,<br>
+                                qui propose les services de prestataire de conseil en investissements.<br><br>
+                                SAS ADN au capital de 10 542 € | Siège social : 131 boulevard Brune - 75014 Paris<br>
+                                RCS Paris | Responsabilité civile professionnelle AIG
+                            </p>
+                            
+                            <p class="footer-copyright">
+                                © {{ "now"|date("Y") }} ADN Family Office. Tous droits réservés.
+                            </p>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

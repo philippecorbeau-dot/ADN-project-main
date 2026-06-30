@@ -1,0 +1,193 @@
+{% extends 'front/user/dashboard/base.html.twig' %}
+
+{% block title %}Opportunités - ADN Family Office{% endblock %}
+{% block page_title %}🚀 Opportunités d'investissement{% endblock %}
+
+{% block content %}
+<!-- Opportunities Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- SCPI -->
+    <div class="bg-white shadow-sm rounded-xl p-6 hover-lift relative group cursor-pointer" onclick="window.location.href='{{ path('user_investment_scpi') }}'; trackClick('SCPI', 'discover');">
+        <div class="mb-6">
+            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">SCPI</h3>
+            <p class="text-gray-600 mb-4">Investissez dans l'immobilier professionnel sans les contraintes de la gestion locative.</p>
+            
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Rendement</span>
+                    <span class="font-medium text-green-600">6-8%</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Ticket d'entrée</span>
+                    <span class="font-medium">À partir de 1 000€</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Durée</span>
+                    <span class="font-medium">Long terme</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="space-y-3">
+            <div class="w-full bg-adn-blue text-white py-3 px-4 rounded-md font-medium hover:bg-adn-blue-dark transition-colors text-center">
+                Découvrir
+            </div>
+            <a href="{{ path('user_opportunities_download', {type: 'SCPI'}) }}" onclick="event.stopPropagation(); trackClick('SCPI', 'documents');"
+               class="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-md font-medium hover:bg-gray-200 transition-colors block text-center">
+                Télécharger la documentation
+            </a>
+        </div>
+    </div>
+
+    <!-- PEA-PME -->
+    <div class="bg-white shadow-sm rounded-xl p-6 hover-lift relative group cursor-pointer" onclick="window.location.href='{{ path('user_investment_pea_pme') }}'; trackClick('PEA-PME', 'discover');">
+        <div class="mb-6">
+            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">PEA-PME</h3>
+            <p class="text-gray-600 mb-4">Soutenez les PME françaises tout en bénéficiant d'avantages fiscaux attractifs.</p>
+            
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Fiscalité</span>
+                    <span class="font-medium text-blue-600">Exonération d'impôts</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Plafond</span>
+                    <span class="font-medium">225 000€</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Durée</span>
+                    <span class="font-medium">5 ans minimum</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="space-y-3">
+            <div class="w-full bg-adn-blue text-white py-3 px-4 rounded-md font-medium hover:bg-adn-blue-dark transition-colors text-center">
+                Découvrir
+            </div>
+            <a href="{{ path('user_opportunities_download', {type: 'PEA_PME'}) }}" onclick="event.stopPropagation(); trackClick('PEA-PME', 'documents');"
+               class="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-md font-medium hover:bg-gray-200 transition-colors block text-center">
+                Télécharger la documentation
+            </a>
+        </div>
+    </div>
+
+    <!-- Assurance-vie -->
+    <div class="bg-white shadow-sm rounded-xl p-6 hover-lift relative group cursor-pointer" onclick="window.location.href='{{ path('user_investment_assurance_vie') }}'; trackClick('Assurance-vie', 'discover');">
+        <div class="mb-6">
+            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Assurance-vie</h3>
+            <p class="text-gray-600 mb-4">Solution d'épargne flexible avec avantages successoraux et fiscaux.</p>
+            
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Fiscalité</span>
+                    <span class="font-medium text-purple-600">Avantageuse après 8 ans</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Accessibilité</span>
+                    <span class="font-medium">Fonds disponibles</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Transmission</span>
+                    <span class="font-medium">Hors succession</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="space-y-3">
+            <div class="w-full bg-adn-blue text-white py-3 px-4 rounded-md font-medium hover:bg-adn-blue-dark transition-colors text-center">
+                Découvrir
+            </div>
+            <a href="{{ path('user_opportunities_download', {type: 'ASSURANCE_VIE'}) }}" onclick="event.stopPropagation(); trackClick('Assurance-vie', 'documents');"
+               class="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-md font-medium hover:bg-gray-200 transition-colors block text-center">
+                Télécharger la documentation
+            </a>
+        </div>
+    </div>
+
+    <!-- PER -->
+    <div class="bg-white shadow-sm rounded-xl p-6 hover-lift relative group cursor-pointer" onclick="window.location.href='{{ path('user_investment_per') }}'; trackClick('PER', 'discover');">
+        <div class="mb-6">
+            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                <svg class="w-8 h-8 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">PER</h3>
+            <p class="text-gray-600 mb-4">Préparez votre retraite en déduisant vos versements de vos revenus imposables.</p>
+            
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Déduction fiscale</span>
+                    <span class="font-medium text-orange-600">Jusqu'à 10% du revenu</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Sortie</span>
+                    <span class="font-medium">Rente ou capital</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-500">Gestion</span>
+                    <span class="font-medium">Pilotée ou libre</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="space-y-3">
+            <div class="w-full bg-adn-blue text-white py-3 px-4 rounded-md font-medium hover:bg-adn-blue-dark transition-colors text-center">
+                Découvrir
+            </div>
+            <a href="{{ path('user_opportunities_download', {type: 'PER'}) }}" onclick="event.stopPropagation(); trackClick('PER', 'documents');"
+               class="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-md font-medium hover:bg-gray-200 transition-colors block text-center">
+                Télécharger la documentation
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="mt-12 bg-gradient-to-r from-adn-blue to-adn-blue-light rounded-xl p-8 text-center text-white">
+    <h2 class="text-2xl font-bold mb-4">Prêt à investir ?</h2>
+    <p class="text-blue-100 mb-6">Nos conseillers sont là pour vous accompagner dans vos choix d'investissement.</p>
+    <a href="{{ path('user_advisor') }}" 
+       class="bg-white text-adn-blue px-6 py-3 rounded-md font-medium hover:bg-gray-100 transition-colors">
+        Prendre rendez-vous
+    </a>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+function trackClick(productType, action) {
+    fetch('/api/investment/track-click', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+            product: productType,
+            action: action
+        })
+    }).catch(error => {
+        console.error('Erreur lors du tracking:', error);
+    });
+}
+</script>
+{% endblock %}
+
+

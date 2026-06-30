@@ -1,0 +1,50 @@
+<dialog id="dialog-aware" class="fixed top-1/2 left-1/2 z-50 p-0 bg-transparent text-homblue-normal transition-all -translate-x-1/2 -translate-y-1/2 invisible opacity-0" style="border:none;">
+    <div class="overflow-hidden rounded-xl flex flex-col sm:flex-row m-4 bg-white shadow-lg">
+        <img loading="lazy" class="hidden sm:block w-64 h-auto" alt="Investisseur averti" src="{{ asset('build/theme/images/skyscrapers-looking-up.jpg') }}" />
+        <div class="p-4 sm:p-6 sm:w-96 flex flex-col w-full">
+            <div class="flex flex-none">
+                <button data-close aria-label="close" class="ml-auto text-3xl sm:mb-2" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="text-xl sm:text-2xl font-ofelia mb-4">
+                Je souhaite être qualifié d'investisseur averti
+            </div>
+            <p class="mb-8">Pour vérifier ce statut, veuillez cocher les mentions suivantes :</p>
+            <div class="flex flex-col gap-4">
+                {{ form_row(form.attestMif) }}
+                {{ form_row(form.attestAware) }}
+                {{ form_row(form.attestTruth) }}
+            </div>
+            <div class="mt-5">
+                <button id="btn-modal-validate" type="submit" class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44 ml-auto" disabled>
+                    Valider
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 ml-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.getElementById('btn-modal-validate');
+        const dialog = document.getElementById('dialog-aware');
+        if (!btn || !dialog) return;
+        function checkAllChecked() {
+            const checks = dialog.querySelectorAll('input[type="checkbox"]');
+            btn.disabled = !Array.from(checks).every(cb => cb.checked);
+        }
+        dialog.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', checkAllChecked);
+        });
+        // Réinitialise le bouton à chaque ouverture
+        dialog.addEventListener('close', checkAllChecked);
+        dialog.addEventListener('show', checkAllChecked);
+        dialog.addEventListener('showModal', checkAllChecked);
+        checkAllChecked();
+    });
+    </script>
+</dialog>

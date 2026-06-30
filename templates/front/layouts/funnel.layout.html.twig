@@ -1,0 +1,175 @@
+{% extends 'layout.html.twig' %}
+{% block header %}
+    <div id="layer" class="hidden fixed top-0 right-0 left-0 bottom-0 bg-homblue-normal z-30 transition-opacity opacity-0"></div>
+    <div class="fixed top-0 z-20 w-full bg-gradient-to-t from-white/30 to-transparent border-b border-b-white backdrop-blur-sm ">
+        <div class="container py-6 flex items-center justify-between">
+            <div class="inline-flex items-center my-auto">
+                <a class="w-auto mr-10" href="{{ path('app_home') }}">
+                    <img class="max-h-[50px] w-auto inline-block" src="{{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }}" alt="{% trans %}ADN Familyoffice{% endtrans %}" />
+                </a>
+            </div>
+            {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+            <div class="hidden sm:flex items-center gap-2 mr-4">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-purple-700 text-xs font-semibold border border-purple-200/50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Contrôle: {{ app.user.firstName ?? app.user.email }}
+                </span>
+                <a rel="nofollow" class="inline-flex items-center px-3 py-1 rounded-full bg-purple-600 text-white text-xs font-semibold hover:bg-purple-700" href="{{ path('user_dashboard', {'_switch_user': '_exit'}) }}">Quitter</a>
+            </div>
+            {% endif %}
+            {% if redirUrl is defined and redirUrl is not null %}
+                <a rel="nofollow" class="btn btn-link btn-w-ico -mt-3" href="{{ path(redirUrl, redirOptions) }}" id="quitButton">
+                    <span class="hidden md:inline">{% trans %}Reprendre ma souscription{% endtrans %}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+                    </svg>
+                </a>
+            {% else %}
+                <a rel="nofollow" class="btn btn-link btn-w-ico -mt-3" href="{{ path('app_home') }}" id="quitButton">
+                    <span class="hidden md:inline">{% trans %}Quitter{% endtrans %}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 md:w-5 md:h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Notification de reprise du parcours KYC - SUPPRIMÉE pour éviter la confusion dans les étapes #}
+    {# {% if canRestartKyc is defined and canRestartKyc and restartMessage is defined and restartMessage %}
+        <div class="fixed top-20 left-0 right-0 z-50 bg-yellow-50 border-l-4 border-yellow-400 p-4 shadow-lg">
+            <div class="container mx-auto">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-700">
+                            <strong>Mise à jour requise :</strong> {{ restartMessage }}
+                        </p>
+                    </div>
+                    <div class="ml-auto pl-3">
+                        <div class="-mx-1.5 -my-1.5">
+                            <button type="button" class="inline-flex rounded-md bg-yellow-50 p-1.5 text-yellow-500 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 focus:ring-offset-yellow-50" onclick="this.parentElement.parentElement.parentElement.parentElement.remove()">
+                                <span class="sr-only">Fermer</span>
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %} #}
+
+    {% block progress %}
+        {% if step is defined and steplist is defined %}
+            {% set percent = ((step - 1) / (steplist|length - 1)) * 100 %}
+            <div class=" py-4 border-b border-gray-100 progress-bar-kyc" style="margin-top: 120px;">
+                <div class="container">
+                    {# Bandeau d'information uniquement quand l'utilisateur est en mode édition KYC #}
+                    {% if app.session.get('kyc_edit_mode') %}
+                        <div class="mb-3 text-xs sm:text-sm rounded-lg p-3 sm:p-4 bg-yellow-50 border border-yellow-200 text-yellow-800 flex items-start gap-2">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M4.93 4.93a10 10 0 1114.14 14.14A10 10 0 014.93 4.93z"/>
+                            </svg>
+                            <div>
+                                <strong>Édition KYC:</strong> vous mettez à jour vos informations et documents. Votre nom et votre prénom restent non modifiables.
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="h-2 rounded-full overflow-hidden" style="background-color: #e5e7eb;">
+                        <div class="h-2" style="width: {{ percent }}%; background-color: #185abd;"></div>
+                    </div>
+                    <ul class="flex justify-between text-xs sm:text-sm mt-2" id="kyc-steps-navigation">
+                        {% for name in steplist %}
+                            {% set stepNumber = loop.index %}
+                            {% set stepData = accessibleSteps[stepNumber] is defined ? accessibleSteps[stepNumber] : null %}
+                            <li class="step-item cursor-pointer transition-all duration-200 hover:scale-105
+                                {% if stepData and stepData.current %}font-bold text-[#185abd] bg-blue-50 px-2 py-1 rounded{% endif %}
+                                {% if stepData and stepData.completed %}text-green-600{% endif %}
+                                {% if stepData and not stepData.accessible %}text-gray-400 cursor-not-allowed opacity-50{% endif %}"
+                                 data-step="{{ stepNumber }}"
+                                 data-accessible="{{ stepData and stepData.accessible ? 'true' : 'false' }}"
+                                 data-url="{{ stepData and stepData.accessible ? stepData.url : '' }}"
+                                 data-current="{{ stepData and stepData.current ? 'true' : 'false' }}">
+                                {{ stepNumber }}. {{ name }}
+                                {% if stepData and stepData.completed %}
+                                    <svg class="w-4 h-4 inline ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    {% endblock %}
+{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+    <script>
+        (function(){
+            function initDatepickers(root){
+                var inputs = (root || document).querySelectorAll('input.date-mask');
+                inputs.forEach(function(input){
+                    if (input.dataset.fpApplied) return;
+                    input.dataset.fpApplied = '1';
+                    if (!window.flatpickr) return;
+                    flatpickr(input, {
+                        dateFormat: 'd/m/Y',
+                        altInput: true,
+                        altFormat: 'd/m/Y',
+                        allowInput: true,
+                        locale: 'fr',
+                        minDate: 'today',
+                        disableMobile: true
+                    });
+                });
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function(){ initDatepickers(); });
+            } else { initDatepickers(); }
+            var obs = new MutationObserver(function(muts){
+                muts.forEach(function(m){
+                    if (!m.addedNodes) return;
+                    m.addedNodes.forEach(function(n){
+                        if (n.nodeType === 1) { initDatepickers(n); }
+                    });
+                });
+            });
+            obs.observe(document.body, {childList:true, subtree:true});
+        })();
+    </script>
+    <script>
+        // Force activer les boutons "Suivant" des étapes KYC pour éviter les blocages UI
+        (function(){
+            function enableNextButtons(){
+                document.querySelectorAll('button[data-enable-if]').forEach(function(btn){
+                    btn.disabled = false;
+                    btn.removeAttribute('data-enable-if');
+                });
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', enableNextButtons);
+            } else { enableNextButtons(); }
+            // Observer pour toute réinjection de bouton
+            var obs = new MutationObserver(enableNextButtons);
+            obs.observe(document.body, {childList:true, subtree:true});
+        })();
+    </script>
+{% endblock %}

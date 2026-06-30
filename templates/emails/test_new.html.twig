@@ -1,0 +1,46 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Test du nouveau template email' %}
+
+{% block content %}
+    <h1>🎨 Template d'email ADN Family Office</h1>
+    
+    <p>Bonjour,</p>
+    
+    <p>Ceci est un email de test pour vérifier le bon affichage de nos nouveaux templates d'emails simples et élégants.</p>
+    
+    <div class="info-box">
+        <p><strong>✨ Nouveaux templates</strong></p>
+        <p>Design moderne, responsive et professionnel avec le logo ADN.</p>
+    </div>
+    
+    <h2>Exemples de contenu</h2>
+    
+    <p>Voici un exemple de paragraphe avec du texte normal. Le design est simple, épuré et met l'accent sur la lisibilité.</p>
+    
+    <div class="button-container">
+        <a href="{{ url('app_home') }}" class="button">Exemple de bouton</a>
+    </div>
+    
+    <div class="warning-box">
+        <p><strong>⚠️ Attention</strong></p>
+        <p>Exemple d'une boîte d'avertissement pour les informations importantes.</p>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p style="font-size: 14px; color: #64748b;">
+        Exemple de texte en plus petit pour les notes ou informations secondaires.
+    </p>
+    
+    <ul style="margin: 20px 0; padding-left: 20px; color: #475569;">
+        <li style="margin-bottom: 10px;">Premier élément de liste</li>
+        <li style="margin-bottom: 10px;">Deuxième élément de liste</li>
+        <li style="margin-bottom: 10px;">Troisième élément de liste</li>
+    </ul>
+    
+    <p style="text-align: center; margin-top: 30px; font-weight: 600; color: #1C29A1;">
+        ADN Family Office - Excellence patrimoniale accessible à tous
+    </p>
+{% endblock %}
+

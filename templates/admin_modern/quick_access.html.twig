@@ -1,0 +1,91 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block content %}
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">Accès rapides</h1>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .option {
+            padding: 2rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: #374151;
+            transition: all 0.2s;
+        }
+        .option:hover {
+            border-color: #6366f1;
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
+        .option-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .option-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .option-desc {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        .modern {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        .modern:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+        .modern .option-desc {
+            color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+    </style>
+        <div class="options">
+            <a href="{{ path('admin_modern_dashboard') }}" class="option modern">
+                <div class="option-icon">👑</div>
+                <div class="option-title">Back-office Moderne</div>
+                <div class="option-desc">Interface moderne, responsive et performante</div>
+            </a>
+            
+            <a href="/admin" class="option">
+                <div class="option-icon">⚙️</div>
+                <div class="option-title">EasyAdmin (Ancien)</div>
+                <div class="option-desc">Interface d'administration classique</div>
+            </a>
+        </div>
+        <div style="text-align: center; color: #6b7280; font-size: 0.9rem;">
+            <p>Recommandé : Utilisez le <strong>Back-office Moderne</strong> pour une meilleure expérience</p>
+        </div>
+    </div>
+{% endblock %}
+

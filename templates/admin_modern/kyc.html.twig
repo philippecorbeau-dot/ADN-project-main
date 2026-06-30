@@ -1,0 +1,470 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Gestion KYC - Back-office ADN{% endblock %}
+{% block page_title %}🆔 Gestion des Documents KYC{% endblock %}
+
+{% block content %}
+<div x-data="kycManagement()">
+    <!-- Header avec actions rapides -->
+    <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 mb-4 sm:mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0">
+            <div class="flex-1 min-w-0">
+                <h2 class="text-base sm:text-lg font-semibold text-gray-900">Documents KYC à traiter</h2>
+                <p class="text-xs sm:text-sm text-gray-500">Validez ou refusez les documents soumis par les utilisateurs</p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+                <!-- Filters -->
+                <select x-model="selectedStatus" class="block w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="">Tous les statuts</option>
+                    <option value="PENDING">En attente</option>
+                    <option value="VALIDATION_ASKED">Validation ADN</option>
+                    <option value="VALIDATED">Validé</option>
+                    <option value="REFUSED">Refusé</option>
+                    <option value="OUTDATED">Expiré</option>
+                </select>
+                
+                <select x-model="selectedType" class="block w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="">Tous les types</option>
+                    <option value="identity">Carte d'identité</option>
+                    <option value="address">Justificatif domicile</option>
+                    <option value="ADDRESS_PROOF">Justificatif adresse (validation)</option>
+                    <option value="identity_proof">Carte d'identité (ancienne)</option>
+                    <option value="address_proof">Justificatif domicile (ancienne)</option>
+                    <option value="registration_proof">KBIS</option>
+                    <option value="articles_of_association">Statuts</option>
+                    <option value="shareholder_declaration">Déclaration UBO</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-4 mb-4 sm:mb-6">
+        {% set statusCounts = {
+            'PENDING': 0,
+            'VALIDATION_ASKED': 0, 
+            'VALIDATED': 0,
+            'REFUSED': 0,
+            'OUTDATED': 0
+        } %}
+        
+        {% for doc in documents %}
+            {% set statusCounts = statusCounts|merge({(doc.status): (statusCounts[doc.status] ?? 0) + 1}) %}
+        {% endfor %}
+        
+        <div class="bg-white rounded-lg p-3 sm:p-4 border border-gray-100 text-center">
+            <p class="text-xl sm:text-2xl font-bold text-yellow-600">{{ statusCounts.PENDING }}</p>
+            <p class="text-xs sm:text-sm text-gray-600">En attente</p>
+        </div>
+        <div class="bg-white rounded-lg p-3 sm:p-4 border border-gray-100 text-center">
+            <p class="text-xl sm:text-2xl font-bold text-blue-600">{{ statusCounts.VALIDATION_ASKED }}</p>
+            <p class="text-xs sm:text-sm text-gray-600">Validation ADN</p>
+        </div>
+        <div class="bg-white rounded-lg p-3 sm:p-4 border border-gray-100 text-center">
+            <p class="text-xl sm:text-2xl font-bold text-green-600">{{ statusCounts.VALIDATED }}</p>
+            <p class="text-xs sm:text-sm text-gray-600">Validés</p>
+        </div>
+        <div class="bg-white rounded-lg p-3 sm:p-4 border border-gray-100 text-center">
+            <p class="text-xl sm:text-2xl font-bold text-red-600">{{ statusCounts.REFUSED }}</p>
+            <p class="text-xs sm:text-sm text-gray-600">Refusés</p>
+        </div>
+        <div class="bg-white rounded-lg p-3 sm:p-4 border border-gray-100 text-center col-span-2 sm:col-span-1">
+            <p class="text-xl sm:text-2xl font-bold text-gray-600">{{ statusCounts.OUTDATED }}</p>
+            <p class="text-xs sm:text-sm text-gray-600">Expirés</p>
+        </div>
+    </div>
+
+    <!-- Filter Results Info -->
+    <div class="mb-4 flex items-center justify-between" x-data="{get visibleCount() { 
+        return Array.from(document.querySelectorAll('.document-item')).filter(el => 
+            el.style.display !== 'none' && !el.hasAttribute('hidden')
+        ).length; 
+    }}">
+        <div class="text-sm text-gray-600">
+            <span x-text="visibleCount"></span> document(s) affiché(s)
+            <span x-show="selectedStatus || selectedType" class="text-indigo-600">
+                (filtré)
+            </span>
+        </div>
+        <div x-show="selectedStatus || selectedType" class="text-sm">
+            <button @click="selectedStatus = ''; selectedType = ''" 
+                    class="text-indigo-600 hover:text-indigo-800 underline">
+                Réinitialiser les filtres
+            </button>
+        </div>
+    </div>
+
+    <!-- Documents List -->
+    <div class="space-y-3 sm:space-y-4">
+        {% for document in documents %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover-lift document-item"
+             x-show='matchesFilter({{ {
+                status: document.status,
+                type: document.type
+             }|json_encode }})'>
+            
+            <div class="p-4 sm:p-6">
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                    <!-- Document Info -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-2 mb-3">
+                            <!-- Status Badge -->
+                            <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium
+                                {% if document.status == 'PENDING' %}bg-yellow-100 text-yellow-800
+                                {% elseif document.status == 'VALIDATION_ASKED' %}bg-blue-100 text-blue-800
+                                {% elseif document.status == 'VALIDATED' %}bg-green-100 text-green-800
+                                {% elseif document.status == 'REFUSED' %}bg-red-100 text-red-800
+                                {% elseif document.status == 'OUTDATED' %}bg-gray-100 text-gray-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {% if document.status == 'PENDING' %}⏳ En attente
+                                {% elseif document.status == 'VALIDATION_ASKED' %}🔍 Validation ADN
+                                {% elseif document.status == 'VALIDATED' %}✅ Validé
+                                {% elseif document.status == 'REFUSED' %}❌ Refusé
+                                {% elseif document.status == 'OUTDATED' %}⏰ Expiré
+                                {% else %}{{ document.status }}{% endif %}
+                            </span>
+                            
+                            <!-- Document Type -->
+                            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
+                                {% if document.type == 'identity' or document.type == 'identity_proof' %}🆔 Carte d'identité
+                                {% elseif document.type == 'address' or document.type == 'address_proof' or document.type == 'ADDRESS_PROOF' %}🏠 Justificatif domicile
+                                {% elseif document.type == 'registration_proof' %}🏢 KBIS
+                                {% elseif document.type == 'articles_of_association' %}📄 Statuts
+                                {% elseif document.type == 'shareholder_declaration' %}👥 Déclaration UBO
+                                {% else %}📄 {{ document.type }}{% endif %}
+                            </span>
+                        </div>
+                        
+                        <!-- User Info -->
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="text-white font-medium text-sm">{{ document.user.email|slice(0, 1)|upper }}</span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h3 class="text-base sm:text-lg font-semibold text-gray-900 truncate">
+                                    {% if document.user.firstName and document.user.lastName %}
+                                        {{ document.user.firstName }} {{ document.user.lastName }}
+                                    {% else %}
+                                        Profil incomplet
+                                    {% endif %}
+                                </h3>
+                                <p class="text-xs sm:text-sm text-gray-500 truncate">{{ document.user.email }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Document Details -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm">
+                            <div>
+                                <span class="text-gray-500 block mb-1">Fichier:</span>
+                                <p class="font-medium truncate">{{ document.filename ?? 'Non spécifié' }}</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block mb-1">Uploadé le:</span>
+                                <p class="font-medium">{{ document.uploadedAt ? document.uploadedAt|date('d/m/Y H:i') : 'N/A' }}</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block mb-1">Expiration:</span>
+                                <p class="font-medium">{{ document.expirationDate ? document.expirationDate|date('d/m/Y') : '—' }}</p>
+                            </div>
+                            <div>
+                                <span class="text-gray-500 block mb-1">Modifié le:</span>
+                                <p class="font-medium">{{ document.updatedAt|date('d/m/Y H:i') }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Refusal Reason -->
+                        {% if document.status == 'REFUSED' and document.refusedReasonMessage %}
+                        <div class="mt-3 p-3 bg-red-50 rounded-lg">
+                            <p class="text-xs sm:text-sm text-red-800">
+                                <strong>Raison du refus:</strong> {{ document.refusedReasonMessage }}
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="flex flex-row lg:flex-col gap-2 lg:ml-6 lg:space-y-2 lg:space-y-0">
+                        {% if document.status in ['PENDING', 'VALIDATION_ASKED'] %}
+                        <button @click="validateDocument({{ document.id }})" 
+                                class="flex-1 lg:flex-none inline-flex items-center justify-center px-3 sm:px-4 py-2 border border-transparent rounded-md shadow-sm text-xs sm:text-sm font-medium text-white bg-green-600 hover:bg-green-700 transition-colors">
+                            <svg class="w-4 h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="hidden sm:inline">Valider</span>
+                            <span class="sm:hidden">✓</span>
+                        </button>
+                        <button @click="openRefusalModal({{ document.id }})" 
+                                class="flex-1 lg:flex-none inline-flex items-center justify-center px-3 sm:px-4 py-2 border border-gray-300 rounded-md shadow-sm text-xs sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                            <svg class="w-4 h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            <span class="hidden sm:inline">Refuser</span>
+                            <span class="sm:hidden">✗</span>
+                        </button>
+                        {% endif %}
+                        
+                        <a href="{{ path('admin_modern_kyc_document_view', {id: document.id}) }}" 
+                           target="_blank"
+                           class="flex-1 lg:flex-none inline-flex items-center justify-center px-3 sm:px-4 py-2 border border-gray-300 rounded-md shadow-sm text-xs sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                            <svg class="w-4 h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <span class="hidden sm:inline">Voir fichier</span>
+                            <span class="sm:hidden">Voir</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Empty State -->
+    {% if documents is empty %}
+    <div class="text-center py-12">
+        <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">Aucun document trouvé</h3>
+        <p class="mt-2 text-gray-500">Aucun document KYC n'a été soumis pour le moment.</p>
+    </div>
+    {% endif %}
+
+    <!-- Refusal Modal -->
+    <div x-show="showRefusalModal" 
+         x-cloak
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;"
+         @click.self="showRefusalModal = false; document.body.classList.remove('modal-open')"
+         @keydown.escape.window="showRefusalModal = false; document.body.classList.remove('modal-open')">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;" @click="showRefusalModal = false"></div>
+        
+        <!-- Modal Container - Centré verticalement et horizontalement -->
+        <div class="flex items-center justify-center min-h-screen px-3 sm:px-4 py-4 sm:py-8" style="min-height: 100vh; position: relative; z-index: 1;">
+            <!-- Modal Content -->
+            <div class="relative w-full max-w-lg bg-white rounded-xl sm:rounded-2xl shadow-2xl transform transition-all overflow-hidden max-h-[85vh] sm:max-h-[90vh] flex flex-col mx-auto"
+                 style="margin: auto;"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+                <!-- Header -->
+                <div class="bg-gradient-to-r from-red-50 to-orange-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-red-100 flex-shrink-0">
+                    <div class="flex items-start gap-3">
+                        <div class="flex-shrink-0 flex items-center justify-center h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-red-100">
+                            <svg class="h-5 w-5 sm:h-6 sm:w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0 pr-1">
+                            <h3 class="text-base sm:text-lg font-semibold text-gray-900 leading-tight">Refuser le document</h3>
+                            <p class="text-xs sm:text-sm text-gray-600 mt-0.5">Veuillez sélectionner la raison du refus</p>
+                        </div>
+                        <button @click="showRefusalModal = false; document.body.classList.remove('modal-open')" 
+                                class="flex-shrink-0 p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-white transition-colors -mt-0.5 -mr-0.5">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Body - Scrollable -->
+                <div class="px-4 sm:px-6 py-4 sm:py-6 overflow-y-auto flex-1 min-h-0">
+                    <label class="block text-sm font-medium text-gray-700 mb-2.5">
+                        Raison du refus
+                    </label>
+                    <select x-model="refusalReason" 
+                            class="block w-full px-3 sm:px-4 py-3 sm:py-3.5 border-2 border-gray-300 rounded-lg shadow-sm text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white appearance-none">
+                        <option value="">Sélectionnez une raison</option>
+                        <option value="unreadable">Le document n'est pas lisible</option>
+                        <option value="not_accepted">Le type de document n'est pas accepté</option>
+                        <option value="has_expired">Le document est expiré</option>
+                        <option value="incomplete">Document incomplet</option>
+                        <option value="missing">Document manquant</option>
+                        <option value="do_not_match_user_data">Le document ne correspond pas aux informations personnelles</option>
+                        <option value="do_not_match_account_data">Le document ne correspond pas aux informations du compte</option>
+                        <option value="underage">Vous êtes mineur(e)</option>
+                        <option value="specific_case">Cas spécifique indéterminé</option>
+                    </select>
+                    <p class="mt-2.5 text-xs text-gray-500 leading-relaxed">
+                        Cette action est irréversible. Le client sera notifié par email.
+                    </p>
+                </div>
+                
+                <!-- Footer - Fixed at bottom -->
+                <div class="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 border-t border-gray-200 flex-shrink-0">
+                    <button @click="showRefusalModal = false; document.body.classList.remove('modal-open')" 
+                            class="w-full sm:w-auto order-2 sm:order-1 inline-flex items-center justify-center px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg border border-gray-300 shadow-sm text-sm sm:text-base font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                        Annuler
+                    </button>
+                    <button @click="refuseDocument()" 
+                            :disabled="!refusalReason"
+                            class="w-full sm:w-auto order-1 sm:order-2 inline-flex items-center justify-center px-4 sm:px-5 py-2.5 sm:py-3 rounded-lg border border-transparent shadow-sm text-sm sm:text-base font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        <span class="hidden sm:inline">Refuser le document</span>
+                        <span class="sm:hidden">Refuser</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        [x-cloak] { display: none !important; }
+        @media (max-width: 640px) {
+            /* Empêcher le scroll du body quand la modal est ouverte */
+            body.modal-open {
+                overflow: hidden;
+                position: fixed;
+                width: 100%;
+            }
+        }
+    </style>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+function kycManagement() {
+    return {
+        selectedStatus: '',
+        selectedType: '',
+        showRefusalModal: false,
+        refusalReason: '',
+        currentDocumentId: null,
+        
+        matchesFilter(document) {
+            // Filtre par statut
+            if (this.selectedStatus && document.status !== this.selectedStatus) {
+                return false;
+            }
+            
+            // Filtre par type avec gestion des variations
+            if (this.selectedType) {
+                let matches = false;
+                
+                // Correspondances exactes
+                if (document.type === this.selectedType) {
+                    matches = true;
+                }
+                // Correspondances pour types similaires
+                else if (this.selectedType === 'identity' && 
+                         (document.type === 'identity_proof' || document.type === 'identity')) {
+                    matches = true;
+                }
+                else if (this.selectedType === 'address' && 
+                         (document.type === 'address_proof' || document.type === 'address' || document.type === 'ADDRESS_PROOF')) {
+                    matches = true;
+                }
+                else if (this.selectedType === 'ADDRESS_PROOF' && 
+                         (document.type === 'address_proof' || document.type === 'address' || document.type === 'ADDRESS_PROOF')) {
+                    matches = true;
+                }
+                
+                if (!matches) {
+                    return false;
+                }
+            }
+            
+            return true;
+        },
+        
+        validateDocument(documentId) {
+            if (confirm('Êtes-vous sûr de vouloir valider ce document ?')) {
+                fetch(`{{ path('admin_modern_kyc_document_validate', {id: 'DOCUMENT_ID'}) }}`.replace('DOCUMENT_ID', documentId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Décrémenter le badge KYC dans la sidebar
+                        this.updateKycBadge(-1);
+                        location.reload();
+                    } else {
+                        alert('Erreur lors de la validation du document');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors de la validation du document');
+                });
+            }
+        },
+        
+        openRefusalModal(documentId) {
+            this.currentDocumentId = documentId;
+            this.refusalReason = '';
+            this.showRefusalModal = true;
+            // Empêcher le scroll du body sur mobile
+            if (window.innerWidth < 640) {
+                document.body.classList.add('modal-open');
+            }
+        },
+        
+        refuseDocument() {
+            if (!this.refusalReason) return;
+            
+            const formData = new FormData();
+            formData.append('refusal_reason', this.refusalReason);
+            
+            fetch(`{{ path('admin_modern_kyc_document_refuse', {id: 'DOCUMENT_ID'}) }}`.replace('DOCUMENT_ID', this.currentDocumentId), {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Décrémenter le badge KYC dans la sidebar
+                    this.updateKycBadge(-1);
+                    this.showRefusalModal = false;
+                    // Réactiver le scroll du body
+                    document.body.classList.remove('modal-open');
+                    location.reload();
+                } else {
+                    alert('Erreur lors du refus du document');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors du refus du document');
+            });
+        },
+        
+        updateKycBadge(delta) {
+            const badge = document.getElementById('kyc-pending-badge');
+            if (badge) {
+                const currentCount = parseInt(badge.textContent) || 0;
+                const newCount = Math.max(0, currentCount + delta);
+                
+                if (newCount === 0) {
+                    badge.style.display = 'none';
+                } else {
+                    badge.textContent = newCount;
+                    badge.style.display = 'flex';
+                }
+            }
+        }
+    }
+}
+</script>
+{% endblock %}
+

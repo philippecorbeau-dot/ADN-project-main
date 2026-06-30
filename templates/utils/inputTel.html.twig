@@ -1,0 +1,36 @@
+{# Initialisation simple d'un champ téléphone avec intl-tel-input #}
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+<script>
+    (function() {
+        function initIntlTelInputs(context) {
+            var root = context || document;
+            var inputs = root.querySelectorAll('input[type="tel"], input[data-tel]');
+            if (!inputs || inputs.length === 0) return;
+
+            inputs.forEach(function(input){
+                if (input.dataset.itiInitialized === '1') return;
+                try {
+                    window.intlTelInput(input, {
+                        initialCountry: 'fr',
+                        preferredCountries: ['fr', 'be', 'ch', 'de', 'es', 'it'],
+                        separateDialCode: true,
+                        utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js'
+                    });
+                    input.dataset.itiInitialized = '1';
+                } catch (e) {
+                    // fail silently pour ne pas bloquer le parcours
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function(){ initIntlTelInputs(); });
+        } else {
+            initIntlTelInputs();
+        }
+
+        // Expose pour initialiser dynamiquement si besoin
+        window.initIntlTelInputs = initIntlTelInputs;
+    })();
+</script>
+

@@ -1,0 +1,34 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Votre demande de contact' %}
+
+{% block content %}
+    <h1>Nous avons bien reçu votre demande</h1>
+    
+    <p>Bonjour {% if name is defined %}{{ name }}{% endif %},</p>
+    
+    <p>Merci de nous avoir contactés. Votre message a bien été transmis à notre équipe.</p>
+    
+    <div class="info-box">
+        <p><strong>📨 Votre message :</strong></p>
+        <p style="font-style: italic; color: #475569; margin-top: 10px;">{{ message }}</p>
+    </div>
+    
+    <p>Un de nos conseillers vous répondra dans les plus brefs délais, généralement sous 24 heures ouvrées.</p>
+    
+    <div class="divider"></div>
+    
+    <h2>En attendant...</h2>
+    
+    <p>Découvrez nos ressources et guides disponibles sur votre espace client :</p>
+    
+    <div class="button-container">
+        <a href="{{ url('app_home') }}" class="button">Découvrir nos services</a>
+    </div>
+    
+    <p style="margin-top: 30px; font-size: 14px; color: #64748b;">
+        Besoin d'une réponse urgente ?<br>
+        Contactez-nous directement au <strong style="color: #1C29A1;">01 XX XX XX XX</strong>
+    </p>
+{% endblock %}
+

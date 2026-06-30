@@ -1,0 +1,51 @@
+{% extends "front/layouts/modal.layout.html.twig" %}
+
+{% block modalId %}aware{% endblock %}
+{% block modalWidth %}{% endblock %}
+{% block modalImg %}<img src="{{ asset('images/bg-modal-3.png') }}" alt="" loading="lazy"/>{% endblock %}
+{% block title %}
+    <span>
+        {% trans %}Je souhaite être qualifié d’investisseur averti{% endtrans %}
+    </span>
+{% endblock %}
+{% block description %}{% trans %}Pour vérifier ce statut, veuillez cocher les mentions suivantes :{% endtrans %}{% endblock %}
+
+{% block modalBody %}
+    <div data-show-if="input.name={{ form.mif.vars.full_name }}=1">
+        {{ form_row(form.attestMif, {'attr': {'data-disable-if': 'input.name=' ~ form.mif.vars.full_name ~ '=0' }}) }}
+    </div>
+
+    <fieldset name="globalAttest" data-disable-if="fieldset.name=awareness<1&&input.name={{ form.mif.vars.full_name }}=0">
+        <fieldset {% if form.mif is defined %}disabled data-show-if="fieldset.name=awareness>=1&&input.name={{ form.mif.vars.full_name }}={{ form.mif[1].vars.value }}" data-enable-if="fieldset.name=awareness>=1&&input.name={{ form.mif.vars.full_name }}={{ form.mif[1].vars.value }}"{% endif%}>
+            {% if form.awarenessTurnover is defined %}
+            <div data-show-if="input.name={{ form.awarenessTurnover.vars.full_name }}=1">
+                {{ form_row(form.attestTurnover, {'attr': {'data-disable-if': 'input.name=' ~ form.awarenessTurnover.vars.full_name ~ '=0' }}) }}
+            </div>
+            {% endif %}
+            {% if form.awarenessBalanceSheet is defined %}
+            <div data-show-if="input.name={{ form.awarenessBalanceSheet.vars.full_name }}=1">
+                {{ form_row(form.attestBalanceSheet, {'attr': {'data-disable-if': 'input.name=' ~ form.awarenessBalanceSheet.vars.full_name ~ '=0' }}) }}
+            </div>
+            {% endif %}
+            {% if form.awarenessEquity is defined %}
+            <div data-show-if="input.name={{ form.awarenessEquity.vars.full_name }}=1">
+                {{ form_row(form.attestEquity, {'attr': {'data-disable-if': 'input.name=' ~ form.awarenessEquity.vars.full_name ~ '=0' }}) }}
+            </div>
+            {% endif %}
+        </fieldset>
+    </fieldset>
+
+    <fieldset name="attest" class="mb-8" disabled data-enable-if="fieldset.name=awareness>=1||input.name={{ form.mif.vars.full_name }}=1">
+        {{ form_row(form.attestAware) }}
+        {{ form_row(form.attestTruth) }}
+    </fieldset>
+
+    <div>
+        <button disabled data-enable-if="form.name={{ form.vars.full_name }}=isValid" type="submit" class="btn btn-secondary btn-w-ico w-full sm:w-auto justify-center">
+            {% trans %}Valider{% endtrans %}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+            </svg>
+        </button>
+    </div>
+{% endblock %}

@@ -1,0 +1,199 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+
+{% block body %} 
+    <div class="container pb-10 mt-24 md:mt-0">
+        <div class="rounded-xl bg-white p-6 sm:p-10 shadow-md transition-opacity transition-transform">
+            <!-- Header moderne avec icône et sous-titre -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-teal-600 to-cyan-600 rounded-full mb-4">
+                    <i class="fa-solid fa-lightbulb text-white text-2xl"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                    {% trans %}Votre parcours d'investisseur{% endtrans %}
+                </h1>
+                <p class="text-lg text-gray-600">
+                    {% trans %}Découvrons ensemble votre profil d'investisseur{% endtrans %}
+                </p>
+            </div>
+            
+            {{ form_start(form, {'attr': {'id': 'form-step4'}}) }}
+                
+                <!-- Section Expérience Immobilière -->
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-4">
+                        <i class="fa-solid fa-home text-blue-600 mr-2"></i>
+                        {{ form.alreadyInvest.vars.label }}
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            {{ form_widget(form.alreadyInvest[0], {'attr' : {'class' : 'hidden peer', 'data-toggle-section': 'invest-types'}}) }}
+                            <label for="{{ form.alreadyInvest[0].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-blue-500 hover:bg-blue-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:ring-4 peer-checked:ring-blue-100">
+                                <i class="fa-solid fa-check-circle text-blue-600 mr-3 text-lg"></i>
+                                <span class="font-semibold text-base">{{ form.alreadyInvest[0].vars.label }}</span>
+                            </label>
+                        </div>
+                        <div>
+                            {{ form_widget(form.alreadyInvest[1], {'attr' : {'class' : 'hidden peer', 'data-toggle-section': 'invest-types'}}) }}
+                            <label for="{{ form.alreadyInvest[1].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-gray-500 hover:bg-gray-50 peer-checked:border-gray-500 peer-checked:bg-gray-50 peer-checked:ring-4 peer-checked:ring-gray-100">
+                                <i class="fa-solid fa-times-circle text-gray-600 mr-3 text-lg"></i>
+                                <span class="font-semibold text-base">{{ form.alreadyInvest[1].vars.label }}</span>
+                            </label>
+                        </div>
+                    </div>
+                    {{ form_errors(form.alreadyInvest) }}
+                </div>
+
+                <!-- Types d'investissement immobilier -->
+                <div id="invest-types" class="mb-10 hidden opacity-0 transform translate-y-4 transition-all duration-300">
+                    <label class="block text-base font-semibold mb-4">
+                        <i class="fa-solid fa-chart-line text-green-600 mr-2"></i>
+                        {{ form.investType.vars.label }}
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for value in form.investType %}
+                            <div>
+                                {{ form_widget(value, {'attr' : {'class' : 'hidden peer'}}) }}
+                                <label for="{{ value.vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-green-500 hover:bg-green-50 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:ring-4 peer-checked:ring-green-100">
+                                    <i class="fa-solid fa-check text-green-600 mr-3 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    <span class="font-medium text-base">{{ value.vars.label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.investType) }}
+                </div>
+
+                <!-- Section Instruments Financiers -->
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-4">
+                        <i class="fa-solid fa-chart-bar text-purple-600 mr-2"></i>
+                        {{ form.securities.vars.label }}
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            {{ form_widget(form.securities[0], {'attr' : {'class' : 'hidden peer', 'data-toggle-section': 'securities-options'}}) }}
+                            <label for="{{ form.securities[0].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-purple-500 hover:bg-purple-50 peer-checked:border-purple-500 peer-checked:bg-purple-50 peer-checked:ring-4 peer-checked:ring-purple-100">
+                                <i class="fa-solid fa-check-circle text-purple-600 mr-3 text-lg"></i>
+                                <span class="font-semibold text-base">{{ form.securities[0].vars.label }}</span>
+                            </label>
+                        </div>
+                        <div>
+                            {{ form_widget(form.securities[1], {'attr' : {'class' : 'hidden peer', 'data-toggle-section': 'securities-options'}}) }}
+                            <label for="{{ form.securities[1].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-gray-500 hover:bg-gray-50 peer-checked:border-gray-500 peer-checked:bg-gray-50 peer-checked:ring-4 peer-checked:ring-gray-100">
+                                <i class="fa-solid fa-times-circle text-gray-600 mr-3 text-lg"></i>
+                                <span class="font-semibold text-base">{{ form.securities[1].vars.label }}</span>
+                            </label>
+                        </div>
+                    </div>
+                    {{ form_errors(form.securities) }}
+                </div>
+
+                <!-- Types d'instruments financiers -->
+                <div id="securities-options" class="mb-10 hidden opacity-0 transform translate-y-4 transition-all duration-300">
+                    <label class="block text-base font-semibold mb-4">
+                        <i class="fa-solid fa-list text-orange-600 mr-2"></i>
+                        {{ form.securitiesOptions.vars.label }}
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for value in form.securitiesOptions %}
+                            <div>
+                                {{ form_widget(value, {'attr' : {'class' : 'hidden peer'}}) }}
+                                <label for="{{ value.vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-orange-500 hover:bg-orange-50 peer-checked:border-orange-500 peer-checked:bg-orange-50 peer-checked:ring-4 peer-checked:ring-orange-100">
+                                    <i class="fa-solid fa-check text-orange-600 mr-3 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    <span class="font-medium text-base">{{ value.vars.label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.securitiesOptions) }}
+                </div>
+
+                <!-- Nombre d'opérations -->
+                <div id="securities-count" class="mb-10 hidden opacity-0 transform translate-y-4 transition-all duration-300">
+                    <label class="block text-base font-semibold mb-4">
+                        <i class="fa-solid fa-calculator text-red-600 mr-2"></i>
+                        {{ form.securitiesOptionsCount.vars.label }}
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {% for value in form.securitiesOptionsCount %}
+                            <div>
+                                {{ form_widget(value, {'attr' : {'class' : 'hidden peer'}}) }}
+                                <label for="{{ value.vars.id }}" class="flex items-center justify-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-red-500 hover:bg-red-50 peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:ring-4 peer-checked:ring-red-100">
+                                    <i class="fa-solid fa-check text-red-600 mr-3 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    <span class="font-medium text-base">{{ value.vars.label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.securitiesOptionsCount) }}
+                </div>
+
+                {# Section financeWorker retirée pour les non-professionnels #}
+
+                {# Bloc critères MIF2 retiré pour les non-professionnels #}
+
+                <div class="flex">
+                    <a class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44" href="{{ path('user_create_profile', {'step' : 4 }) }}">
+                        {% trans %}Précédent{% endtrans %}
+                    </a>
+                    <button id="btn-next" type="submit" class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44 ml-auto">
+                        {% trans %}Suivant{% endtrans %}
+                    </button>
+                </div>
+            {{ form_row(form._token) }}
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion de l'affichage conditionnel des sections
+            function toggleSection(radioButton, sectionId) {
+                const section = document.getElementById(sectionId);
+                if (!section) return;
+
+                if (radioButton.checked && radioButton.value === '1') { // "Oui"
+                    section.classList.remove('hidden');
+                    setTimeout(() => {
+                        section.classList.remove('opacity-0', 'translate-y-4');
+                    }, 10);
+                } else {
+                    section.classList.add('opacity-0', 'translate-y-4');
+                    setTimeout(() => {
+                        section.classList.add('hidden');
+                    }, 300);
+                }
+            }
+
+            // Écouteurs d'événements pour les radio buttons
+            const alreadyInvestRadios = document.querySelectorAll('input[name="step4_beginner[alreadyInvest]"]');
+            alreadyInvestRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    toggleSection(this, 'invest-types');
+                });
+            });
+
+            const securitiesRadios = document.querySelectorAll('input[name="step4_beginner[securities]"]');
+            securitiesRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    toggleSection(this, 'securities-options');
+                    toggleSection(this, 'securities-count');
+                });
+            });
+
+            // Initialisation : afficher les sections si déjà sélectionnées
+            alreadyInvestRadios.forEach(radio => {
+                if (radio.checked && radio.value === '1') {
+                    toggleSection(radio, 'invest-types');
+                }
+            });
+
+            securitiesRadios.forEach(radio => {
+                if (radio.checked && radio.value === '1') {
+                    toggleSection(radio, 'securities-options');
+                    toggleSection(radio, 'securities-count');
+                }
+            });
+        });
+    </script>
+{% endblock %}

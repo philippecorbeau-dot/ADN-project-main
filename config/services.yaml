@@ -1,0 +1,48 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    url_api_data_gouv: 'https://api-adresse.data.gouv.fr/search/'
+    app.twelvedata_api_key: '%env(TWELVEDATA_API_KEY)%'
+    app.timezone: 'Europe/Paris'
+    
+    # Configuration centralisée des emails
+    app.mail.sender_email: 'philippe.corbeau@adnfamilyoffice.fr'
+    app.mail.sender_name: 'ADN Family Office'
+    app.mail.admin_team_email: 'philippe.corbeau@adnfamilyoffice.fr'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    # O2S Integration Configuration
+    App\Integration\O2S\Config\O2SConfiguration:
+        arguments:
+            $clientId: '%env(O2S_CLIENT_ID)%'
+            $clientSecret: '%env(O2S_CLIENT_SECRET)%'
+            $username: '%env(O2S_USERNAME)%'
+            $password: '%env(O2S_PASSWORD)%'
+            $environment: '%env(string:O2S_ENVIRONMENT)%'
+
+    # O2SSyncService doit être public pour être récupéré via $container->get()
+    # dans le cron OVH cron/ovh/o2s_sync_all_comptes.php.
+    # Cette déclaration finale dans services.yaml override l'auto-discovery
+    # (App\: resource: '../src/') qui le rendait privé/inliné.
+    App\Integration\O2S\Sync\O2SSyncService:
+        public: true

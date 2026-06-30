@@ -1,0 +1,32 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Document expiré' %}
+
+{% block content %}
+    <h1>⏰ Votre document a expiré</h1>
+    
+    <p>Bonjour {{ user.firstname ?? 'Cher client' }},</p>
+    
+    <p>Nous vous informons que votre document <strong>{{ documentType }}</strong> est arrivé à expiration.</p>
+    
+    <div class="warning-box">
+        <p><strong>📅 Date d'expiration :</strong></p>
+        <p style="margin-top: 8px;">{{ expirationDate|date('d/m/Y') }}</p>
+    </div>
+    
+    <h2>Que faire maintenant ?</h2>
+    
+    <p>Pour maintenir votre dossier à jour et continuer à accéder à l'ensemble de nos services, veuillez nous transmettre un document valide.</p>
+    
+    <div class="button-container">
+        <a href="{{ url('user_documents') }}" class="button">Mettre à jour mon document</a>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p style="text-align: center; font-size: 14px; color: #64748b;">
+        Cette mise à jour est importante pour la conformité de votre dossier.<br>
+        Notre équipe reste à votre disposition pour toute question.
+    </p>
+{% endblock %}
+

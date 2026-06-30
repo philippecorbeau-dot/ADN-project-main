@@ -1,0 +1,314 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+
+{% block body %} 
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-50">
+    <div class="container min-h-[calc(100vh-72px)] pb-4 pt-4 flex">
+        <div class="w-full min-h-full bg-white/90 backdrop-blur-xl border border-gray-100 rounded-3xl shadow-xl p-8 md:p-12 relative overflow-hidden flex flex-col">
+            
+            <!-- En-tête modernisé -->
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    <span>Étape 1 sur 4</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 mb-4 leading-tight">
+                    {% trans %}Votre profil{% endtrans %}
+                </h1>
+                <p class="text-lg text-gray-600 font-medium max-w-2xl mx-auto leading-relaxed">
+                    Complétez vos informations professionnelles pour personnaliser votre expérience ADN Family Office
+                </p>
+            </div>
+            <form method="POST" name="step1_pro" data-address-generator onsubmit="return formatPhone(this)" class="flex-1 flex flex-col space-y-8">
+                <!-- Section Informations Entreprise -->
+                <div class="bg-white/60 backdrop-blur-sm border border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                    
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-14 h-14 bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center shadow-lg">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2m0 0h4m6 0v-3.5M9 21v-3.5"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-black text-gray-900 mb-1">🏢 Informations entreprise</h2>
+                            <p class="text-gray-600 font-medium">Renseignez les détails de votre société</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {{ form_row(form.companyName, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                        {{ form_row(form.phone, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        {{ form_row(form.addressLine1, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                        {{ form_row(form.addressLine2, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        {{ form_row(form.postalCode, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                        {{ form_row(form.city, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                    </div>
+                    
+                    <div class="mt-6">
+                        {{ form_row(form.country, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                    </div>
+                    
+                    <div class="mt-6">
+                        {{ form_row(form.socialObject, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium resize-none', 'rows': '4'}}) }}
+                    </div>
+                    
+                    <div class="mt-6 max-w-sm">
+                        {{ form_row(form.siren, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                    </div>
+                </div>
+
+                <!-- Section Représentant Légal -->
+                <div class="bg-gradient-to-br from-slate-50 to-gray-50 border border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-gray-400 to-gray-600"></div>
+                    
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-14 h-14 bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center shadow-lg">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-black text-gray-900 mb-1">👤 {% trans %}Représentant légal{% endtrans %}</h2>
+                            <p class="text-gray-600 font-medium">Informations du dirigeant principal</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {{ form_row(form.legalRepresentativeFirstname, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                        {{ form_row(form.legalRepresentativeLastname, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                        {{ form_row(form.legalRepresentativeNationality, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        {{ form_row(form.legalRepresentativeCountry, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                        {{ form_row(form.legalRepresentativeBirthday, {'attr': {'class': 'w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-gray-400 focus:ring-4 focus:ring-gray-400/10 transition-all duration-300 bg-white/80 backdrop-blur-sm hover:border-gray-300 font-medium'}}) }}
+                    </div>
+                </div>
+                <!-- Section Actionnaires -->
+                <div class="bg-gradient-to-br from-slate-50 to-gray-50 border border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+                    
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-14 h-14 bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center shadow-lg">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-black text-gray-900 mb-1">👥 {% trans %}Principaux actionnaires{% endtrans %}</h2>
+                            <p class="text-gray-600 font-medium">Ajoutez les actionnaires détenant plus de 25% des parts</p>
+                        </div>
+                    </div>
+                    
+                    {{ form_errors(form.shareholdersInformations) }}
+                    
+                    <div class="flex flex-wrap gap-4 mb-8">
+                        <button data-add-collection="#ubo-prototype" type="button" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/>
+                        </svg>
+                            <span>{% trans %}Ajouter un actionnaire{% endtrans %}</span>
+                    </button>
+                        <button disabled data-enable-if="collection.name=#ubo-prototype>=1" data-remove-collection="#ubo-prototype" type="button" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                        </svg>
+                            <span>{% trans %}Supprimer un actionnaire{% endtrans %}</span>
+                    </button>
+                    </div>
+                    
+                    <div id="ubo-prototype"
+                         class="append-shareholder grid grid-cols-1 lg:grid-cols-2 gap-6"
+                         data-prototype="{{ form_widget(form.shareholdersInformations.vars.prototype)|e('html_attr') }}"
+                         data-append-selector=".append-shareholder"
+                         data-widget-counter="{{ form.shareholdersInformations.children|length }}"
+                         data-widget-limit="4">
+                        {% for ubo in form.shareholdersInformations %}
+                            <div class="bg-white/80 backdrop-blur-sm border-2 border-dashed border-gray-300 rounded-2xl p-6 hover:border-gray-400 hover:bg-white/95 transition-all duration-300 hover:scale-105 hover:shadow-lg relative" data-shareholder="true">
+                                <div class="flex items-center gap-3 mb-4 pb-3 border-b border-gray-200">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-gray-500 to-gray-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                        #{{ loop.index }}
+                                    </div>
+                                    <h4 class="text-lg font-bold text-gray-900">Actionnaire {{ loop.index }}</h4>
+                                </div>
+                                {{ form_widget(ubo) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- Navigation modernisée -->
+                <div class="flex items-center justify-between mt-auto pt-8 p-6 bg-gradient-to-r from-slate-50 to-gray-50 border border-gray-200 rounded-2xl">
+                    <!-- Bouton Précédent à gauche -->
+                    <a href="{{ path('user_create_profile') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-all duration-300 hover:-translate-x-1 hover:shadow-lg group">
+                        <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
+                        </svg>
+                        <span>{% trans %}Précédent{% endtrans %}</span>
+                    </a>
+                    
+                    <!-- Bouton Suivant à droite -->
+                    <button disabled data-enable-if="form.name={{ form.vars.full_name }}=isValid&&collection.name=#ubo-prototype>=1" type="submit" class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none group">
+                        <span>{% trans %}Suivant{% endtrans %}</span>
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                        </svg>
+                    </button>
+                </div>
+                {{ form_widget(form._token) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{{ asset('assets/css/autocomplete.css') }}" media="print" onload="this.media='all'">
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/autocomplete.js') }}" defer></script>
+    {% include 'utils/inputTel.html.twig' %}
+    <script>
+        // Boutons d'ajout/suppression d'actionnaire (gestion CollectionType Symfony)
+        (function(){
+            function initCollections(context){
+                var root = context || document;
+                var addBtns = root.querySelectorAll('[data-add-collection]');
+                var removeBtns = root.querySelectorAll('[data-remove-collection]');
+
+                addBtns.forEach(function(btn){
+                    btn.addEventListener('click', function(){
+                        var targetSel = btn.getAttribute('data-add-collection');
+                        var container = document.querySelector(targetSel);
+                        if (!container) return;
+                        var counter = parseInt(container.getAttribute('data-widget-counter') || '0', 10);
+                        var limit = parseInt(container.getAttribute('data-widget-limit') || '100', 10);
+                        if (counter >= limit) return;
+                        var prototype = container.getAttribute('data-prototype') || '';
+                        var html = prototype.replace(/__name__/g, String(counter));
+                        var wrapper = document.createElement('div');
+                        wrapper.className = 'bg-white/80 backdrop-blur-sm border-2 border-dashed border-gray-300 rounded-2xl p-6 hover:border-gray-400 hover:bg-white/95 transition-all duration-300 hover:scale-105 hover:shadow-lg relative';
+                        wrapper.setAttribute('data-shareholder','true');
+                        
+                        // Ajouter l'en-tête de l'actionnaire
+                        var header = document.createElement('div');
+                        header.className = 'flex items-center gap-3 mb-4 pb-3 border-b border-gray-200';
+                        header.innerHTML = `
+                            <div class="w-8 h-8 bg-gradient-to-br from-gray-500 to-gray-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                #${counter + 1}
+                            </div>
+                            <h4 class="text-lg font-bold text-gray-900">Actionnaire ${counter + 1}</h4>
+                        `;
+                        
+                        // Créer un conteneur pour le contenu du formulaire
+                        var formContent = document.createElement('div');
+                        formContent.innerHTML = html;
+                        
+                        wrapper.appendChild(header);
+                        wrapper.appendChild(formContent);
+                        var appendInto = container.querySelector(container.getAttribute('data-append-selector')) || container;
+                        appendInto.appendChild(wrapper);
+                        container.setAttribute('data-widget-counter', String(counter + 1));
+
+                        if (window.autocompleteManager && typeof window.autocompleteManager.initAddressToCityAutocomplete === 'function') {
+                            window.autocompleteManager.initAddressToCityAutocomplete();
+                        }
+
+                        if (typeof window.validateAndToggleNext === 'function') window.validateAndToggleNext();
+                    });
+                });
+
+                removeBtns.forEach(function(btn){
+                    btn.addEventListener('click', function(){
+                        var targetSel = btn.getAttribute('data-remove-collection');
+                        var container = document.querySelector(targetSel);
+                        if (!container) return;
+                        var appendInto = container.querySelector(container.getAttribute('data-append-selector')) || container;
+                        var blocks = appendInto.children;
+                        if (blocks.length > 0) {
+                            appendInto.removeChild(blocks[blocks.length - 1]);
+                            var counter = Math.max(0, parseInt(container.getAttribute('data-widget-counter') || '1', 10) - 1);
+                            container.setAttribute('data-widget-counter', String(counter));
+                        }
+                        if (typeof window.validateAndToggleNext === 'function') window.validateAndToggleNext();
+                    });
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function(){ initCollections(); });
+            } else { initCollections(); }
+        })();
+
+        // Normalisation téléphone si la fonction n'est pas déjà définie
+        if (typeof window.formatPhone !== 'function') {
+            window.formatPhone = function(form){
+                try {
+                    var input = form.querySelector('input[name$="[phone]"]');
+                    if (!input) return true;
+                    var v = (input.value || '').toString().trim();
+                    if (!v) return true;
+                    v = v.replace(/[^\d+]/g, '');
+                    if (/^0\d{9}$/.test(v)) { v = '+33' + v.substring(1); }
+                    if (/^33\d{9}$/.test(v)) { v = '+' + v; }
+                    input.value = v;
+                } catch(e) {}
+                return true;
+            }
+        }
+
+        // Validation minimale live et activation du bouton Suivant pour les actionnaires
+        (function(){
+            var nextBtn = document.querySelector('button[data-enable-if]');
+            function fieldIsFilled(input){
+                return !!(input && String(input.value || '').trim().length);
+            }
+            window.validateAndToggleNext = function(){
+                try {
+                    var formEl = document.querySelector('form[name="step1_pro"]');
+                    if (!formEl) return;
+                    var shareholders = formEl.querySelectorAll('[data-shareholder]');
+                    // Autoriser à avancer s'il y a 0 actionnaire? Non: exiger au moins 1
+                    if (shareholders.length === 0) {
+                        // fallback: autoriser si société/dirigeant sont complets (cas sans UBO requis)
+                        var requiredCompany = ['companyName','siren','addressLine1','city','postalCode'];
+                        var companyOk = requiredCompany.every(function(key){
+                            var input = formEl.querySelector('[name*="'+key+'"]');
+                            return fieldIsFilled(input);
+                        });
+                        if (nextBtn) nextBtn.disabled = !companyOk;
+                        return;
+                    }
+                    var allOk = true;
+                    shareholders.forEach(function(block){
+                        ['firstName','lastName','addressLine1','city','postalCode'].forEach(function(key){
+                            var input = block.querySelector('input[name*="'+key+'"]');
+                            if (!fieldIsFilled(input)) {
+                                allOk = false;
+                                if (input) input.classList.add('border-red-500');
+                            } else if (input) {
+                                input.classList.remove('border-red-500');
+                            }
+                        });
+                    });
+                    if (nextBtn) nextBtn.disabled = !allOk;
+                } catch(e) {}
+            }
+            document.addEventListener('input', function(e){
+                if (e.target.closest('[data-shareholder]')) window.validateAndToggleNext();
+            });
+            // initial call + mutation observer pour inputs ajoutés dynamiquement
+            document.addEventListener('DOMContentLoaded', window.validateAndToggleNext);
+            var observer = new MutationObserver(function(){ window.validateAndToggleNext(); });
+            observer.observe(document.querySelector('#ubo-prototype'), { childList: true });
+        })();
+    </script>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'front/user/knowledge/layout.html.twig' %}
+
+{% block step_title %}Connaissances et expérience en matière d'investissement{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Introduction -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-info-circle text-blue-600 mt-1"></i>
+            <div class="flex-1">
+                <h3 class="font-semibold text-blue-800 mb-2">Informations sur l'expérience d'investissement</h3>
+                <p class="text-sm text-blue-700">
+                    Ces questions nous permettent d'évaluer votre expérience en matière d'investissement et votre connaissance des marchés financiers.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulaire -->
+    <form method="post" class="space-y-6">
+        {{ form_start(form) }}
+        
+        <!-- Question 1 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.hasLostSignificantAmounts) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Avez-vous déjà perdu des sommes significatives en bourse ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.hasLostSignificantAmounts) }}
+            </div>
+            
+            <!-- Sous-question conditionnelle -->
+            <div id="loss-percentage" class="mt-4 hidden">
+                <div class="mb-4">
+                    <h4 class="text-md font-medium text-gray-700 mb-2">
+                        {{ form_label(form.portfolioLossPercentage) }}
+                    </h4>
+                    <p class="text-sm text-gray-600 mb-2">
+                        Quel est le pourcentage de votre portefeuille que vous avez perdu ?
+                    </p>
+                </div>
+                {{ form_widget(form.portfolioLossPercentage) }}
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.managesOwnPortfolio) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Gérez-vous vous-même votre portefeuille ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.managesOwnPortfolio) }}
+            </div>
+            
+            <!-- Sous-question conditionnelle -->
+            <div id="securities-lines" class="mt-4 hidden">
+                <div class="mb-4">
+                    <h4 class="text-md font-medium text-gray-700 mb-2">
+                        {{ form_label(form.portfolioSecuritiesLines) }}
+                    </h4>
+                    <p class="text-sm text-gray-600 mb-2">
+                        Sur combien de lignes de titres est réparti votre portefeuille ?
+                    </p>
+                </div>
+                {{ form_widget(form.portfolioSecuritiesLines) }}
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.concentratesOnSingleSecurity) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Vous arrive-t-il de concentrer tout le portefeuille sur un seul titre ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.concentratesOnSingleSecurity) }}
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.appropriatenessTestPerformed) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Le test de caractère approprié est réalisé à chaque fois que je passe un ordre d'achat sur produit complexe ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.appropriatenessTestPerformed) }}
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.ordersThroughCif) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Les ordres sur titre vif et/ou produit structuré ne doivent pas transiter par mon CIF ?
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.ordersThroughCif) }}
+            </div>
+        </div>
+
+        <!-- Boutons de navigation -->
+        <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+            <a href="{{ path('knowledge_education_level') }}" 
+               class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                <i class="fa-solid fa-arrow-left mr-2"></i>
+                Précédent
+            </a>
+            
+            <button type="submit" 
+                    class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105">
+                Suivant
+                <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </form>
+</div>
+
+<!-- JavaScript pour l'affichage conditionnel -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de l'affichage conditionnel pour les pertes
+    const lossRadios = document.querySelectorAll('input[name="knowledge_investment_experience[hasLostSignificantAmounts]"]');
+    const lossPercentage = document.getElementById('loss-percentage');
+    
+    function toggleLossPercentage() {
+        const selectedValue = document.querySelector('input[name="knowledge_investment_experience[hasLostSignificantAmounts]"]:checked');
+        if (selectedValue && selectedValue.value === '1') {
+            lossPercentage.classList.remove('hidden');
+        } else {
+            lossPercentage.classList.add('hidden');
+        }
+    }
+    
+    lossRadios.forEach(radio => {
+        radio.addEventListener('change', toggleLossPercentage);
+    });
+    
+    // Gestion de l'affichage conditionnel pour la gestion du portefeuille
+    const portfolioRadios = document.querySelectorAll('input[name="knowledge_investment_experience[managesOwnPortfolio]"]');
+    const securitiesLines = document.getElementById('securities-lines');
+    
+    function toggleSecuritiesLines() {
+        const selectedValue = document.querySelector('input[name="knowledge_investment_experience[managesOwnPortfolio]"]:checked');
+        if (selectedValue && selectedValue.value === '1') {
+            securitiesLines.classList.remove('hidden');
+        } else {
+            securitiesLines.classList.add('hidden');
+        }
+    }
+    
+    portfolioRadios.forEach(radio => {
+        radio.addEventListener('change', toggleSecuritiesLines);
+    });
+    
+    // Initialiser l'état
+    toggleLossPercentage();
+    toggleSecuritiesLines();
+});
+</script>
+{% endblock %} 

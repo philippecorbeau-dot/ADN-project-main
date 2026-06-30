@@ -1,0 +1,320 @@
+{% extends 'product/base-product.html.twig' %}
+
+{% block title %}{{ title }} - ADN Family Office{% endblock %}
+
+{% block product_content %}
+<!-- Hero Section -->
+<div class="product-hero">
+    <div class="product-hero-content">
+        <h1>🏦 PER</h1>
+        <p>Préparez votre retraite tout en optimisant votre fiscalité dès aujourd'hui. Le Plan d'Épargne Retraite combine avantages fiscaux immédiats et constitution d'un capital ou d'une rente pour vos vieux jours.</p>
+    </div>
+</div>
+
+<!-- Contenu principal -->
+<div class="product-content">
+    <!-- Contenu principal -->
+    <div>
+        <!-- Section présentation -->
+        <div class="content-section">
+            <h2>
+                <span>🎯</span>
+                Qu'est-ce que le PER ?
+            </h2>
+            
+            <p>Le <strong>Plan d'Épargne Retraite</strong> est un produit d'épargne long terme qui vous permet de vous constituer un complément de retraite tout en bénéficiant d'avantages fiscaux immédiats grâce à la déductibilité des versements.</p>
+            
+            <h3>Trois types de PER</h3>
+            <p><strong>PER individuel :</strong> Souscrit à titre personnel<br>
+            <strong>PER d'entreprise collectif :</strong> Proposé par l'employeur<br>
+            <strong>PER d'entreprise obligatoire :</strong> Remplace l'ancien Article 83</p>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">10%</span>
+                    <span class="stat-label">Plafond déduction PASS</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">4 113€</span>
+                    <span class="stat-label">Déduction mini. 2024</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">20%</span>
+                    <span class="stat-label">Prélèvement transmission</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section avantages -->
+        <div class="content-section">
+            <h2>
+                <span>✨</span>
+                Avantages du PER
+            </h2>
+            
+            <ul>
+                <li><strong>Déduction fiscale immédiate</strong> - Réduction d'impôt dès la première année</li>
+                <li><strong>Capitalisation</strong> - Fructification sans fiscalité pendant la phase d'épargne</li>
+                <li><strong>Flexibilité</strong> - Versements libres ou programmés</li>
+                <li><strong>Sortie en capital ou rente</strong> - Choix au moment du départ en retraite</li>
+                <li><strong>Déblocage anticipé</strong> - Possible dans certains cas (accident de la vie)</li>
+                <li><strong>Transmission</strong> - Fiscalité avantageuse pour les héritiers</li>
+            </ul>
+        </div>
+
+        <!-- Section fiscalité -->
+        <div class="content-section">
+            <h2>
+                <span>💰</span>
+                Optimisation fiscale
+            </h2>
+            
+            <h3>À l'entrée - Déduction fiscale</h3>
+            <p>Vos versements sont déductibles de votre revenu imposable dans la limite du plus élevé entre :</p>
+            <ul>
+                <li>10% de vos revenus professionnels (plafonné à 8 fois le PASS)</li>
+                <li>10% du PASS (4 113€ en 2024)</li>
+            </ul>
+            
+            <h3>Pendant la vie du plan</h3>
+            <p>Capitalisation sans fiscalité. Seuls les prélèvements sociaux sur les fonds euros sont prélevés annuellement.</p>
+            
+            <h3>À la sortie</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0;">
+                <div style="padding: 1.5rem; background: #dbeafe; border-radius: 1rem;">
+                    <h4 style="color: var(--primary-color);">Sortie en rente</h4>
+                    <p style="margin: 0; font-size: 0.9rem;">Rente viagère imposable selon le barème progressif avec abattement de 10%</p>
+                </div>
+                <div style="padding: 1.5rem; background: #f0fdf4; border-radius: 1rem;">
+                    <h4 style="color: var(--success-color);">Sortie en capital</h4>
+                    <p style="margin: 0; font-size: 0.9rem;">Capital imposable selon le barème progressif ou option pour le PFU (12,8% + PS)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section stratégies -->
+        <div class="content-section">
+            <h2>
+                <span>🎯</span>
+                Stratégies d'investissement
+            </h2>
+            
+            <h3>Horizon long terme (>15 ans)</h3>
+            <p>Allocation dynamique avec forte proportion d'actions pour maximiser le potentiel de croissance.</p>
+            
+            <h3>Approche de la retraite (5-15 ans)</h3>
+            <p>Réduction progressive du risque avec augmentation des obligations et fonds euros.</p>
+            
+            <h3>Gestion à l'approche (0-5 ans)</h3>
+            <p>Sécurisation du capital avec fonds euros et obligations courtes. Préparation de la phase de sortie.</p>
+            
+            <div style="margin: 2rem 0;">
+                <h4>Exemple d'allocation selon l'âge :</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="padding: 1rem; background: var(--gray-50); border-radius: 0.75rem; text-align: center;">
+                        <strong>30-40 ans</strong><br>
+                        <small>80% Actions / 20% Obligations</small>
+                    </div>
+                    <div style="padding: 1rem; background: var(--gray-50); border-radius: 0.75rem; text-align: center;">
+                        <strong>40-50 ans</strong><br>
+                        <small>60% Actions / 40% Obligations</small>
+                    </div>
+                    <div style="padding: 1rem; background: var(--gray-50); border-radius: 0.75rem; text-align: center;">
+                        <strong>50-60 ans</strong><br>
+                        <small>40% Actions / 60% Obligations</small>
+                    </div>
+                    <div style="padding: 1rem; background: var(--gray-50); border-radius: 0.75rem; text-align: center;">
+                        <strong>60+ ans</strong><br>
+                        <small>20% Actions / 80% Sécurisé</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section cas de déblocage -->
+        <div class="content-section">
+            <h2>
+                <span>🚨</span>
+                Cas de déblocage anticipé
+            </h2>
+            
+            <p>Le PER peut être débloqué avant la retraite dans les situations suivantes :</p>
+            
+            <ul>
+                <li><strong>Acquisition résidence principale</strong> - Premier achat uniquement</li>
+                <li><strong>Invalidité</strong> - Titulaire, conjoint, enfants ou PACS</li>
+                <li><strong>Décès</strong> - Conjoint, enfants ou PACS</li>
+                <li><strong>Surendettement</strong> - Procédure de surendettement</li>
+                <li><strong>Cessation d'activité non salariée</strong> - Liquidation judiciaire</li>
+                <li><strong>Chômage longue durée</strong> - Plus de 2 ans d'inscription</li>
+            </ul>
+            
+            <div style="margin-top: 1.5rem; padding: 1rem; background: #fef3c7; border-radius: 0.75rem; border-left: 4px solid var(--accent-color);">
+                <strong>⚠️ Important :</strong> En cas de déblocage anticipé, aucune fiscalité ne s'applique, mais vous perdez les avantages fiscaux obtenus lors des versements (rattrapage d'impôt).
+            </div>
+        </div>
+
+        <!-- Section vs autres produits -->
+        <div class="content-section">
+            <h2>
+                <span>⚖️</span>
+                PER vs autres produits retraite
+            </h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 1.5rem 0;">
+                <div style="padding: 1.5rem; background: var(--gray-50); border-radius: 1rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 1rem;">PER</h4>
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+                        <li>✓ Déduction fiscale</li>
+                        <li>✓ Sortie capital/rente</li>
+                        <li>✗ Épargne bloquée</li>
+                        <li>✓ Transmission optimisée</li>
+                    </ul>
+                </div>
+                <div style="padding: 1.5rem; background: var(--gray-50); border-radius: 1rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 1rem;">Assurance-vie</h4>
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+                        <li>✗ Pas de déduction</li>
+                        <li>✓ Liquidité totale</li>
+                        <li>✓ Fiscalité après 8 ans</li>
+                        <li>✓ Transmission hors succession</li>
+                    </ul>
+                </div>
+                <div style="padding: 1.5rem; background: var(--gray-50); border-radius: 1rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 1rem;">PEA</h4>
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+                        <li>✗ Pas de déduction</li>
+                        <li>✓ Liquidité après 5 ans</li>
+                        <li>✓ Exonération après 5 ans</li>
+                        <li>✗ Actions européennes uniquement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="product-sidebar">
+        <!-- Caractéristiques -->
+        <div class="sidebar-card">
+            <h3>
+                <span>📋</span>
+                Caractéristiques
+            </h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div>
+                    <strong>Rendement attendu :</strong><br>
+                    <span class="badge badge-info">Variable (selon allocation)</span>
+                </div>
+                
+                <div>
+                    <strong>Niveau de risque :</strong><br>
+                    <span class="badge badge-warning">Faible à Élevé</span>
+                </div>
+                
+                <div>
+                    <strong>Liquidité :</strong><br>
+                    <span class="badge badge-danger">Bloquée jusqu'à la retraite</span>
+                </div>
+                
+                <div>
+                    <strong>Investissement minimum :</strong><br>
+                    <span class="badge badge-info">300 €</span>
+                </div>
+                
+                <div>
+                    <strong>Horizon recommandé :</strong><br>
+                    <span class="badge badge-info">Jusqu'à la retraite</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulateur d'économie -->
+        <div class="sidebar-card">
+            <h3>
+                <span>💡</span>
+                Simulation économie d'impôt
+            </h3>
+            
+            <div style="background: var(--gray-50); padding: 1rem; border-radius: 0.75rem; margin: 1rem 0;">
+                <strong>Exemple :</strong> Versement de 5 000€
+                <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    <div>TMI 30% : <strong>1 500€ d'économie</strong></div>
+                    <div>TMI 41% : <strong>2 050€ d'économie</strong></div>
+                    <div>TMI 45% : <strong>2 250€ d'économie</strong></div>
+                </div>
+            </div>
+            
+            <div style="padding: 1rem; background: #d1fae5; border-radius: 0.75rem; border-left: 4px solid var(--success-color);">
+                <small><strong>Plus votre TMI est élevée, plus l'avantage fiscal est important !</strong></small>
+            </div>
+        </div>
+
+        <!-- Nos PER sélectionnés -->
+        <div class="sidebar-card">
+            <h3>
+                <span>⭐</span>
+                Nos PER sélectionnés
+            </h3>
+            
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 1rem; padding: 1rem; background: var(--gray-50); border-radius: 0.75rem;">
+                    <strong>PER Multisupport +</strong><br>
+                    <small>Fonds euros : 2,0%</small><br>
+                    <small>200+ supports UC</small><br>
+                    <small>Gestion pilotée incluse</small>
+                </li>
+                <li style="margin-bottom: 1rem; padding: 1rem; background: var(--gray-50); border-radius: 0.75rem;">
+                    <small>PER Éthique & Solidaire</strong><br>
+                    <small>Investissement responsable</small><br>
+                    <small>Fonds ISR labellisés</small><br>
+                    <small>Impact social mesurable</small>
+                </li>
+                <li style="padding: 1rem; background: var(--gray-50); border-radius: 0.75rem;">
+                    <strong>PER Digital</strong><br>
+                    <small>100% en ligne</small><br>
+                    <small>Frais réduits</small><br>
+                    <small>Robo-advisor inclus</small>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Planification retraite -->
+        <div class="sidebar-card">
+            <h3>
+                <span>📈</span>
+                Planification retraite
+            </h3>
+            
+            <p style="font-size: 0.9rem; margin-bottom: 1rem;">Estimez vos besoins de retraite :</p>
+            
+            <div style="font-size: 0.85rem;">
+                <div style="padding: 0.75rem; background: #fee2e2; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                    <strong>Retraite de base :</strong> ~50% du salaire
+                </div>
+                <div style="padding: 0.75rem; background: #fef3c7; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                    <strong>Retraite complémentaire :</strong> ~25% du salaire
+                </div>
+                <div style="padding: 0.75rem; background: #d1fae5; border-radius: 0.5rem;">
+                    <strong>Épargne privée (PER) :</strong> ~25% nécessaire
+                </div>
+            </div>
+            
+            <div style="margin-top: 1rem; padding: 1rem; background: #dbeafe; border-radius: 0.75rem;">
+                <small><strong>Conseil :</strong> Commencez le plus tôt possible pour bénéficier de l'effet des intérêts composés !</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section CTA -->
+<div class="cta-section">
+    <h2>Préparez votre retraite en optimisant vos impôts</h2>
+    <p>Nos experts vous accompagnent dans l'élaboration de votre stratégie retraite personnalisée et le choix du PER adapté à votre situation.</p>
+    <a href="{{ path('app_contact') }}" class="btn-cta">
+        <span>🏦</span>
+        Simuler mon PER
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+# Symfony standard front controller rules
+DirectoryIndex index.php
+
+<IfModule mod_negotiation.c>
+    Options -MultiViews
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # === SEO: Canonical host (force https://adnfamilyoffice.fr, no www) ===
+    # 1) Redirect www.adnfamilyoffice.fr -> adnfamilyoffice.fr (301 permanent)
+    RewriteCond %{HTTP_HOST} ^www\.adnfamilyoffice\.fr$ [NC]
+    RewriteRule ^(.*)$ https://adnfamilyoffice.fr/$1 [R=301,L,QSA]
+
+    # 2) Force HTTPS (in case Apache receives an http request)
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L,QSA]
+
+    # Serve existing files/directories
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    # Otherwise route to front controller
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# === SEO/Security headers ===
+<IfModule mod_headers.c>
+    # Hide PHP version (avoid X-Powered-By)
+    Header unset X-Powered-By
+    Header always unset X-Powered-By
+    # Prevent MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+    # XSS protection (legacy but still requested by some audits)
+    Header set X-XSS-Protection "1; mode=block"
+    # Clickjacking protection
+    Header set X-Frame-Options "SAMEORIGIN"
+    # Referrer policy (SEO-friendly, send referrer to same-origin)
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# === Static assets caching (1 year, immutable) ===
+# Speeds up Core Web Vitals (LCP) and reduces bandwidth
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# Forbid directory listing
+Options -Indexes
+

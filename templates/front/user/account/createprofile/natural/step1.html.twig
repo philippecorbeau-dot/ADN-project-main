@@ -1,0 +1,258 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+
+{% block body %}
+    <div class="container pb-10 mt-24 md:mt-0">
+        <div class="rounded-xl bg-white p-6 sm:p-10 shadow-md transition-opacity transition-transform">
+            <!-- Header moderne avec icône et sous-titre -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-4">
+                    <i class="fa-solid fa-user-circle text-white text-2xl"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                    {% trans %}Votre identité{% endtrans %}
+                </h1>
+                <p class="text-lg text-gray-600">
+                    {% trans %}Commençons par faire connaissance{% endtrans %}
+                </p>
+            </div>
+            
+            {{ form_start(form, {
+                'attr': {
+                    'id': 'form-step1',
+                    'name': 'step1',
+                    'data-address-generator': true,
+                    'onsubmit': 'return formatPhone(this)'
+                }
+            }) }}
+                <div class="lg:w-6/12">
+                    <span class="text-lg font-bold bg-white">{% trans %}Identité{% endtrans %}</span>
+                    <div class="bg-white p-4 mb-6">
+                        <fieldset class="flex flex-col sm:flex-row gap-x-4">
+                            {{ form_row(form.gender) }}
+                            {{ form_row(form.firstName) }}
+                            {{ form_row(form.lastName) }}
+                        </fieldset>
+                        <fieldset class="flex flex-col sm:flex-row gap-x-4 sm:w-1/2">
+                            {{ form_row(form.birthLastName) }}
+                        </fieldset>
+                        <fieldset class="flex flex-col sm:flex-row gap-x-4 sm:w-1/2">
+                            {{ form_row(form.phone) }}
+                        </fieldset>
+                    </div>
+                    <span class="text-lg font-bold bg-white">{% trans %}Nationalité{% endtrans %}</span>
+                    <div class="bg-white p-4 mb-6">
+                        <fieldset>
+                            <div class="flex flex-col sm:flex-row gap-x-4 sm:w-1/2">
+                                {{ form_row(form.birthday) }}
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-x-4">
+                                {{ form_row(form.nationality, {
+                                    'attr' : {
+                                        'data-birthcountry' : '',
+                                    }
+                                }) }}
+                                {{ form_row(form.birthplace, {
+                                    'attr' : {
+                                        'autocomplete' : 'off',
+                                        'data-birthplace' : '',
+                                    }
+                                }) }}
+                                {{ form_widget(form.inseeCodeBirthplace, {
+                                    'attr' : {
+                                        'data-inseecodebirthplace' : '',
+                                    }
+                                }) }}
+                            </div>
+                            <div class="sm:flex sm:flex-row-reverse">
+                                <div class="block-results-response hidden border border-gray-300 rounded-lg py-[3px] absolute bg-white z-10 mt-[-1.6rem] min-w-[300px]" data-birthplace-results></div>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-x-4">
+                                {{ form_row(form.postalCodeBirthplace, {
+                                    'attr' : {
+                                        'data-postalcodebirthplace' : '',
+                                    }
+                                }) }}
+                            </div>
+                        </fieldset>
+                    </div>
+                    <span class="text-lg font-bold bg-white">{% trans %}Domiciliation{% endtrans %}</span>
+                    <div class="bg-white p-4 mb-6">
+                        <fieldset>
+                            <div class="flex flex-col sm:flex-row gap-x-4">
+                                {{ form_row(form.country, {
+                                    'attr' : {
+                                        'data-country' : '',
+                                    }
+                                }) }}
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-x-4 sm:w-2/3">
+                                {{ form_row(form.addressLine1, {
+                                    'attr' : {
+                                        'placeholder' : 'Saisir votre adresse postale',
+                                        'data-address-autocomplete' : 'true'
+                                    }
+                                }) }}
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-x-4 sm:w-2/3">
+                                {{ form_row(form.addressLine2, {
+                                    'attr' : {
+                                        'placeholder' : 'Ex : Bâtiment A, 2e étage...'
+                                    }
+                                }) }}
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-x-4">
+                                {{ form_row(form.city, {
+                                    'attr' : {
+                                        'autocomplete' : 'off',
+                                        'data-city-autocomplete' : 'true',
+                                        'placeholder' : 'Saisir votre ville'
+                                    }
+                                }) }}
+                                {{ form_widget(form.inseeCode, {
+                                    'attr' : {
+                                        'data-inseecode' : '',
+                                    }
+                                }) }}
+                            </div>
+                            <div class="sm:flex sm:flex-row-reverse">
+                                <div class="block-results-response hidden border border-gray-300 rounded-lg py-[3px] absolute bg-white z-10 mt-[-1.6rem] min-w-[300px]" data-city-results></div>
+                            </div>
+                            <div data-address-info-block>
+                                <div class="flex flex-col sm:flex-row gap-x-4 sm:w-1/2">
+                                    {{ form_row(form.postalCode, {
+                                        'attr' : {
+                                            'data-postalcode' : '',
+                                        }
+                                    }) }}
+                                </div>
+                                {# Champ région supprimé car non indispensable #}
+                            </div>
+                        </fieldset>
+                    </div>
+                    <span class="text-lg font-bold bg-white">{% trans %}Impôts{% endtrans %}</span>
+                    <div class="bg-white p-4">
+                        <fieldset class="sm:w-1/2">
+                            {{ form_row(form.profession) }}
+                            {{ form_row(form.maritalStatus) }}
+                            {{ form_row(form.taxResidence) }}
+                        </fieldset>
+                        <fieldset class="mb-6">
+                            <div class="mb-4">
+                                <label class="required block leading-none">{{ form.info.political.vars.label }}</label>
+                                <span data-popover="PPE" class="text-sm underline cursor-default relative"><span class="opacity-50">{% trans %}Comprendre le statut de PPE{% endtrans %}</span></span>
+                                {% embed "embed/popover.html.twig" %}
+                                    {% block id %}PPE{% endblock %}
+                                    {% block title %}{% trans %}Qu'est-ce qu'une Personne Politiquement Exposée (PPE) ?{% endtrans %}{% endblock %}
+                                    {% block content %}{% trans %}Il s'agit d'un individu qui occupe ou a occupé d'importantes fonctions publiques. Cela peut également concerner leur famille ou associés proches.{% endtrans %}{% endblock %}
+                                {% endembed %}
+                                <div class="flex flex-col gap-y-4 mt-4">
+                                    <div>
+                                        {{ form_widget(form.info.political[0], {'attr' : {'class' : 'hidden peer'}}) }}
+                                        <label for="{{ form.info.political[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                            </svg>
+                                            <span class="font-bold">{{ form.info.political[0].vars.label }}</span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        {{ form_widget(form.info.political[1], {'attr' : {'class' : 'hidden peer'}}) }}
+                                        <label for="{{ form.info.political[1].vars.id   }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            <span class="font-bold">{{ form.info.political[1].vars.label }}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                {{ form_errors(form.info.political) }}
+                            </div>
+                            <div class="mb-4">
+                                <label class="required block">{{ form.info.usPerson.vars.label }}</label>
+                                <span data-popover="US" class="text-sm opacity-50 underline cursor-default">{% trans %}Comprendre le statut de "US person"{% endtrans %}</span>
+                                {% embed "embed/popover.html.twig" %}
+                                    {% block id %}US{% endblock %}
+                                    {% block title %}{% trans %}Qu'est ce qu'une "US person" ?{% endtrans %}{% endblock %}
+                                    {% block content %}
+                                        <p>Le terme 'US Person' fait référence à toute personne assujettie à l'impôt américain, indépendamment de son lieu de résidence. Vous pourriez être considéré comme une US Person si vous remplissez l'une des conditions suivantes :</p>
+                                        <ul class="mb-2 list-disc pl-5">
+                                            <li>Vous possédez un passeport américain ou vous êtes né(e) aux États-Unis.</li>
+                                            <li>Vous résidez légalement aux États-Unis, quelle que soit votre nationalité, ou vous y avez séjourné pendant une durée significative au cours des trois dernières années.</li>
+                                            <li>Vous détenez une 'Green Card', aussi appelée carte de résidence permanente.</li>
+                                        </ul>
+                                        <p>Cette définition s'applique également si vous résidez en France (ou ailleurs) sans avoir renoncé à votre citoyenneté américaine.</p>
+                                    {% endblock %}
+                                {% endembed %}
+                                <div class="flex flex-col gap-y-4 mt-4">
+                                    <div>
+                                        {{ form_widget(form.info.usPerson[0], {'attr' : {'class' : 'hidden peer'}}) }}
+                                        <label for="{{ form.info.usPerson[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                            </svg>
+                                            <span class="font-bold">{{ form.info.usPerson[0].vars.label }}</span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        {{ form_widget(form.info.usPerson[1], {'attr' : {'class' : 'hidden peer'}}) }}
+                                        <label for="{{ form.info.usPerson[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            <span class="font-bold">{{ form.info.usPerson[1].vars.label }}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                {{ form_errors(form.info.usPerson) }}
+                            </div>
+                        </fieldset>
+                        <div class="flex">
+                            <a class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44" href="{{ path('user_create_profile', {'step' : 0 }) }}">
+                                {% trans %}Précédent{% endtrans %}
+                            </a>
+                            <button id="btn-next" type="submit" class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44 ml-auto">
+                                {% trans %}Suivant{% endtrans %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/autocomplete.css') }}" media="print" onload="this.media='all'">
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/js/autocomplete.js') }}" defer></script>
+    <script>
+        // Normalise le téléphone en E.164 FR si l'utilisateur saisit un 06/07/etc.
+        function formatPhone(form) {
+            try {
+                var input = form.querySelector('input[name$="[phone]"]');
+                if (!input) return true;
+                var v = (input.value || '').toString().trim();
+                if (!v) return true;
+                // Supprimer espaces, points, tirets
+                v = v.replace(/[^\d+]/g, '');
+                // Si commence par 0 et a 10 chiffres => +33 sans le 0
+                if (/^0\d{9}$/.test(v)) {
+                    v = '+33' + v.substring(1);
+                }
+                // Si commence par 33 sans +
+                if (/^33\d{9}$/.test(v)) {
+                    v = '+' + v;
+                }
+                // Laisser intact si déjà en format +<country>...
+                input.value = v;
+            } catch (e) {
+                console.warn('formatPhone error', e);
+            }
+            return true; // Ne jamais bloquer la soumission
+        }
+    </script>
+{% endblock %}

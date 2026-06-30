@@ -1,0 +1,350 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Produits O2S synchronisés{% endblock %}
+{% block page_title %}📦 Produits O2S synchronisés{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div>
+            <a href="{{ path('admin_o2s_index') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Retour au dashboard O2S
+            </a>
+            <p class="text-gray-600">Tous les comptes O2S synchronisés dans la base locale</p>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
+            <p class="text-sm text-gray-500 mb-1">Total comptes</p>
+            <p class="text-2xl font-bold text-gray-900">{{ totalCount }}</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
+            <p class="text-sm text-gray-500 mb-1">Valorisation totale</p>
+            <p class="text-2xl font-bold text-green-600">{{ totalValuation|number_format(0, ',', ' ') }} €</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
+            <p class="text-sm text-gray-500 mb-1">Types différents</p>
+            <p class="text-2xl font-bold text-purple-600">{{ availableTypes|length }}</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
+            <p class="text-sm text-gray-500 mb-1">Pages</p>
+            <p class="text-2xl font-bold text-blue-600">{{ totalPages }}</p>
+        </div>
+    </div>
+
+    <!-- Filtres et recherche -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
+        <form method="GET" action="{{ path('admin_o2s_products') }}" class="flex flex-col lg:flex-row gap-4">
+            <!-- Recherche -->
+            <div class="flex-1">
+                <div class="relative">
+                    <input type="text" 
+                           name="search" 
+                           value="{{ search }}" 
+                           placeholder="Rechercher par nom, client, email..."
+                           class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Filtre par type -->
+            <div class="w-full lg:w-48">
+                <select name="type" class="w-full py-2.5 px-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <option value="">Tous les types</option>
+                    {% for type in availableTypes %}
+                        <option value="{{ type }}" {{ typeFilter == type ? 'selected' : '' }}>{{ type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Tri -->
+            <div class="w-full lg:w-48">
+                <select name="sort" class="w-full py-2.5 px-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <option value="valuation" {{ sortBy == 'valuation' ? 'selected' : '' }}>Valorisation</option>
+                    <option value="date" {{ sortBy == 'date' ? 'selected' : '' }}>Date valeur</option>
+                    <option value="sync" {{ sortBy == 'sync' ? 'selected' : '' }}>Dernière sync</option>
+                    <option value="client" {{ sortBy == 'client' ? 'selected' : '' }}>Client</option>
+                    <option value="name" {{ sortBy == 'name' ? 'selected' : '' }}>Nom produit</option>
+                </select>
+            </div>
+            
+            <!-- Ordre -->
+            <div class="w-full lg:w-32">
+                <select name="dir" class="w-full py-2.5 px-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <option value="DESC" {{ sortDir == 'DESC' ? 'selected' : '' }}>↓ Décr.</option>
+                    <option value="ASC" {{ sortDir == 'ASC' ? 'selected' : '' }}>↑ Croiss.</option>
+                </select>
+            </div>
+            
+            <!-- Boutons -->
+            <div class="flex gap-2">
+                <button type="submit" class="px-4 py-2.5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+                {% if search or typeFilter %}
+                    <a href="{{ path('admin_o2s_products') }}" class="px-4 py-2.5 rounded-xl bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Liste des produits -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="font-semibold text-gray-900">Comptes synchronisés</h3>
+                    <p class="text-sm text-gray-500">{{ totalCount }} compte(s) O2S dans la base locale{% if search %} - Recherche: "{{ search }}"{% endif %}</p>
+                </div>
+            </div>
+        </div>
+
+        {% if products is not empty %}
+            <!-- Vue Desktop -->
+            <div class="hidden lg:block overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Produit</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Client</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Valorisation</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date valeur</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Dernière sync</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                        {% for p in products %}
+                            <tr class="hover:bg-blue-50/50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-white font-semibold text-xs">
+                                            {{ p.productType|slice(0,2)|upper }}
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">{{ p.displayAlias ?? p.internalName }}</div>
+                                            <div class="text-xs text-gray-500">{{ p.distributor }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if p.user %}
+                                        <div class="text-sm text-gray-900">{{ p.user.email }}</div>
+                                        <div class="text-xs text-gray-500">{{ p.user.firstName }} {{ p.user.lastName }}</div>
+                                    {% else %}
+                                        <span class="text-gray-400">—</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold 
+                                        {% if p.productType == 'ASSURANCE_VIE' %}bg-blue-100 text-blue-800
+                                        {% elseif p.productType == 'PEA' %}bg-green-100 text-green-800
+                                        {% elseif p.productType == 'PER' %}bg-purple-100 text-purple-800
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {{ p.productType }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    {% if p.o2sValuation %}
+                                        <span class="font-bold text-gray-900">{{ p.o2sValuation|number_format(0, ',', ' ') }} €</span>
+                                    {% else %}
+                                        <span class="text-gray-400">—</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if p.o2sValuationDate %}
+                                        <span class="text-sm text-gray-600">{{ p.o2sValuationDate|date('d/m/Y') }}</span>
+                                    {% else %}
+                                        <span class="text-gray-400">—</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if p.o2sSyncedAt %}
+                                        <span class="text-xs text-gray-500">{{ p.o2sSyncedAt|date('d/m/Y H:i') }}</span>
+                                    {% else %}
+                                        <span class="text-gray-400">—</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        {% if p.o2sCompteId %}
+                                            <a href="{{ path('admin_o2s_compte_detail', {compteId: p.o2sCompteId}) }}" 
+                                               class="p-2 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors"
+                                               title="Voir détails O2S">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                </svg>
+                                            </a>
+                                        {% endif %}
+                                        <button type="button" 
+                                                class="p-2 rounded-lg text-green-600 hover:bg-green-50 transition-colors refresh-btn"
+                                                data-compte-id="{{ p.o2sCompteId }}"
+                                                title="Rafraîchir les données">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Vue Mobile/Tablet -->
+            <div class="lg:hidden divide-y divide-gray-100">
+                {% for p in products %}
+                    <div class="p-4">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                                {{ p.productType|slice(0,2)|upper }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-semibold text-gray-900 truncate">{{ p.displayAlias ?? p.internalName }}</div>
+                                <div class="text-sm text-gray-500">{{ p.distributor }}</div>
+                                {% if p.user %}
+                                    <div class="text-xs text-gray-400 mt-1">{{ p.user.email }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                {% if p.o2sValuation %}
+                                    <div class="font-bold text-gray-900">{{ p.o2sValuation|number_format(0, ',', ' ') }} €</div>
+                                {% endif %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium 
+                                    {% if p.productType == 'ASSURANCE_VIE' %}bg-blue-100 text-blue-700
+                                    {% elseif p.productType == 'PEA' %}bg-green-100 text-green-700
+                                    {% elseif p.productType == 'PER' %}bg-purple-100 text-purple-700
+                                    {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                    {{ p.productType }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-gray-500">
+                            <span>
+                                {% if p.o2sValuationDate %}Valeur au {{ p.o2sValuationDate|date('d/m/Y') }}{% endif %}
+                            </span>
+                            <div class="flex items-center gap-2">
+                                {% if p.o2sCompteId %}
+                                    <a href="{{ path('admin_o2s_compte_detail', {compteId: p.o2sCompteId}) }}" 
+                                       class="text-blue-600">Voir O2S</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if totalPages > 1 %}
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <p class="text-sm text-gray-600">
+                            Affichage {{ ((page - 1) * limit) + 1 }} - {{ min(page * limit, totalCount) }} sur {{ totalCount }} résultats
+                        </p>
+                        <nav class="flex items-center gap-1">
+                            {# Bouton Précédent #}
+                            {% if page > 1 %}
+                                <a href="{{ path('admin_o2s_products', {page: page - 1, search: search, type: typeFilter, sort: sortBy, dir: sortDir}) }}" 
+                                   class="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                </a>
+                            {% endif %}
+                            
+                            {# Numéros de page #}
+                            {% for i in max(1, page - 2)..min(totalPages, page + 2) %}
+                                <a href="{{ path('admin_o2s_products', {page: i, search: search, type: typeFilter, sort: sortBy, dir: sortDir}) }}" 
+                                   class="px-4 py-2 rounded-lg font-medium transition-colors {{ i == page ? 'bg-blue-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50' }}">
+                                    {{ i }}
+                                </a>
+                            {% endfor %}
+                            
+                            {# Bouton Suivant #}
+                            {% if page < totalPages %}
+                                <a href="{{ path('admin_o2s_products', {page: page + 1, search: search, type: typeFilter, sort: sortBy, dir: sortDir}) }}" 
+                                   class="px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            {% endif %}
+                        </nav>
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="p-12 text-center">
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+                {% if search or typeFilter %}
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun résultat</h3>
+                    <p class="text-gray-500 mb-4">Aucun produit ne correspond à vos critères de recherche</p>
+                    <a href="{{ path('admin_o2s_products') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-colors">
+                        Effacer les filtres
+                    </a>
+                {% else %}
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Aucun produit O2S</h3>
+                    <p class="text-gray-500 mb-4">Lancez une synchronisation pour importer les comptes depuis Harvest</p>
+                    <a href="{{ path('admin_o2s_index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Synchroniser
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.refresh-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const compteId = this.dataset.compteId;
+            if (!compteId) return;
+
+            const icon = this.querySelector('svg');
+            icon.classList.add('animate-spin');
+
+            fetch('{{ path('admin_o2s_api_refresh', {compteId: 'PLACEHOLDER'}) }}'.replace('PLACEHOLDER', compteId), {
+                method: 'POST'
+            })
+            .then(r => r.json())
+            .then(data => {
+                icon.classList.remove('animate-spin');
+                if (data.success) {
+                    alert('Données rafraîchies : ' + (data.totalValue ? data.totalValue.toLocaleString('fr-FR') + ' €' : 'N/A'));
+                    location.reload();
+                } else {
+                    alert('Erreur: ' + (data.error || 'Erreur inconnue'));
+                }
+            })
+            .catch(err => {
+                icon.classList.remove('animate-spin');
+                alert('Erreur réseau');
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

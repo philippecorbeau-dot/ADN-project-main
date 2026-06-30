@@ -1,0 +1,61 @@
+{% extends 'emails/layout.html.twig' %}
+
+{% block title %}Bienvenue chez ADN Family Office{% endblock %}
+
+{% block header_title %}Votre aventure commence ici{% endblock %}
+{% block header_subtitle %}Rejoignez l'élite de la gestion patrimoniale{% endblock %}
+
+{% block content %}
+    <p class="greeting">Bonjour {{ user.firstName|escape|capitalize }},</p>
+    
+    <div class="message-box">
+        <p>
+            <strong>Félicitations !</strong> Vous venez de rejoindre la communauté exclusive ADN Family Office. 
+            Nous sommes ravis de vous accompagner dans l'optimisation et la gestion de votre patrimoine.
+        </p>
+    </div>
+    
+    <p>
+        Pour finaliser votre inscription et accéder à votre espace personnel, 
+        veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous.
+    </p>
+    
+    <!-- Fonctionnalités -->
+    <table class="feature-grid" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+        <tr>
+            <td class="feature-item" style="width: 33.33%; padding: 20px 12px; text-align: center; background-color: #f8fafc; border-radius: 12px;">
+                <p class="feature-title">Suivi en temps réel</p>
+                <p class="feature-desc">Visualisez votre patrimoine</p>
+            </td>
+            <td width="12"></td>
+            <td class="feature-item" style="width: 33.33%; padding: 20px 12px; text-align: center; background-color: #f8fafc; border-radius: 12px;">
+                <p class="feature-title">Opportunités exclusives</p>
+                <p class="feature-desc">Investissements sélectionnés</p>
+            </td>
+            <td width="12"></td>
+            <td class="feature-item" style="width: 33.33%; padding: 20px 12px; text-align: center; background-color: #f8fafc; border-radius: 12px;">
+                <p class="feature-title">Conseil personnalisé</p>
+                <p class="feature-desc">Experts à votre écoute</p>
+            </td>
+        </tr>
+    </table>
+    
+    <!-- Bouton CTA -->
+    <div class="cta-container">
+        <a href="{{ signedUrl|raw }}" class="cta-button">Activer mon compte</a>
+        <p class="cta-hint">Cliquez pour confirmer votre email</p>
+    </div>
+    
+    <!-- Expiration -->
+    <p class="expiry-text">
+        Ce lien expire le <strong>{{ expiresAt|date('d/m/Y à H:i') }}</strong>
+    </p>
+    
+    <div class="divider"></div>
+    
+    <!-- Aide -->
+    <div class="help-section">
+        <p>Une question ? Notre équipe est là pour vous</p>
+        <a href="mailto:contact@adnfamilyoffice.fr">contact@adnfamilyoffice.fr</a>
+    </div>
+{% endblock %}

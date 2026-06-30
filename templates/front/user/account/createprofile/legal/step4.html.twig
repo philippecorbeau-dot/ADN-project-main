@@ -1,0 +1,211 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+
+{% block body %} 
+    <div class="container pb-10 mt-24 md:mt-0">
+        <div class="rounded-xl bg-white p-6 sm:p-10 shadow-md transition-opacity transition-transform">
+            <hgroup class="mb-8">
+                <h1 class="text-2xl">{% trans %}Votre expérience{% endtrans %}</h1>
+                <p>{% trans %}1. Votre profil d'investisseur{% endtrans %}</p>
+            </hgroup>
+            {{ alert.success("Pourquoi posons-nous des questions sur vos objectifs ?", "Pour les investisseurs non avertis, le règlement européen n°2020/1503 impose à Homunity d'obtenir des informations sur l'expérience de l'investisseur, ses objectifs d'investissement, sa situation financière et sa compréhension des risques liés à l'investissement.") }}
+            {{ form_start(form, {'attr': {'id': 'form-step4'}}) }}
+                <div class="mb-10">
+                    <label class="required leading-none flex gap-x-2 items-center">
+                        {{ form.mif.vars.label }}
+                        <span data-popover="info-mif2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 cursor-pointer">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                            </svg>
+                        </span>
+                        {% embed "embed/popover.html.twig" %}
+                            {% block cursor %}{% endblock %}
+                            {% block id %}info-mif2{% endblock %}
+                            {% block title %}{% trans %}Les activités concernées sont :{% endtrans %}{% endblock %}
+                            {% block content %}
+                                <div class="text-sm">
+                                    <p class="mb-2">{% trans %}1. établissement de crédit{% endtrans %}</p>
+                                    <p class="mb-2">{% trans %}2. entreprise d'investissement{% endtrans %}</p>
+                                    <p class="mb-2">{% trans %}3. autres établissements financiers agréés ou réglementés{% endtrans %}</p>
+                                    <p class="mb-2">{% trans %}4. entreprises d'assurance{% endtrans %}</p>
+                                    <p class="mb-2">{% trans %}5. organismes de placement collectif et leurs sociétés de gestion{% endtrans %}</p>
+                                    <p class="mb-2">{% trans %}6. fonds de pension et leurs sociétés de gestion{% endtrans %}</p>
+                                    <p class="mb-2">{% trans %}7. négociant en matières premières et instruments dérivés sur les matières premières{% endtrans %}</p>
+                                    <p class="mb-2">{% trans %}8. entreprises locales{% endtrans %}</p>
+                                    <p class="mb-2">{% trans %}9. autres investisseurs institutionnels{% endtrans %}</p>
+                                    <p>{% trans %}10. les grandes entreprises réunissant deux des critères suivants, au niveau individuel :{% endtrans %}</p>
+                                    <ul class="mb-2 ml-3 list-disc list-inside">
+                                        <li>{% trans %}total du bilan: 20 000 000 EUR;{% endtrans %}</li>
+                                        <li>{% trans %}chiffre d'affaires net: 40 000 000 EUR;{% endtrans %}</li>
+                                        <li>{% trans %}capitaux propres: 2 000 000 EUR{% endtrans %}</li>
+                                    </ul>
+                                    <p class="mb-2">{% trans %}11. les gouvernements nationaux et régionaux, y compris les organismes publics qui gèrent la dette publique au niveau national ou régional, les banques centrales, les institutions internationales et supranationales comme la Banque mondiale, le FMI, la BCE, la BEI et les autres organisations internationales analogues{% endtrans %}</p>
+                                    <p class="mb-2">{% trans %}12. d'autres investisseurs institutionnels dont l'activité principale consiste à investir dans des instruments financiers, notamment les entités s'occupant de la titrisation d'actifs ou d'autres opérations de financement.{% endtrans %}</p>
+                                </div>
+                            {% endblock %}
+                        {% endembed %}
+                    </label>
+                    <span data-popover="mif" class="text-sm opacity-50 underline cursor-default inline-block">{% trans %}La réglementation MIF2 {% endtrans %}</span>
+                    {% embed "embed/popover.html.twig" %}
+                        {% block id %}mif{% endblock %}
+                        {% block title %}{% trans %}La réglementation MIF2{% endtrans %}{% endblock %}
+                        {% block content %}
+                            <div class="text-sm">
+                                <p class="mb-2">{% trans %}Au sens de la directive n°2014/65/UE, les professionnels sont :{% endtrans %}</p>
+                                <p class="mb-3">{% trans %}1. Les entités agrées ou réglementées pour opérer sur les marchés financiers dont la liste est donnée par la directive (a- établissements de crédit, b- entreprises d'investissement; c- autres établissements financiers agréés ou réglementés; d- entreprises d'assurance; e- organismes de placement collectif et leurs sociétés de gestion; f- fonds de pension et leurs sociétés de gestion; g- négociant en matières premières et instruments dérivés sur celles-ci; h- entreprises locales; i- autres investisseurs institutionnels).{% endtrans %}</p>
+                                <p>{% trans %}2. Les grandes entreprises réunissant deux des critères suivants, au niveau individuel :{% endtrans %}</p>
+                                <ul class="mb-3">
+                                    <li>{% trans %}— total du bilan: 20 000 000 EUR;{% endtrans %}</li>
+                                    <li>{% trans %}— chiffre d'affaires net: 40 000 000 EUR;{% endtrans %}</li>
+                                    <li>{% trans %}— capitaux propres: 2 000 000 EUR;{% endtrans %}</li>
+                                </ul>
+                                <p class="mb-3">{% trans %}3. Les gouvernements nationaux et régionaux, y compris les organismes publics qui gèrent la dette publique au niveau national ou régional, les banques centrales, les institutions internationales et supranationales comme la Banque mondiale, le FMI, la BCE, la BEI et les autres organisations internationales analogues.{% endtrans %}</p>
+                                <p>{% trans %}4. D'autres investisseurs institutionnels dont l'activité principale consiste à investir dans des instruments financiers, notamment les entités s'occupant de la titrisation d'actifs ou d'autres opérations de financement.{% endtrans %}</p>
+                            </div>
+                        {% endblock %}
+                    {% endembed %}
+                    <div class="flex flex-col gap-y-4 mt-2">
+                        <div>
+                            {{ form_widget(form.mif[0], {'attr' : {'class' : 'hidden peer'}}) }}
+                            <label for="{{ form.mif[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                                <span class="font-bold">{{ form.mif[0].vars.label }}</span>
+                            </label>
+                        </div>
+                        <div>
+                            {{ form_widget(form.mif[1], {'attr' : {'class' : 'hidden peer'}}) }}
+                            <label for="{{ form.mif[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span class="font-bold">{{ form.mif[1].vars.label }}</span>
+                            </label>
+                        </div>
+                    </div>
+                    {{ form_errors(form.mif) }}
+                </div>
+                {# Champ awareness optionnel selon le type de formulaire (Pro/Naturel) #}
+                {% set awareness_sum = 0 %}
+                {% if form.awarenessTurnover is defined and form.awarenessBalanceSheet is defined and form.awarenessEquity is defined %}
+                    {% set awareness_sum = (form.awarenessTurnover.vars.value|default(0) + form.awarenessBalanceSheet.vars.value|default(0) + form.awarenessEquity.vars.value|default(0)) %}
+                {% endif %}
+                <fieldset class="hidden" name="awareness" data-sum="{{ awareness_sum }}" data-show-if="input.name={{ form.mif.vars.full_name }}={{ form.mif[1].vars.value }}">
+                    <div class="mb-10">
+                        {% if form.awarenessTurnover is defined %}
+                        <label class="required block">{{ form.awarenessTurnover.vars.label }}</label>
+                        <div class="flex flex-col gap-y-4 mt-2">
+                            <div>
+                                {{ form_widget(form.awarenessTurnover[0], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value}}) }}
+                                <label for="{{ form.awarenessTurnover[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessTurnover[0].vars.label }}</span>
+                                </label>
+                            </div>
+                            <div>
+                                {{ form_widget(form.awarenessTurnover[1], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value}}) }}
+                                <label for="{{ form.awarenessTurnover[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessTurnover[1].vars.label }}</span>
+                                </label>
+                            </div>
+                            {{ form_errors(form.awarenessTurnover) }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-10">
+                        {% if form.awarenessBalanceSheet is defined %}
+                        <label class="required block">{{ form.awarenessBalanceSheet.vars.label }}</label>
+                        <div class="flex flex-col gap-y-4 mt-2">
+                            <div>
+                                {{ form_widget(form.awarenessBalanceSheet[0], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value}}) }}
+                                <label for="{{ form.awarenessBalanceSheet[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessBalanceSheet[0].vars.label }}</span>
+                                </label>
+                            </div>
+                            <div>
+                                {{ form_widget(form.awarenessBalanceSheet[1], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value}}) }}
+                                <label for="{{ form.awarenessBalanceSheet[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessBalanceSheet[1].vars.label }}</span>
+                                </label>
+                            </div>
+                            {{ form_errors(form.awarenessBalanceSheet) }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-10">
+                        {% if form.awarenessEquity is defined %}
+                        <label class="required block">{{ form.awarenessEquity.vars.label }}</label>
+                        <div class="flex flex-col gap-y-4 mt-2">
+                            <div>
+                                {{ form_widget(form.awarenessEquity[0], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value }}) }}
+                                <label for="{{ form.awarenessEquity[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessEquity[0].vars.label }}</span>
+                                </label>
+                            </div>
+                            <div>
+                                {{ form_widget(form.awarenessEquity[1], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value}}) }}
+                                <label for="{{ form.awarenessEquity[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessEquity[1].vars.label }}</span>
+                                </label>
+                            </div>
+                            {{ form_errors(form.awarenessEquity) }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </fieldset>
+                <div class="hidden" data-show-if="fieldset.name=awareness>=1||input.name={{ form.mif.vars.full_name }}={{ form.mif[0].vars.value }}">
+                    {% embed "embed/alert.html.twig" with {'type' : 'info'} %}
+                        {% block title %}{% trans %}Vous êtes considéré comme investisseur averti.{% endtrans %}{% endblock %}
+                        {% block content %}
+                            <p class="mb-5">{% trans %}En signant la déclaration du règlement européen, vous pourrez poursuivre en tant qu'investisseur averti et ainsi accéder directement à nos offres d'investissement. Nous vous informons qu'en tant qu'investisseur averti, vous disposez de moins de protection qu'un investisseur non averti (pas de délai de réflexion et moins d'avertissement sur les risques). Si vous ne souhaitez pas être qualifié d'investisseur averti, vous pouvez poursuivre.{% endtrans %}</p>
+                        {% endblock %}
+                        {% block cta %}
+                            <div>
+                                <button data-modal="dialog-aware" type="button" class="btn btn-secondary btn-w-ico">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                                    </svg>
+                                    {% trans %}Valider mon statut{% endtrans %}
+                                </button>
+                            </div>
+                        {% endblock %}
+                    {% endembed %}
+                    {% include 'front/partials/modals/attest-profile-pro.html.twig' %}
+                </div>
+                <div class="flex">
+                    <a class="btn btn-link btn-w-ico" href="{{ path('user_create_profile', {'step' : 3 }) }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                        </svg>
+                        {% trans %}Précédent{% endtrans %}
+                    </a>
+                    <button id="btn-next" type="submit" class="btn btn-secondary btn-w-ico ml-auto">
+                        {% trans %}Suivant{% endtrans %}
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+

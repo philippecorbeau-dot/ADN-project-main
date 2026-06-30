@@ -1,0 +1,547 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Nouveau produit{% endblock %}
+{% block page_title %}🆕 Nouveau produit{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+  <!-- Header minimal -->
+  <div class="flex items-center justify-between mb-4">
+    <nav class="flex items-center space-x-2 text-sm text-gray-500">
+      <a href="{{ path('admin_products_index') }}" class="hover:text-indigo-600 transition-colors">
+        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Retour aux produits
+      </a>
+    </nav>
+  </div>
+
+  <!-- Formulaire principal -->
+  <div class="max-w-4xl mx-auto">
+    <div class="admin-card p-8">
+      <div class="mb-2">
+        <h2 class="text-xl font-semibold text-gray-900">Informations du produit</h2>
+      </div>
+
+      {{ form_start(form, {attr: {class: 'space-y-8'}}) }}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Colonne gauche - Informations principales -->
+          <div class="space-y-6">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
+              <h3 class="text-sm font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Informations principales
+              </h3>
+              
+              <div class="space-y-4">
+                <div class="form-group">
+                  <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                  <label class="text-sm font-semibold text-gray-700">Client associé</label>
+                  </div>
+                  <div class="space-y-2">
+                    <div class="relative" id="userCombobox">
+                      <button type="button" id="userSelectToggle" class="w-full px-4 py-3 border border-gray-200 rounded-lg bg-white flex items-center justify-between focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <span id="userSelectLabel" class="truncate text-gray-700">Sélectionner un client…</span>
+                        <svg class="w-4 h-4 text-gray-400 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                      </button>
+                      <div id="userSelectDropdown" class="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-30 hidden">
+                        <div class="p-2 border-b border-gray-100">
+                          <input id="userSelectSearch" type="text" class="w-full px-3 py-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Rechercher par nom ou e‑mail…" />
+                        </div>
+                        <ul id="userSelectOptions" class="max-h-64 overflow-auto py-1"></ul>
+                        <div id="userSelectEmpty" class="py-6 text-sm text-gray-500 text-center hidden">
+                          <svg class="mx-auto h-8 w-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                          </svg>
+                          Aucun client trouvé
+                        </div>
+                      </div>
+                    </div>
+                    {{ form_widget(form.user, {id: 'userSelect', attr: {class: 'hidden'}}) }}
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                    <label class="text-sm font-semibold text-gray-700">Type de produit</label>
+                  </div>
+                {{ form_widget(form.productType, {id: 'productTypeSelect', attr: {class: 'w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white'}}) }}
+                <div id="productTypeOtherWrap" class="mt-3 hidden">
+                  <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <label class="block text-sm font-medium text-blue-900 mb-2">Nouveau type de produit</label>
+                    {{ form_widget(form.productTypeOther, {attr: {placeholder: 'Saisir un nouveau type…', class:'w-full px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white'}}) }}
+                    <p class="text-xs text-blue-700 mt-1">Ce nouveau type sera ajouté à la liste</p>
+                  </div>
+                </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    <label class="text-sm font-semibold text-gray-700">Distributeur</label>
+                  </div>
+                  {{ form_widget(form.distributor, {id: 'distributorSelect', attr: {class: 'w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white'}}) }}
+                  <div id="distributorOtherWrap" class="mt-3 hidden">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <label class="block text-sm font-medium text-green-900 mb-2">Nouveau distributeur</label>
+                      {{ form_widget(form.distributorOther, {attr: {placeholder: 'Ajouter un nouveau distributeur…', class:'w-full px-3 py-2 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white'}}) }}
+                      <p class="text-xs text-green-700 mt-1">Ce nouveau distributeur sera ajouté à la liste</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
+                    </svg>
+                    <label class="text-sm font-semibold text-gray-700">Alias d'affichage <span class="text-gray-400 font-normal">(optionnel)</span></label>
+                  </div>
+                  {{ form_widget(form.displayAlias, {attr: {class: 'w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white', placeholder: 'Ex: 990'}}) }}
+                  <p class="text-xs text-gray-500 mt-1">Nom court pour identifier facilement le produit</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Colonne droite - Paramètres financiers -->
+          <div class="space-y-6">
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-100">
+              <h3 class="text-sm font-semibold text-green-900 mb-3 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+                Paramètres financiers
+              </h3>
+              
+              <div class="space-y-4">
+                <div class="form-group">
+                  <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                    <label class="text-sm font-semibold text-gray-700">Fonds Euro</label>
+                    <span class="text-xs text-gray-400">(si Assurance-vie / PER)</span>
+                  </div>
+                  {{ form_widget(form.euroFund, {attr: {class: 'w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white'}}) }}
+                  <p class="text-xs text-gray-500 mt-1">Montant en fonds euros pour les contrats d'assurance</p>
+                </div>
+
+                <div class="form-group">
+                  <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <label class="text-sm font-semibold text-gray-700">Fiscalité datée</label>
+                  </div>
+                  {{ form_widget(form.fiscalDate, {attr: {class: 'w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white'}}) }}
+                  <p class="text-xs text-gray-500 mt-1">Date limite pour bénéficier des avantages fiscaux</p>
+                </div>
+
+                <div class="form-group">
+                  <div class="flex items-center gap-2 mb-2">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <label class="text-sm font-semibold text-gray-700">Montant initial</label>
+                  </div>
+                  {{ form_widget(form.initialAmount, {attr: {class: 'w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white', placeholder: '100000.00'}}) }}
+                  <p class="text-xs text-gray-500 mt-1">Montant initial investi dans le produit (en euros)</p>
+                </div>
+
+                <!-- Versements additionnels -->
+                <div class="form-group">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                      <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                      </svg>
+                      <label class="text-sm font-semibold text-gray-700">Versements additionnels</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <button type="button" id="contribAddBtn" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs rounded-md bg-indigo-50 text-indigo-700 hover:bg-indigo-100">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        Ajouter
+                      </button>
+                      <button type="button" id="contribRemoveBtn" class="inline-flex items-center gap-1 px-3 py-1.5 text-xs rounded-md bg-rose-50 text-rose-700 hover:bg-rose-100">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" /></svg>
+                        Retirer
+                      </button>
+                    </div>
+                  </div>
+                  <div id="contrib-collection"
+                       class="space-y-3"
+                       data-prototype="{{ form_widget(form.contributions.vars.prototype)|e('html_attr') }}"
+                       data-widget-counter="{{ form.contributions.children|length }}">
+                    {% for c in form.contributions %}
+                      <div class="p-3 border border-gray-200 rounded-lg bg-white contrib-item">{{ form_widget(c) }}</div>
+                    {% endfor %}
+                  </div>
+                  <p class="text-xs text-gray-500 mt-2">Ajoutez des versements complémentaires. Ils s'ajouteront automatiquement au montant initial.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-between pt-8 border-t border-gray-200">
+          <a href="{{ path('admin_products_index') }}" 
+             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Annuler
+          </a>
+          <button type="submit" class="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold hover-lift shadow-lg hover:shadow-xl transition-all duration-300">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Créer le produit
+          </button>
+        </div>
+      {{ form_end(form) }}
+    </div>
+
+    <!-- Aide contextuelle -->
+    <div class="mt-8 admin-card p-6 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+      <div class="flex items-start gap-3">
+        <svg class="w-6 h-6 text-amber-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <h3 class="text-lg font-semibold text-amber-900 mb-2">Aide à la création</h3>
+          <ul class="text-sm text-amber-800 space-y-1">
+            <li>• <strong>Client associé :</strong> Sélectionnez le client propriétaire de ce produit</li>
+            <li>• <strong>Type de produit :</strong> Choisissez entre Assurance-vie, PER, ou autres produits financiers</li>
+            <li>• <strong>Distributeur :</strong> Indiquez l'établissement financier qui commercialise le produit</li>
+            <li>• <strong>Alias :</strong> Nom court pour identifier rapidement le produit (optionnel)</li>
+            <li>• <strong>Fonds Euro :</strong> Applicable uniquement pour les contrats d'assurance-vie et PER</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var typeSelect = document.getElementById('productTypeSelect') || document.querySelector('[name="'+ ({{ form.productType.vars.full_name|json_encode|raw }}) +'"]');
+  var typeWrap = document.getElementById('productTypeOtherWrap');
+  var distSelect = document.getElementById('distributorSelect') || document.querySelector('[name="'+ ({{ form.distributor.vars.full_name|json_encode|raw }}) +'"]');
+  var distWrap = document.getElementById('distributorOtherWrap');
+  var userSelect = document.getElementById('userSelect') || document.querySelector('[name="'+ ({{ form.user.vars.full_name|json_encode|raw }}) +'"]');
+  var userToggle = document.getElementById('userSelectToggle');
+  var userDropdown = document.getElementById('userSelectDropdown');
+  var userLabel = document.getElementById('userSelectLabel');
+  var userSearch = document.getElementById('userSelectSearch');
+  var userOptions = document.getElementById('userSelectOptions');
+  var userEmpty = document.getElementById('userSelectEmpty');
+
+  // (logs supprimés)
+
+  function toggleOther(select, wrap){
+    if (!select || !wrap) { return; }
+    var val = (select.value || '').toString().trim();
+    var normalized = val.toUpperCase();
+    var shouldShow = normalized === 'OTHER';
+    if (shouldShow) {
+      wrap.classList.remove('hidden');
+      // Animation d'apparition
+      wrap.style.opacity = '0';
+      wrap.style.transform = 'translateY(-10px)';
+      setTimeout(function() {
+        wrap.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        wrap.style.opacity = '1';
+        wrap.style.transform = 'translateY(0)';
+      }, 10);
+      // Focus sur le champ de saisie
+      var input = wrap.querySelector('input[type="text"]');
+      if (input) {
+        setTimeout(function() { input.focus(); }, 100);
+      }
+    } else {
+      wrap.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      wrap.style.opacity = '0';
+      wrap.style.transform = 'translateY(-10px)';
+      setTimeout(function() {
+        wrap.classList.add('hidden');
+        wrap.style.transition = '';
+        wrap.style.opacity = '';
+        wrap.style.transform = '';
+      }, 200);
+    }
+  }
+
+  // Initialiser l'état au chargement
+  if (typeSelect && typeWrap) {
+    toggleOther(typeSelect, typeWrap);
+    typeSelect.addEventListener('change', function(){ toggleOther(typeSelect, typeWrap); });
+  }
+
+  if (distSelect && distWrap) {
+    toggleOther(distSelect, distWrap);
+    distSelect.addEventListener('change', function(){ toggleOther(distSelect, distWrap); });
+  }
+
+  // Combobox Client: ouverture/fermeture et recherche AJAX par email
+  function openDropdown() { 
+    if (userDropdown) { 
+      userDropdown.classList.remove('hidden'); 
+      if (userSearch) {
+        userSearch.focus();
+        // Lancer une recherche vide pour afficher quelques résultats
+        if (userSearch.value.trim() === '') {
+          runUserAjax();
+        }
+      }
+    } 
+  }
+  
+  function closeDropdown() { 
+    if (userDropdown) { 
+      userDropdown.classList.add('hidden'); 
+    } 
+  }
+
+  function ensureOption(select, value, label){
+    if (!select) return null;
+    var opts = Array.prototype.slice.call(select.options || []);
+    var found = opts.find(function(o){ return o.value == value; });
+    if (!found) {
+      found = document.createElement('option');
+      found.value = value;
+      found.text = label || value;
+      select.appendChild(found);
+    }
+    return found;
+  }
+
+  function setUserSelection(id, label) {
+    if (!userSelect) {
+      return;
+    }
+    
+    // Créer l'option si elle n'existe pas
+    ensureOption(userSelect, id, label);
+    
+    // Définir la valeur
+    userSelect.value = id;
+    // Forcer l'index sélectionné pour garantir la soumission
+    var idx = Array.prototype.slice.call(userSelect.options).findIndex(function(o){ return o.value == id; });
+    if (idx >= 0) {
+      userSelect.selectedIndex = idx;
+    }
+    
+    // Déclencher l'événement change
+    var event = new Event('change', { bubbles: true });
+    userSelect.dispatchEvent(event);
+    
+    // Mettre à jour le libellé affiché
+    if (userLabel && label) {
+      userLabel.textContent = formatUserLabel(label);
+    }
+    
+    // Fermer le dropdown
+    closeDropdown();
+  }
+
+  var pendingTimer = null;
+  function renderUserOptions(list){
+    if (!userOptions || !userEmpty) return;
+    userOptions.innerHTML = '';
+    if (!list || list.length === 0) {
+      userEmpty.classList.remove('hidden');
+      return;
+    }
+    userEmpty.classList.add('hidden');
+    list.forEach(function(item){
+      var li = document.createElement('li');
+      li.className = 'px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center justify-between transition-colors';
+      li.dataset.id = item.id;
+      li.dataset.label = item.label;
+      li.innerHTML = '<span class="truncate">' + escapeHtml(formatUserLabel(item.label)) + '</span>' +
+                     '<span class="ml-3 text-xs text-gray-500">#' + item.id + '</span>';
+      // Sélection via clic
+      li.addEventListener('click', function(e){ 
+        e.preventDefault();
+        e.stopPropagation();
+        setUserSelection(item.id, item.label); 
+      });
+      // Sélection via mousedown (avant blur/fermeture)
+      li.addEventListener('mousedown', function(e){
+        e.preventDefault();
+      });
+      // Permettre la validation via clavier
+      li.setAttribute('tabindex', '0');
+      li.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          setUserSelection(item.id, item.label);
+        }
+      });
+      userOptions.appendChild(li);
+    });
+  }
+
+  // Délégation d'événement en secours
+  if (userOptions) {
+    userOptions.addEventListener('click', function(e){
+      var li = e.target.closest('li');
+      if (!li || !userOptions.contains(li)) return;
+      var id = li.dataset.id;
+      var label = li.dataset.label;
+      if (id) {
+        setUserSelection(id, label);
+      }
+    });
+  }
+
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  function formatUserLabel(raw) {
+    if (!raw) return '';
+    var m = raw.match(/^(.*?)\s*[<\(\[]\s*([^>\)\]]+@[^>\)\]]+)\s*[>\)\]]\s*$/);
+    if (m) {
+      var name = (m[1] || '').trim();
+      var email = (m[2] || '').trim();
+      return (name ? name + ' — ' : '') + email;
+    }
+    return raw;
+  }
+
+  function runUserAjax() {
+    if (!userSearch) return;
+    var q = userSearch.value.trim();
+    
+    // Permettre une recherche vide pour afficher quelques résultats récents
+    fetch('{{ path('admin_users_search') }}?q=' + encodeURIComponent(q), {
+      credentials:'same-origin',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(function(r){ 
+        if (!r.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return r.json(); 
+      })
+      .then(function(list){ renderUserOptions(list); })
+      .catch(function(){ renderUserOptions([]); });
+  }
+
+  if (userToggle) {
+    userToggle.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if (!userDropdown || userDropdown.classList.contains('hidden')) { 
+        openDropdown(); 
+      } else { 
+        closeDropdown(); 
+      }
+    });
+  }
+
+  if (userSearch) {
+    userSearch.addEventListener('input', function(){ 
+      clearTimeout(pendingTimer); 
+      pendingTimer = setTimeout(runUserAjax, 300); 
+    });
+    userSearch.addEventListener('keydown', function(e){ 
+      if (e.key === 'Escape') { 
+        closeDropdown(); 
+        return;
+      }
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        var first = userOptions && userOptions.querySelector('li');
+        if (first) first.focus();
+      }
+      if (e.key === 'Enter') {
+        // Si un premier résultat est présent, sélectionner directement
+        var firstLi = userOptions && userOptions.querySelector('li');
+        if (firstLi) {
+          firstLi.click();
+        }
+      }
+    });
+  }
+
+  // Fermer le dropdown en cliquant à l'extérieur
+  document.addEventListener('click', function(e){
+    var root = document.getElementById('userCombobox');
+    if (!root) return;
+    if (!root.contains(e.target)) { 
+      closeDropdown(); 
+    }
+  });
+
+  // Initialiser le libellé si une valeur est déjà sélectionnée (pré-remplissage)
+  if (userSelect && userLabel) {
+    var current = userSelect.options && userSelect.options[userSelect.selectedIndex];
+    if (current && current.text && current.value) {
+      userLabel.textContent = current.text;
+    }
+    // Garder le label à jour si la valeur change côté serveur/auto-fill
+    userSelect.addEventListener('change', function(){
+      var opt = userSelect.options && userSelect.options[userSelect.selectedIndex];
+      if (opt && opt.text) { userLabel.textContent = opt.text; }
+    });
+  }
+
+  // Gestion collection des versements (nouveau)
+  (function(){
+    var container = document.getElementById('contrib-collection');
+    var addBtn = document.getElementById('contribAddBtn');
+    var removeBtn = document.getElementById('contribRemoveBtn');
+    function bindRow(row){
+      // rien de spécial ici (pas de total côté création)
+    }
+    function addItem(){
+      if (!container) return;
+      var counter = parseInt(container.getAttribute('data-widget-counter') || '0', 10);
+      var proto = container.getAttribute('data-prototype') || '';
+      var html = proto.replace(/__name__/g, String(counter));
+      var wrapper = document.createElement('div');
+      wrapper.className = 'p-3 border border-gray-200 rounded-lg bg-white contrib-item';
+      wrapper.innerHTML = html;
+      container.appendChild(wrapper);
+      container.setAttribute('data-widget-counter', String(counter + 1));
+      bindRow(wrapper);
+    }
+    function removeItem(){
+      if (!container) return;
+      var nodes = container.querySelectorAll('.contrib-item');
+      if (nodes.length > 0){
+        container.removeChild(nodes[nodes.length - 1]);
+        var counter = Math.max(0, parseInt(container.getAttribute('data-widget-counter') || '1', 10) - 1);
+        container.setAttribute('data-widget-counter', String(counter));
+      }
+    }
+    if (addBtn) addBtn.addEventListener('click', addItem);
+    if (removeBtn) removeBtn.addEventListener('click', removeItem);
+  })();
+});
+</script>
+{% endblock %}
+
+

@@ -1,0 +1,5 @@
+admin_products:
+    resource: ../../src/Controller/Admin/ProductAccountController.php
+    type: annotation
+    prefix: /admin
+

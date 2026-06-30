@@ -1,0 +1,553 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Gestion MoneyPitch - Back-office ADN{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                    <span class="bg-purple-100 p-2 rounded-lg">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                        </svg>
+                    </span>
+                    Utilisateurs MoneyPitch
+                </h1>
+                <p class="text-gray-600 mt-1">Gérez la redirection des utilisateurs vers MoneyPitch ou l'espace ADN</p>
+            </div>
+            
+            <!-- Info box -->
+            <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 max-w-lg">
+                <div class="flex items-start gap-3">
+                    <div class="text-purple-600 text-xl">💡</div>
+                    <div class="text-sm">
+                        <p class="font-medium text-purple-800">Mode transitoire</p>
+                        <p class="text-purple-700">Les utilisateurs avec le flag "MoneyPitch" activé sont redirigés vers O2S après connexion. Désactivez ce flag pour leur donner accès à l'espace ADN.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('all')">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total utilisateurs</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1" id="totalUsersCount">{{ totalUsers }}</p>
+                </div>
+                <div class="bg-gray-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-purple-200 p-6 cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('moneypitch')">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-purple-600">Vers MoneyPitch</p>
+                    <p class="text-3xl font-bold text-purple-700 mt-1" id="moneypitchUsersCount">{{ moneypitchUsers }}</p>
+                </div>
+                <div class="bg-purple-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-indigo-200 p-6 cursor-pointer hover:shadow-md transition-shadow" onclick="setFilter('adn')">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-indigo-600">Vers Espace ADN</p>
+                    <p class="text-3xl font-bold text-indigo-700 mt-1" id="adnUsersCount">{{ adnUsers }}</p>
+                </div>
+                <div class="bg-indigo-100 rounded-lg p-3">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters - Dynamic -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div class="flex flex-col md:flex-row gap-4">
+            <!-- Search -->
+            <div class="flex-1 relative">
+                <label for="search" class="sr-only">Rechercher</label>
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" 
+                       name="search" 
+                       id="search"
+                       value="{{ currentFilters.search }}"
+                       placeholder="Rechercher par nom ou email..."
+                       class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                       autocomplete="off">
+            </div>
+            
+            <!-- Filter dropdown -->
+            <div class="w-full md:w-56">
+                <select name="filter" id="filter" class="w-full border border-gray-300 rounded-lg py-2.5 px-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    <option value="all" {{ currentFilters.filter == 'all' ? 'selected' : '' }}>Tous les utilisateurs</option>
+                    <option value="moneypitch" {{ currentFilters.filter == 'moneypitch' ? 'selected' : '' }}>MoneyPitch uniquement</option>
+                    <option value="adn" {{ currentFilters.filter == 'adn' ? 'selected' : '' }}>Espace ADN uniquement</option>
+                </select>
+            </div>
+            
+            {% if currentFilters.search or currentFilters.filter != 'all' %}
+            <a href="{{ path('admin_modern_moneypitch') }}" class="text-gray-600 hover:text-gray-800 px-4 py-2.5 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors flex items-center gap-2 whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                Réinitialiser
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bouton d'action groupée -->
+    {% if moneypitchWithEmail > 0 %}
+    <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <button type="button" 
+                onclick="document.getElementById('confirm-modal').classList.remove('hidden')"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors shadow-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            Tout rediriger vers ADN ({{ moneypitchWithEmail }} utilisateur{{ moneypitchWithEmail > 1 ? 's' : '' }})
+        </button>
+
+        {% if moneypitchWithoutEmail > 0 %}
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+            <svg class="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+            <span><strong>{{ moneypitchWithoutEmail }}</strong> utilisateur{{ moneypitchWithoutEmail > 1 ? 's' : '' }} sans adresse email — non {{ moneypitchWithoutEmail > 1 ? 'inclus' : 'inclus' }} dans la bascule</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Modale de confirmation -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            <!-- Overlay -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="document.getElementById('confirm-modal').classList.add('hidden')"></div>
+            
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-xl shadow-xl transform transition-all sm:max-w-lg sm:w-full mx-4">
+                <div class="p-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="text-lg font-semibold text-gray-900" id="modal-title">Confirmer la redirection groupée</h3>
+                            <p class="text-sm text-gray-500">{{ moneypitchWithEmail }} utilisateur{{ moneypitchWithEmail > 1 ? 's' : '' }} avec adresse email seront basculé{{ moneypitchWithEmail > 1 ? 's' : '' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-left">
+                        <p class="text-sm text-amber-800">
+                            <strong>⚠️ Attention :</strong> <strong>{{ moneypitchWithEmail }} utilisateur{{ moneypitchWithEmail > 1 ? 's' : '' }}</strong> ayant une adresse email valide seront basculés vers l'espace ADN.
+                        </p>
+                        <ul class="mt-2 text-sm text-amber-700 list-disc list-inside space-y-1">
+                            <li>Ceux avec un mot de passe existant pourront se connecter directement</li>
+                            <li>Ceux importés d'O2S recevront un email de réinitialisation de mot de passe</li>
+                            <li>Les administrateurs ne sont pas affectés</li>
+                        </ul>
+                    </div>
+                    
+                    {% if moneypitchWithoutEmail > 0 %}
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4 text-left">
+                        <p class="text-sm text-gray-600">
+                            ℹ️ <strong>{{ moneypitchWithoutEmail }} utilisateur{{ moneypitchWithoutEmail > 1 ? 's' : '' }}</strong> sans adresse email resteront sur MoneyPitch. Corrigez d'abord leurs adresses email depuis le dashboard (bouton « Corriger les emails »).
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" 
+                                onclick="document.getElementById('confirm-modal').classList.add('hidden')"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors">
+                            Annuler
+                        </button>
+                        <form method="POST" action="{{ path('admin_modern_moneypitch_redirect_all_to_adn') }}" id="redirect-all-form">
+                            <input type="hidden" name="_token" value="{{ csrf_token('moneypitch_redirect_all') }}">
+                            <button type="submit" 
+                                    id="confirm-btn"
+                                    onclick="this.disabled = true; this.innerHTML = '⏳ Traitement en cours...'; this.form.submit();"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors">
+                                ✅ Basculer {{ moneypitchWithEmail }} utilisateur{{ moneypitchWithEmail > 1 ? 's' : '' }} vers ADN
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elseif moneypitchWithoutEmail > 0 and moneypitchUsers > 0 %}
+    <!-- Cas où tous les utilisateurs MoneyPitch restants n'ont pas d'email -->
+    <div class="mb-6">
+        <div class="inline-flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+            <span>Les <strong>{{ moneypitchWithoutEmail }}</strong> utilisateur{{ moneypitchWithoutEmail > 1 ? 's' : '' }} restant{{ moneypitchWithoutEmail > 1 ? 's' : '' }} sur MoneyPitch n'ont pas d'adresse email valide. Corrigez d'abord leurs emails depuis le dashboard pour pouvoir les basculer vers ADN.</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Users Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-gray-900">Utilisateurs (<span id="users-count">{{ users|length }}</span>)</h2>
+        </div>
+        
+        {% if users|length > 0 %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inscription</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email vérifié</th>
+                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Redirection</th>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="users-table-body">
+                    {% for user in users %}
+                    <tr class="hover:bg-gray-50 transition-colors user-row" 
+                        data-name="{{ user.fullName|lower }}" 
+                        data-email="{{ user.email|lower }}"
+                        data-redirect="{{ user.isRedirectToMoneyPitch ? 'moneypitch' : 'adn' }}">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+                                    {{ user.firstName|first|upper }}{{ user.lastName|first|upper }}
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900 flex items-center gap-2">
+                                        {{ user.fullName }}
+                                        {% if user.isAdmin %}
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">
+                                            Admin
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-sm text-gray-500">{{ user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if user.isPro %}bg-amber-100 text-amber-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                                {{ user.typeName }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ user.createdAt|date('d/m/Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if user.isVerified %}
+                            <span class="inline-flex items-center gap-1 text-green-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-sm">Oui</span>
+                            </span>
+                            {% else %}
+                            <span class="inline-flex items-center gap-1 text-gray-400">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-sm">Non</span>
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                            {% if user.isAdmin %}
+                            {# Les admins ne sont jamais redirigés vers MoneyPitch #}
+                            <span class="inline-flex items-center gap-2 text-xs text-gray-500" title="Les administrateurs ne sont jamais redirigés">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                                Admin (non redirigé)
+                            </span>
+                            {% else %}
+                            <div class="inline-flex items-center gap-2 toggle-wrapper" data-user-id="{{ user.id }}" data-state="{{ user.isRedirectToMoneyPitch ? 'moneypitch' : 'adn' }}">
+                                <form method="POST"
+                                      action="{{ path('admin_modern_moneypitch_toggle', {id: user.id}) }}"
+                                      class="inline toggle-form"
+                                      data-csrf="{{ csrf_token('moneypitch_toggle_' ~ user.id) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('moneypitch_toggle_' ~ user.id) }}">
+                                    <input type="hidden" name="target" value="{{ user.isRedirectToMoneyPitch ? 'adn' : 'moneypitch' }}" class="toggle-target-input">
+                                    <button type="submit"
+                                            class="toggle-btn relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-wait
+                                                   {{ user.isRedirectToMoneyPitch ? 'bg-purple-600' : 'bg-gray-200' }}"
+                                            title="{{ user.isRedirectToMoneyPitch ? 'Cliquer pour rediriger vers ADN' : 'Cliquer pour rediriger vers MoneyPitch' }}"
+                                            aria-pressed="{{ user.isRedirectToMoneyPitch ? 'true' : 'false' }}">
+                                        <span class="toggle-knob pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out
+                                                     {{ user.isRedirectToMoneyPitch ? 'translate-x-5' : 'translate-x-0' }}">
+                                            <span class="toggle-icon-off absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ user.isRedirectToMoneyPitch ? 'opacity-0 duration-100 ease-out' : 'opacity-100 duration-200 ease-in' }}">
+                                                <svg class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 12 12">
+                                                    <path d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                                </svg>
+                                            </span>
+                                            <span class="toggle-icon-on absolute inset-0 flex h-full w-full items-center justify-center transition-opacity {{ user.isRedirectToMoneyPitch ? 'opacity-100 duration-200 ease-in' : 'opacity-0 duration-100 ease-out' }}">
+                                                <svg class="h-3 w-3 text-purple-600" fill="currentColor" viewBox="0 0 12 12">
+                                                    <path d="M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z"></path>
+                                                </svg>
+                                            </span>
+                                        </span>
+                                    </button>
+                                </form>
+                                <span class="toggle-label text-xs font-medium {{ user.isRedirectToMoneyPitch ? 'text-purple-600' : 'text-indigo-600' }}">
+                                    {{ user.isRedirectToMoneyPitch ? 'MoneyPitch' : 'ADN' }}
+                                </span>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a href="{{ path('admin_modern_user_view', {id: user.id}) }}" 
+                               class="text-indigo-600 hover:text-indigo-900"
+                               title="Voir la fiche">
+                                <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="px-6 py-12 text-center" id="no-results">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun utilisateur trouvé</h3>
+            <p class="mt-1 text-sm text-gray-500">
+                {% if currentFilters.search or currentFilters.filter != 'all' %}
+                Aucun résultat pour ces critères de recherche.
+                {% else %}
+                Aucun utilisateur n'est encore inscrit.
+                {% endif %}
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Legend -->
+    <div class="mt-6 bg-gray-50 rounded-xl p-4 border border-gray-200">
+        <h3 class="text-sm font-medium text-gray-700 mb-3">Légende</h3>
+        <div class="flex flex-wrap gap-6 text-sm">
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-purple-600"></div>
+                <span class="text-gray-600"><strong>MoneyPitch</strong> — L'utilisateur est redirigé vers O2S/MoneyPitch à la connexion</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-gray-200"></div>
+                <span class="text-gray-600"><strong>ADN</strong> — L'utilisateur accède à l'espace client ADN classique</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search');
+    const filterSelect = document.getElementById('filter');
+    const usersCount = document.getElementById('users-count');
+    let searchTimeout;
+
+    function getUserRows() {
+        return document.querySelectorAll('#users-table-body .user-row');
+    }
+
+    // ───────────────────────── Filtrage côté client ─────────────────────────
+    function filterUsers() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const filterValue = filterSelect.value;
+        let visibleCount = 0;
+
+        getUserRows().forEach(row => {
+            const name = row.dataset.name || '';
+            const email = row.dataset.email || '';
+            const redirect = row.dataset.redirect || '';
+
+            const matchesSearch = !searchTerm
+                || name.includes(searchTerm)
+                || email.includes(searchTerm);
+
+            const matchesFilter = filterValue === 'all' || redirect === filterValue;
+
+            row.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+            if (matchesSearch && matchesFilter) {
+                visibleCount++;
+            }
+        });
+
+        if (usersCount) {
+            usersCount.textContent = visibleCount;
+        }
+    }
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(filterUsers, 200);
+    });
+    filterSelect.addEventListener('change', filterUsers);
+
+    // ─────────────────────── Toggle MoneyPitch en AJAX ──────────────────────
+    // Préserve la recherche, le filtre et le scroll. Empêche le double-clic
+    // grâce au flag `data-busy` et au paramètre `target` envoyé au serveur.
+
+    function feedbackToast(message, type) {
+        if (window.toast && typeof window.toast[type] === 'function') {
+            window.toast[type](message);
+        } else if (typeof window.showToast === 'function') {
+            window.showToast(message, type);
+        }
+    }
+
+    function applyState(wrapper, isMoneyPitch) {
+        wrapper.dataset.state = isMoneyPitch ? 'moneypitch' : 'adn';
+
+        const btn = wrapper.querySelector('.toggle-btn');
+        const knob = wrapper.querySelector('.toggle-knob');
+        const iconOff = wrapper.querySelector('.toggle-icon-off');
+        const iconOn = wrapper.querySelector('.toggle-icon-on');
+        const label = wrapper.querySelector('.toggle-label');
+        const targetInput = wrapper.querySelector('.toggle-target-input');
+
+        if (btn) {
+            btn.classList.toggle('bg-purple-600', isMoneyPitch);
+            btn.classList.toggle('bg-gray-200', !isMoneyPitch);
+            btn.setAttribute('aria-pressed', isMoneyPitch ? 'true' : 'false');
+            btn.setAttribute('title', isMoneyPitch ? 'Cliquer pour rediriger vers ADN' : 'Cliquer pour rediriger vers MoneyPitch');
+        }
+        if (knob) {
+            knob.classList.toggle('translate-x-5', isMoneyPitch);
+            knob.classList.toggle('translate-x-0', !isMoneyPitch);
+        }
+        if (iconOn) {
+            iconOn.classList.toggle('opacity-100', isMoneyPitch);
+            iconOn.classList.toggle('opacity-0', !isMoneyPitch);
+        }
+        if (iconOff) {
+            iconOff.classList.toggle('opacity-100', !isMoneyPitch);
+            iconOff.classList.toggle('opacity-0', isMoneyPitch);
+        }
+        if (label) {
+            label.textContent = isMoneyPitch ? 'MoneyPitch' : 'ADN';
+            label.classList.toggle('text-purple-600', isMoneyPitch);
+            label.classList.toggle('text-indigo-600', !isMoneyPitch);
+        }
+        // L'input cache la PROCHAINE cible — c'est l'inverse de l'état actuel
+        if (targetInput) {
+            targetInput.value = isMoneyPitch ? 'adn' : 'moneypitch';
+        }
+
+        // Mettre à jour la ligne pour que le filtre dynamique reste cohérent
+        const row = wrapper.closest('.user-row');
+        if (row) {
+            row.dataset.redirect = isMoneyPitch ? 'moneypitch' : 'adn';
+        }
+    }
+
+    function updateCounters(counters) {
+        if (!counters) return;
+        const mapping = {
+            'totalUsersCount': counters.total,
+            'moneypitchUsersCount': counters.moneypitch,
+            'adnUsersCount': counters.adn,
+        };
+        for (const [id, value] of Object.entries(mapping)) {
+            const el = document.getElementById(id);
+            if (el && typeof value !== 'undefined') {
+                el.textContent = value;
+            }
+        }
+    }
+
+    async function submitToggleForm(form) {
+        const wrapper = form.closest('.toggle-wrapper');
+        const btn = form.querySelector('.toggle-btn');
+        if (!wrapper || !btn) return;
+
+        // Anti double-clic / race condition
+        if (wrapper.dataset.busy === '1') {
+            return;
+        }
+        wrapper.dataset.busy = '1';
+        btn.disabled = true;
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+                body: formData,
+                credentials: 'same-origin',
+            });
+
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok || !data || !data.success) {
+                const msg = (data && data.message) || 'Échec de la mise à jour. Veuillez réessayer.';
+                feedbackToast(msg, (data && data.messageType) || 'error');
+                return;
+            }
+
+            applyState(wrapper, !!data.redirectToMoneyPitch);
+            updateCounters(data.counters);
+            filterUsers();
+            feedbackToast(data.message, data.messageType || 'success');
+        } catch (err) {
+            console.error('[MoneyPitch toggle] Erreur réseau :', err);
+            feedbackToast('Erreur réseau. Vérifiez votre connexion et réessayez.', 'error');
+        } finally {
+            wrapper.dataset.busy = '0';
+            btn.disabled = false;
+        }
+    }
+
+    // Délégation pour gérer les formulaires (même rendus dynamiquement)
+    document.addEventListener('submit', function(event) {
+        const form = event.target;
+        if (form && form.classList && form.classList.contains('toggle-form')) {
+            event.preventDefault();
+            submitToggleForm(form);
+        }
+    });
+});
+
+// Fonction pour définir le filtre depuis les cartes stats
+function setFilter(value) {
+    const filterSelect = document.getElementById('filter');
+    if (filterSelect) {
+        filterSelect.value = value;
+        filterSelect.dispatchEvent(new Event('change'));
+    }
+}
+</script>
+{% endblock %}

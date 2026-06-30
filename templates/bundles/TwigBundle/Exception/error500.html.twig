@@ -1,0 +1,282 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Erreur serveur - ADN Family Office{% endblock %}
+
+{% block page_styles %}
+<style>
+    :root {
+        --adn-primary: #1C29A1;
+        --adn-primary-light: #2D3FDB;
+        --gradient-primary: linear-gradient(135deg, #1C29A1 0%, #3B82F6 40%, #6366F1 100%);
+        --gradient-hero: linear-gradient(135deg, #0F1751 0%, #1C29A1 30%, #2D3FDB 70%, #3B82F6 100%);
+    }
+
+    body {
+        background: var(--gradient-hero);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .error-page {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .error-page::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="g" cx="50%%" cy="50%%" r="50%%"><stop offset="0%%" style="stop-color:rgba(255,255,255,0.1)"/><stop offset="100%%" style="stop-color:rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23g)"/><circle cx="800" cy="300" r="150" fill="url(%23g)"/></svg>') no-repeat center center / cover;
+        animation: floatingBg 20s ease-in-out infinite;
+        z-index: 1;
+    }
+
+    @keyframes floatingBg {
+        0%, 100% { transform: translateY(0px) scale(1); }
+        50% { transform: translateY(-20px) scale(1.05); }
+    }
+
+    .error-container {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        max-width: 520px;
+        margin: 0 auto;
+    }
+
+    .error-card {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(30px);
+        border-radius: 2rem;
+        padding: 3rem 2rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        text-align: center;
+        animation: cardAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes cardAppear {
+        0% { opacity: 0; transform: translateY(30px) scale(0.95); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .error-icon-wrapper {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 1.5rem;
+        position: relative;
+    }
+
+    .error-icon-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .error-icon {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .error-icon svg {
+        width: 56px;
+        height: 56px;
+        animation: rotate 8s linear infinite;
+    }
+
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .error-code {
+        font-size: 4rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        line-height: 1;
+    }
+
+    .error-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+
+    .error-message {
+        color: #64748b;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .error-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .error-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 1rem 2rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .error-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .error-btn-primary {
+        background: var(--gradient-primary);
+        color: white;
+        box-shadow: 0 4px 14px rgba(28, 41, 161, 0.35);
+    }
+
+    .error-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(28, 41, 161, 0.45);
+    }
+
+    .error-btn-secondary {
+        background: transparent;
+        color: #64748b;
+        border: 2px solid #e2e8f0;
+    }
+
+    .error-btn-secondary:hover {
+        background: #f8fafc;
+        color: #334155;
+        border-color: #cbd5e1;
+    }
+
+    .support-info {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .support-text {
+        color: #94a3b8;
+        font-size: 0.875rem;
+    }
+
+    .support-link {
+        color: var(--adn-primary);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .support-link:hover {
+        text-decoration: underline;
+    }
+
+    @media (min-width: 640px) {
+        .error-card { padding: 3.5rem 3rem; }
+        .error-actions { flex-direction: row; justify-content: center; }
+        .error-btn { flex: 1; max-width: 200px; }
+    }
+
+    @media (max-width: 480px) {
+        .error-card { padding: 2rem 1.5rem; border-radius: 1.5rem; }
+        .error-icon-wrapper { width: 100px; height: 100px; }
+        .error-icon svg { width: 44px; height: 44px; }
+        .error-code { font-size: 3rem; }
+        .error-title { font-size: 1.25rem; }
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+    <header class="bg-white shadow-sm py-4 px-6 fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="{{ path('app_home') }}" class="flex items-center">
+                <img src="{{ asset('assets/logo_adn.svg') }}" alt="ADN Family Office" class="h-10">
+            </a>
+        </div>
+    </header>
+{% endblock %}
+
+{% block body %}
+<div class="error-page" style="padding-top: 100px;">
+    <div class="error-container">
+        <div class="error-card">
+            <div class="error-icon-wrapper">
+                <div class="error-icon-bg"></div>
+                <div class="error-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="error-code">500</div>
+            <h1 class="error-title">Erreur serveur</h1>
+            <p class="error-message">
+                Nos serveurs rencontrent un problème temporaire. Notre équipe technique a été alertée. 
+                Veuillez réessayer dans quelques instants.
+            </p>
+
+            <div class="error-actions">
+                <a href="{{ path('app_home') }}" class="error-btn error-btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Accueil
+                </a>
+                <a href="javascript:location.reload()" class="error-btn error-btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    Réessayer
+                </a>
+            </div>
+
+            <div class="support-info">
+                <p class="support-text">
+                    Besoin d'aide ? 
+                    <a href="mailto:contact@adnfamilyoffice.fr" class="support-link">Contactez le support</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}{% endblock %}
+

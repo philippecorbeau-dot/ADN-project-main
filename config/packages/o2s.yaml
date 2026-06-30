@@ -1,0 +1,82 @@
+# O2S Integration Configuration
+# This file configures the O2S API services for the ADN Family Office platform.
+#
+# Environment variables required in .env.local:
+#   O2S_CLIENT_ID=your_client_id
+#   O2S_CLIENT_SECRET=your_client_secret
+#   O2S_USERNAME=your_username
+#   O2S_PASSWORD=your_password
+#   O2S_ENVIRONMENT=production|recette
+
+parameters:
+    # O2S configuration from environment
+    app.o2s.client_id: '%env(default::O2S_CLIENT_ID)%'
+    app.o2s.client_secret: '%env(default::O2S_CLIENT_SECRET)%'
+    app.o2s.username: '%env(default::O2S_USERNAME)%'
+    app.o2s.password: '%env(default::O2S_PASSWORD)%'
+    app.o2s.environment: '%env(default:o2s_default_env:O2S_ENVIRONMENT)%'
+    o2s_default_env: 'production'
+
+services:
+    # Auto-wire O2S services (utilise le HttpClient par défaut de Symfony)
+    App\Integration\O2S\:
+        resource: '../../src/Integration/O2S/'
+        exclude:
+            - '../../src/Integration/O2S/DTO/'
+            - '../../src/Integration/O2S/Exception/'
+
+    # Service aliases for interfaces (allows easy swapping of implementations)
+    App\Integration\O2S\Client\O2SClientInterface:
+        alias: App\Integration\O2S\Client\O2SClient
+
+    App\Integration\O2S\Client\O2SAuthenticatorInterface:
+        alias: App\Integration\O2S\Client\O2SAuthenticator
+
+    App\Integration\O2S\Service\ContactServiceInterface:
+        alias: App\Integration\O2S\Service\ContactService
+
+    App\Integration\O2S\Service\CompteServiceInterface:
+        alias: App\Integration\O2S\Service\CompteService
+
+    App\Integration\O2S\Service\AssetServiceInterface:
+        alias: App\Integration\O2S\Service\AssetService
+
+    App\Integration\O2S\Service\InstitutionServiceInterface:
+        alias: App\Integration\O2S\Service\InstitutionService
+
+    App\Integration\O2S\Service\ProductServiceInterface:
+        alias: App\Integration\O2S\Service\ProductService
+
+    # Services public pour accès depuis les contrôleurs
+    App\Integration\O2S\Service\CompteService:
+        public: true
+        arguments:
+            $o2sCache: '@cache.app'
+
+    App\Integration\O2S\Service\ContactService:
+        public: true
+        arguments:
+            $o2sCache: '@cache.app'
+
+    App\Integration\O2S\Service\InstitutionService:
+        public: true
+        arguments:
+            $o2sCache: '@cache.app'
+
+    App\Integration\O2S\Service\ProductService:
+        public: true
+        arguments:
+            $o2sCache: '@cache.app'
+
+    App\Integration\O2S\Service\PamCalculationService:
+        arguments:
+            $o2sCache: '@cache.app'
+
+    # Service public pour les scripts cron OVH (cron/ovh/*.php)
+    App\Integration\O2S\Sync\O2SSyncService:
+        public: true
+
+    App\Command\O2STestCommand:
+        arguments:
+            $o2sCache: '@cache.app'
+

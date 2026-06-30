@@ -1,0 +1,34 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Bienvenue chez ADN Family Office' %}
+
+{% block content %}
+    <h1>Bienvenue {{ user.firstname }} !</h1>
+    
+    <p>Nous sommes ravis de vous accueillir parmi nos clients.</p>
+    
+    <p>ADN Family Office est le premier family office ouvert à toutes les familles. Notre mission est de démocratiser l'accès aux services de gestion de patrimoine premium, traditionnellement réservés aux grandes fortunes.</p>
+    
+    <div class="button-container">
+        <a href="{{ url('user_dashboard') }}" class="button">Accéder à mon espace</a>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <h2>Prochaines étapes</h2>
+    
+    <p>Pour profiter pleinement de nos services, nous vous invitons à :</p>
+    
+    <ul style="margin: 20px 0; padding-left: 20px;">
+        <li style="margin-bottom: 10px;">Compléter votre profil investisseur</li>
+        <li style="margin-bottom: 10px;">Découvrir nos solutions d'investissement</li>
+        <li style="margin-bottom: 10px;">Prendre rendez-vous avec votre conseiller</li>
+    </ul>
+    
+    <div class="info-box">
+        <p><strong>💡 Besoin d'aide ?</strong></p>
+        <p>Notre équipe est à votre disposition du lundi au vendredi de 9h à 18h.<br>
+        📧 Email : <a href="mailto:contact@adnfamilyoffice.fr">contact@adnfamilyoffice.fr</a></p>
+    </div>
+{% endblock %}
+

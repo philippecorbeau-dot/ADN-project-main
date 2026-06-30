@@ -1,0 +1,200 @@
+{% extends 'front/user/dashboard/base.html.twig' %}
+
+{% block page_title %}{{ product.name }} - {{ product.fullName }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Breadcrumb moderne -->
+    {% include 'partials/breadcrumb.html.twig' with {
+        'items': [
+            {'label': 'Dashboard', 'path': 'user_dashboard', 'icon': 'dashboard'},
+            {'label': 'Investissements', 'path': 'user_portfolio', 'icon': 'investment'},
+            {'label': product.name}
+        ]
+    } %}
+
+    <!-- En-tête du produit -->
+    <div class="bg-gradient-to-r from-{{ product.color }}-50 to-{{ product.color }}-100 rounded-xl p-8 mb-8">
+        <div class="flex items-start justify-between">
+            <div class="flex items-start space-x-6">
+                <div class="w-16 h-16 bg-{{ product.color }}-100 rounded-xl flex items-center justify-center">
+                    {% if product.icon == 'building' %}
+                        <svg class="w-8 h-8 text-{{ product.color }}-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/>
+                        </svg>
+                    {% elseif product.icon == 'chart-line' %}
+                        <svg class="w-8 h-8 text-{{ product.color }}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                        </svg>
+                    {% elseif product.icon == 'shield-check' %}
+                        <svg class="w-8 h-8 text-{{ product.color }}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    {% elseif product.icon == 'calendar-days' %}
+                        <svg class="w-8 h-8 text-{{ product.color }}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    {% endif %}
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ product.name }}</h1>
+                    <p class="text-lg text-gray-600 mb-4">{{ product.fullName }}</p>
+                    <p class="text-gray-700 text-base">{{ product.description }}</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                    <div class="text-sm text-gray-500 mb-1">Rendement attendu</div>
+                    <div class="text-2xl font-bold text-{{ product.color }}-600">{{ product.yield }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Colonne principale -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Comment ça fonctionne -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Comment ça fonctionne ?</h2>
+                <div class="space-y-3">
+                    {% for step in product.howItWorks %}
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-{{ product.color }}-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-{{ product.color }}-600 text-sm font-semibold">{{ loop.index }}</span>
+                            </div>
+                            <p class="text-gray-700">{{ step }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Avantages et Risques -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Avantages -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <h3 class="text-lg font-semibold text-gray-900">Avantages</h3>
+                    </div>
+                    <ul class="space-y-2">
+                        {% for advantage in product.advantages %}
+                            <li class="flex items-start space-x-2">
+                                <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm">{{ advantage }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Risques -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <h3 class="text-lg font-semibold text-gray-900">Risques</h3>
+                    </div>
+                    <ul class="space-y-2">
+                        {% for risk in product.risks %}
+                            <li class="flex items-start space-x-2">
+                                <svg class="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm">{{ risk }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Caractéristiques clés -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Caractéristiques clés</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-sm text-gray-600">Rendement</span>
+                        <span class="font-semibold text-{{ product.color }}-600">{{ product.yield }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-sm text-gray-600">Niveau de risque</span>
+                        <span class="font-semibold">{{ product.riskLevel }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-sm text-gray-600">Investissement min.</span>
+                        <span class="font-semibold">{{ product.minInvestment }}</span>
+                    </div>
+                    {% for key, value in product.characteristics %}
+                        <div class="flex justify-between items-start py-2 {% if not loop.last %}border-b border-gray-100{% endif %}">
+                            <span class="text-sm text-gray-600">{{ key }}</span>
+                            <span class="font-medium text-right text-sm">{{ value }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Intéressé(e) ?</h3>
+                <div class="space-y-3">
+                    <a href="{{ path('user_message_new') }}" 
+                       class="w-full bg-{{ product.color }}-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-{{ product.color }}-700 transition-colors text-center block">
+                        Demander des informations
+                    </a>
+                    <a href="{{ path('user_chat_index') }}" 
+                       class="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-200 transition-colors text-center block">
+                        Chat avec un conseiller
+                    </a>
+                    <a href="{{ path('user_investment_comparison') }}" 
+                       class="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors text-center block">
+                        Comparer les produits
+                    </a>
+                </div>
+            </div>
+
+            <!-- Information légale -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                <div class="flex items-start space-x-2">
+                    <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    <div>
+                        <h4 class="text-sm font-semibold text-yellow-800 mb-1">Information importante</h4>
+                        <p class="text-xs text-yellow-700">
+                            Les performances passées ne préjugent pas des performances futures. 
+                            Tout investissement comporte des risques de perte en capital. 
+                            Il est recommandé de diversifier ses investissements.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="mt-8 flex justify-between">
+        <a href="{{ path('user_dashboard') }}" 
+           class="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Retour au dashboard
+        </a>
+        <a href="{{ path('user_investment_comparison') }}" 
+           class="inline-flex items-center text-{{ product.color }}-600 hover:text-{{ product.color }}-700 transition-colors">
+            Comparer tous les produits
+            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+            </svg>
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,340 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité - ADN Family Office{% endblock %}
+
+{% block body %}
+<style>
+    .legal-page {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 100vh;
+        padding: 4rem 0;
+    }
+    
+    .legal-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 2rem;
+        padding: 3rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    }
+    
+    .legal-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .legal-header h1 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+    
+    .legal-header .subtitle {
+        color: #64748b;
+        font-size: 1.125rem;
+    }
+    
+    .legal-section {
+        margin-bottom: 2.5rem;
+    }
+    
+    .legal-section h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1C29A1;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .legal-section h2::before {
+        content: '';
+        width: 4px;
+        height: 1.5rem;
+        background: linear-gradient(135deg, #3B82F6, #1C29A1);
+        border-radius: 2px;
+    }
+    
+    .legal-section h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #374151;
+        margin: 1.5rem 0 0.75rem 0;
+    }
+    
+    .legal-section p {
+        color: #4b5563;
+        line-height: 1.75;
+        margin-bottom: 1rem;
+    }
+    
+    .legal-section ul {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+    }
+    
+    .legal-section ul li {
+        padding: 0.5rem 0 0.5rem 2rem;
+        position: relative;
+        color: #4b5563;
+    }
+    
+    .legal-section ul li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #3B82F6;
+        font-weight: bold;
+        font-size: 1.125rem;
+    }
+    
+    .info-box {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border-left: 4px solid #3B82F6;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .info-box p {
+        margin: 0.5rem 0;
+        color: #1e40af;
+    }
+    
+    .info-box strong {
+        color: #1e3a8a;
+    }
+    
+    .warning-box {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border-left: 4px solid #f59e0b;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .warning-box p {
+        margin: 0.5rem 0;
+        color: #92400e;
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #3B82F6;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid #3B82F6;
+        border-radius: 0.75rem;
+        transition: all 0.2s;
+        margin-top: 2rem;
+    }
+    
+    .back-link:hover {
+        background: #3B82F6;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+        .legal-page {
+            padding: 2rem 1rem;
+        }
+        
+        .legal-container {
+            padding: 2rem 1.5rem;
+            border-radius: 1.5rem;
+        }
+        
+        .legal-header h1 {
+            font-size: 2rem;
+        }
+        
+        .legal-section h2 {
+            font-size: 1.25rem;
+        }
+    }
+</style>
+
+<div class="legal-page">
+    <div class="legal-container">
+        <div class="legal-header">
+            <h1>🔒 Politique de confidentialité</h1>
+            <p class="subtitle">Protection de vos données personnelles - RGPD</p>
+        </div>
+        
+        <div class="legal-content">
+            <div class="info-box">
+                <p><strong>Dernière mise à jour :</strong> Novembre 2025</p>
+                <p>Cette politique de confidentialité décrit la manière dont ADN Family Office collecte, utilise et protège vos données personnelles conformément au Règlement Général sur la Protection des Données (RGPD).</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Responsable de traitement</h2>
+                <p><strong>ADN Family Office</strong><br>
+                140 bis rue de Rennes, 75006 Paris<br>
+                Email : <a href="mailto:contact@adnfamilyoffice.fr" style="color: #3B82F6;">contact@adnfamilyoffice.fr</a><br>
+                Téléphone : +33 6 26 48 25 91</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Données collectées</h2>
+                <p>Dans le cadre de notre activité, nous sommes amenés à collecter les données suivantes :</p>
+                
+                <h3>📋 Données d'identification</h3>
+                <ul>
+                    <li>Nom, prénom</li>
+                    <li>Adresse postale</li>
+                    <li>Adresse email</li>
+                    <li>Numéro de téléphone</li>
+                    <li>Date de naissance</li>
+                </ul>
+                
+                <h3>💼 Données professionnelles</h3>
+                <ul>
+                    <li>Situation professionnelle</li>
+                    <li>Revenus et patrimoine (pour les prestations de conseil)</li>
+                    <li>Objectifs d'investissement</li>
+                </ul>
+                
+                <h3>🖥️ Données de navigation</h3>
+                <ul>
+                    <li>Adresse IP</li>
+                    <li>Cookies (voir notre <a href="{{ path('legal_cookies') }}" style="color: #3B82F6;">politique cookies</a>)</li>
+                    <li>Pages visitées</li>
+                    <li>Durée de visite</li>
+                </ul>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Finalités du traitement</h2>
+                <p>Vos données personnelles sont collectées pour les finalités suivantes :</p>
+                <ul>
+                    <li>Gestion de votre compte client</li>
+                    <li>Exécution des prestations de conseil en gestion de patrimoine</li>
+                    <li>Respect de nos obligations réglementaires (KYC, LCB-FT)</li>
+                    <li>Amélioration de nos services</li>
+                    <li>Communication d'informations sur nos services (avec votre consentement)</li>
+                    <li>Statistiques et analyses anonymisées</li>
+                </ul>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Base légale du traitement</h2>
+                <p>Le traitement de vos données repose sur :</p>
+                <ul>
+                    <li><strong>L'exécution d'un contrat</strong> : pour la fourniture de nos prestations</li>
+                    <li><strong>Une obligation légale</strong> : respect des obligations KYC, LCB-FT, AMF</li>
+                    <li><strong>Votre consentement</strong> : pour les communications marketing</li>
+                    <li><strong>L'intérêt légitime</strong> : pour l'amélioration de nos services</li>
+                </ul>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Durée de conservation</h2>
+                <p>Vos données sont conservées pendant :</p>
+                <ul>
+                    <li><strong>Données clients actifs :</strong> durée de la relation commerciale</li>
+                    <li><strong>Données clients inactifs :</strong> 5 ans après la fin de la relation</li>
+                    <li><strong>Données réglementaires :</strong> 10 ans (obligations AMF/ACPR)</li>
+                    <li><strong>Cookies :</strong> 13 mois maximum</li>
+                </ul>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Destinataires des données</h2>
+                <p>Vos données peuvent être partagées avec :</p>
+                <ul>
+                    <li>Nos partenaires financiers (banques, assureurs, gestionnaires d'actifs)</li>
+                    <li>Prestataires techniques (hébergement, maintenance)</li>
+                    <li>Autorités réglementaires (AMF, ACPR, TRACFIN)</li>
+                    <li>Organismes professionnels (ANACOFI, ORIAS)</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <p><strong>⚠️ Important :</strong> Nous ne vendons jamais vos données personnelles à des tiers. Tous nos partenaires sont soumis à des obligations de confidentialité strictes.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Vos droits</h2>
+                <p>Conformément au RGPD, vous disposez des droits suivants :</p>
+                
+                <h3>👁️ Droit d'accès</h3>
+                <p>Obtenir une copie de toutes les données vous concernant.</p>
+                
+                <h3>✏️ Droit de rectification</h3>
+                <p>Corriger ou compléter vos données inexactes ou incomplètes.</p>
+                
+                <h3>🗑️ Droit à l'effacement</h3>
+                <p>Demander la suppression de vos données (sous réserve de nos obligations légales).</p>
+                
+                <h3>⛔ Droit d'opposition</h3>
+                <p>Vous opposer au traitement de vos données pour des raisons légitimes.</p>
+                
+                <h3>🔒 Droit à la limitation</h3>
+                <p>Demander le gel du traitement de vos données.</p>
+                
+                <h3>📦 Droit à la portabilité</h3>
+                <p>Récupérer vos données dans un format structuré et lisible.</p>
+                
+                <div class="info-box">
+                    <p><strong>💡 Pour exercer vos droits :</strong></p>
+                    <p>Envoyez un email à <a href="mailto:contact@adnfamilyoffice.fr" style="color: #1e40af; text-decoration: underline;">contact@adnfamilyoffice.fr</a> avec une pièce d'identité.</p>
+                    <p>Nous vous répondrons dans un délai de 30 jours maximum.</p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Sécurité</h2>
+                <p>Nous mettons en œuvre toutes les mesures techniques et organisationnelles appropriées pour protéger vos données :</p>
+                <ul>
+                    <li>Chiffrement SSL/TLS de toutes les communications</li>
+                    <li>Stockage sécurisé des données sur des serveurs en France (OVH)</li>
+                    <li>Accès restreint aux données par authentification forte</li>
+                    <li>Sauvegardes régulières et chiffrées</li>
+                    <li>Formation de nos équipes aux bonnes pratiques RGPD</li>
+                </ul>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Cookies</h2>
+                <p>Notre site utilise des cookies pour améliorer votre expérience. Pour en savoir plus, consultez notre <a href="{{ path('legal_cookies') }}" style="color: #3B82F6; font-weight: 600;">politique de cookies</a>.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Réclamation</h2>
+                <p>Si vous estimez que le traitement de vos données ne respecte pas la réglementation, vous pouvez introduire une réclamation auprès de la CNIL :</p>
+                <div class="info-box">
+                    <p><strong>CNIL</strong><br>
+                    3 Place de Fontenoy - TSA 80715<br>
+                    75334 PARIS CEDEX 07<br>
+                    Téléphone : 01 53 73 22 22<br>
+                    Site web : <a href="https://www.cnil.fr" target="_blank" style="color: #1e40af; text-decoration: underline;">www.cnil.fr</a></p>
+                </div>
+            </div>
+            
+            <div class="legal-section">
+                <h2>Modifications</h2>
+                <p>Nous nous réservons le droit de modifier cette politique de confidentialité à tout moment. Les modifications entreront en vigueur dès leur publication sur cette page. La date de dernière mise à jour est indiquée en haut de cette page.</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="{{ path('app_home') }}" class="back-link">
+                ← Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

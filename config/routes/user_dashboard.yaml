@@ -1,0 +1,6 @@
+# Routes pour le nouveau dashboard utilisateur
+user_dashboard_routes:
+    resource: ../../src/Controller/Front/User/DashboardController.php
+    type: annotation
+    prefix: /user
+

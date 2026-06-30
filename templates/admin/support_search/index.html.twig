@@ -1,0 +1,841 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Recherche-support{% endblock %}
+{% block page_title %}🔎 Recherche-support (Euronext){% endblock %}
+
+{% block content %}
+<div class="fade-in">
+  <!-- Header minimal (titre enlevé: déjà affiché dans le header global) -->
+  <div class="mb-2"></div>
+
+  <!-- Interface de recherche -->
+  <div data-controller="support-search"
+       data-support-search-endpoint-value="{{ path('admin_support_search_api') }}"
+       data-support-search-associate-endpoint-value="{{ path('admin_products_add_support', {id: 0})|replace({'/0/': '/__ID__/'}) }}"
+       data-support-search-associate-batch-value="{{ path('admin_support_search_associate') }}"
+       data-support-search-holdings-endpoint-value="{{ path('admin_support_search_holdings') }}"
+       data-support-search-update-endpoint-value="{{ path('admin_support_search_update') }}"
+       data-support-search-user-product-url-value="{{ path('admin_products_edit', {id: 0})|replace({'/0': '/__ID__'}) }}"
+       data-support-search-csrf-value="{{ csrf }}"
+       data-support-search-refresh-interval-value="120"
+       class="space-y-6">
+
+    <!-- Panneau de recherche -->
+    <div class="admin-card p-6">
+      <div class="mb-4">
+        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          Critères de recherche
+        </h2>
+        <p class="text-sm text-gray-600 mt-1">Utilisez les filtres ci-dessous pour trouver les supports financiers</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+        <!-- Exchange -->
+        <div class="lg:col-span-2">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Marché</label>
+          <div class="inline-flex rounded-lg overflow-hidden border-2 border-indigo-200 bg-indigo-50">
+            <button type="button" class="px-4 py-3 text-sm font-semibold bg-indigo-600 text-white transition-all hover:bg-indigo-700" data-support-search-target="tab" data-exchange="">
+              Global
+            </button>
+            <button type="button" class="px-4 py-3 text-sm font-semibold bg-white text-gray-700 transition-all hover:bg-indigo-100" data-support-search-target="tab" data-exchange="XPAR">
+              XPAR
+            </button>
+            <button type="button" class="px-4 py-3 text-sm font-semibold bg-white text-gray-700 transition-all hover:bg-indigo-100" data-support-search-target="tab" data-exchange="FSX">
+              FSX
+            </button>
+          </div>
+        </div>
+
+        <!-- Recherche -->
+        <div class="lg:col-span-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Recherche</label>
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input type="text" placeholder="ISIN, libellé ou symbole" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" data-support-search-target="q">
+          </div>
+        </div>
+
+        <!-- Produit -->
+        <div class="lg:col-span-3">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Associer au produit</label>
+          <select class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white" data-support-search-target="product">
+            <option value="">Sélectionner un produit…</option>
+            {% for p in products %}
+              {% set typeLabel = p.productType|replace({'_':' '})|lower|title %}
+              <option value="{{ p.id }}" data-initial="{{ p.initialAmount }}" data-euro="{{ p.euroFund ?: 0 }}" data-type="{{ p.productType }}" data-alias="{{ p.displayAlias }}" {% if productId and productId == p.id %}selected{% endif %}>
+                {{ p.user ? p.user.email : '—' }} — {{ p.displayAlias ? p.displayAlias : '—' }} — {{ typeLabel }}
+              </option>
+            {% endfor %}
+          </select>
+          <p class="mt-1 text-xs text-gray-500">Affiche: Client — Alias — Type</p>
+        </div>
+
+        <!-- Contrôles -->
+        <div class="lg:col-span-3">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Contrôles</label>
+          <div class="flex items-center gap-2">
+            <!-- Statut -->
+            <div class="text-sm text-gray-600 min-w-0 flex-1" data-support-search-target="status">Prêt à rechercher</div>
+            
+            <!-- Pagination -->
+            <div class="flex items-center gap-1">
+              <button type="button" class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all" data-support-search-target="prev" title="Page précédente">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+              </button>
+              <button type="button" class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all" data-support-search-target="next" title="Page suivante">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Limite supprimée -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau des résultats -->
+    <div class="admin-card overflow-hidden">
+      <div class="px-4 sm:px-6 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          Résultats de recherche
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">Sélectionnez les supports à associer au produit choisi</p>
+      </div>
+
+      <!-- Checkbox sélectionner tout pour mobile -->
+      <div class="lg:hidden px-4 py-3 bg-gray-50 border-b border-gray-200">
+        <label class="flex items-center gap-2">
+          <input type="checkbox" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 transition-all" data-support-search-target="selectAll">
+          <span class="text-sm font-medium text-gray-700">Tout sélectionner</span>
+        </label>
+      </div>
+
+       <!-- Tableau classique (visible à toutes résolutions) -->
+       <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50 sticky top-0">
+            <tr>
+              <th class="px-4 py-3 text-left w-24">
+                <div class="flex items-center">
+                  <input type="checkbox" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 transition-all" data-support-search-target="selectAll">
+                  <span class="ml-2 text-xs font-semibold text-gray-600 uppercase tracking-wider">Sélection</span>
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                  </svg>
+                  Libellé
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  ISIN
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                  </svg>
+                  Type
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                  Exchange
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                  </svg>
+                  Devise
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                  </svg>
+                  Dernière VL
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  Date VL
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-100" data-support-search-target="tbody">
+            <!-- Les résultats seront injectés ici par JavaScript -->
+            <tr>
+              <td colspan="8" class="px-6 py-12 text-center">
+                <div class="flex flex-col items-center justify-center">
+                  <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                  <h3 class="text-lg font-semibold text-gray-900 mb-2">Lancez votre recherche</h3>
+                  <p class="text-gray-500 mb-4">Saisissez un terme de recherche pour trouver des supports financiers</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200">
+        <div class="flex justify-center sm:justify-end">
+          <button type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold hover-lift shadow-lg hover:shadow-xl transition-all duration-300" data-support-search-target="addButton">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Ajouter à la sélection
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panneau de sélection -->
+    <div class="admin-card overflow-hidden" data-support-search-target="selectionPanel" style="display:none;">
+      <div class="px-4 sm:px-6 py-6 border-b border-gray-200">
+        <div class="flex flex-col sm:flex-row items-start justify-between gap-4">
+          <h3 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Sélection pour le client
+          </h3>
+          <div class="flex gap-6">
+            <div class="text-center sm:text-right">
+              <div class="text-xs uppercase text-gray-500 mb-1">Montant initial</div>
+              <div class="text-lg font-semibold text-gray-900" data-support-search-target="initialDisplay">—</div>
+            </div>
+            <div class="text-center sm:text-right">
+              <div class="text-xs uppercase text-gray-500 mb-1">Restant</div>
+              <div class="text-lg font-semibold text-indigo-600" data-support-search-target="remainingDisplay">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+       <!-- Tableau de sélection (visible à toutes résolutions) -->
+       <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ISIN</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Libellé</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Cours</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date cours</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nb parts</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Montant</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Poids (%)</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-100" data-support-search-target="selectionBody">
+            <!-- Les sélections seront injectées ici par JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Vue Mobile : Cards responsives -->
+      <div class="lg:hidden px-4 py-4 space-y-3" data-support-search-target="selectionBody">
+        <!-- Les sélections seront injectées ici par JavaScript -->
+      </div>
+
+      <!-- Actions finales -->
+      <div class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200">
+        <div class="flex justify-center sm:justify-end">
+          <button type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold hover-lift shadow-lg hover:shadow-xl transition-all duration-300" data-support-search-target="associateButton">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+            </svg>
+            Associer les supports
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+/* Styles pour les cards mobiles des résultats de recherche */
+@media (max-width: 1023px) {
+  /* Style pour les lignes de tableau transformées en cards sur mobile */
+  [data-support-search-target="tbody"] tr {
+    display: block;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+  }
+
+  [data-support-search-target="tbody"] tr:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  [data-support-search-target="tbody"] td {
+    display: block;
+    padding: 8px 0;
+    border: none !important;
+    text-align: left !important;
+  }
+
+  /* Première cellule : checkbox avec le libellé */
+  [data-support-search-target="tbody"] td:first-child {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #f3f4f6 !important;
+  }
+
+  [data-support-search-target="tbody"] td:first-child input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  /* Affichage des labels pour chaque champ */
+  [data-support-search-target="tbody"] td:not(:first-child)::before {
+    content: attr(data-label);
+    display: inline-block;
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+    width: 100%;
+  }
+
+  [data-support-search-target="tbody"] td:not(:first-child) {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  /* Style pour les valeurs */
+  [data-support-search-target="tbody"] td:not(:first-child) > * {
+    color: #111827;
+    font-size: 0.875rem;
+  }
+
+  /* Grille responsive pour afficher les données en 2 colonnes */
+  [data-support-search-target="tbody"] tr {
+    display: grid;
+    gap: 8px;
+  }
+
+  /* ISIN et Type en ligne */
+  [data-support-search-target="tbody"] td:nth-child(3),
+  [data-support-search-target="tbody"] td:nth-child(4) {
+    display: inline-block;
+    width: calc(50% - 4px);
+    vertical-align: top;
+  }
+
+  [data-support-search-target="tbody"] td:nth-child(3) {
+    margin-right: 8px;
+  }
+
+  /* Exchange et Devise en ligne */
+  [data-support-search-target="tbody"] td:nth-child(5),
+  [data-support-search-target="tbody"] td:nth-child(6) {
+    display: inline-block;
+    width: calc(50% - 4px);
+    vertical-align: top;
+  }
+
+  [data-support-search-target="tbody"] td:nth-child(5) {
+    margin-right: 8px;
+  }
+
+  /* Dernière VL et Date en ligne */
+  [data-support-search-target="tbody"] td:nth-child(7),
+  [data-support-search-target="tbody"] td:nth-child(8) {
+    display: inline-block;
+    width: calc(50% - 4px);
+    vertical-align: top;
+  }
+
+  [data-support-search-target="tbody"] td:nth-child(7) {
+    margin-right: 8px;
+  }
+
+  /* Badges pour les types et exchanges */
+  [data-support-search-target="tbody"] td:nth-child(4) .badge,
+  [data-support-search-target="tbody"] td:nth-child(5) .badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+  }
+
+  /* Style pour la devise */
+  [data-support-search-target="tbody"] td:nth-child(6) .badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  /* Amélioration de l'affichage des valeurs */
+  [data-support-search-target="tbody"] td:nth-child(7),
+  [data-support-search-target="tbody"] td:nth-child(8) {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #059669;
+  }
+}
+
+/* Styles pour les cards mobiles du tableau de sélection */
+@media (max-width: 1023px) {
+  /* Cards pour le tableau de sélection */
+  [data-support-search-target="selectionBody"] tr {
+    display: block;
+    background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+    border: 2px solid #d1fae5;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+  }
+
+  [data-support-search-target="selectionBody"] td {
+    display: block;
+    padding: 8px 0;
+    border: none !important;
+    text-align: left !important;
+  }
+
+  /* ISIN en en-tête avec style spécial */
+  [data-support-search-target="selectionBody"] td:first-child {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #059669;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #d1fae5 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Labels pour les autres champs */
+  [data-support-search-target="selectionBody"] td:not(:first-child)::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  [data-support-search-target="selectionBody"] td:not(:first-child) {
+    display: block;
+  }
+
+  /* Valeurs importantes (Montant et Poids) plus visibles */
+  [data-support-search-target="selectionBody"] td:nth-child(6),
+  [data-support-search-target="selectionBody"] td:nth-child(7) {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #059669;
+  }
+
+  /* Styles pour les inputs dans le tableau de sélection */
+  [data-support-search-target="selectionBody"] input[type="number"],
+  [data-support-search-target="selectionBody"] input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.9375rem;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  [data-support-search-target="selectionBody"] input[type="number"]:focus,
+  [data-support-search-target="selectionBody"] input[type="date"]:focus {
+    border-color: #10b981;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+
+  /* Grille responsive pour Cours et Date cours */
+  [data-support-search-target="selectionBody"] td:nth-child(3),
+  [data-support-search-target="selectionBody"] td:nth-child(4) {
+    display: inline-block;
+    width: calc(50% - 4px);
+    vertical-align: top;
+  }
+
+  [data-support-search-target="selectionBody"] td:nth-child(3) {
+    margin-right: 8px;
+  }
+
+  /* Grille responsive pour Montant et Poids */
+  [data-support-search-target="selectionBody"] td:nth-child(6),
+  [data-support-search-target="selectionBody"] td:nth-child(7) {
+    display: inline-block;
+    width: calc(50% - 4px);
+    vertical-align: top;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border-radius: 8px;
+    padding: 12px !important;
+    margin-top: 8px;
+  }
+
+  [data-support-search-target="selectionBody"] td:nth-child(6) {
+    margin-right: 8px;
+  }
+}
+
+/* Animations et transitions globales */
+@media (max-width: 1023px) {
+  .admin-card {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    border-radius: 0;
+  }
+
+  /* Animation d'apparition pour les cards */
+  [data-support-search-target="tbody"] tr,
+  [data-support-search-target="selectionBody"] tr {
+    animation: slideInUp 0.3s ease-out;
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Message d'état plus compact */
+  [data-support-search-target="status"] {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
+}
+
+/* Styles pour tablettes (taille moyenne) */
+@media (min-width: 640px) and (max-width: 1023px) {
+  /* Cards en grille 2 colonnes sur tablette si possible */
+  [data-support-search-target="tbody"] tr {
+    max-width: 100%;
+  }
+
+  [data-support-search-target="selectionBody"] tr {
+    max-width: 100%;
+  }
+
+  /* Amélioration des inputs sur tablette */
+  [data-support-search-target="selectionBody"] input[type="number"],
+  [data-support-search-target="selectionBody"] input[type="date"] {
+    font-size: 1rem;
+    padding: 12px;
+  }
+}
+
+/* Améliorations pour petits écrans (mobiles) */
+@media (max-width: 639px) {
+  /* Ajustements pour les très petits écrans */
+  [data-support-search-target="tbody"] tr,
+  [data-support-search-target="selectionBody"] tr {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  /* Titre de la page plus compact */
+  h3.text-lg {
+    font-size: 1rem;
+  }
+
+  /* Boutons pleine largeur */
+  button[data-support-search-target="addButton"],
+  button[data-support-search-target="associateButton"] {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Améliorations générales pour tous les écrans */
+[data-support-search-target="tbody"] tr {
+  transition: all 0.2s ease;
+}
+
+[data-support-search-target="tbody"] tr:active {
+  transform: scale(0.98);
+}
+
+/* Focus visible pour accessibilité */
+input[type="checkbox"]:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+button:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+
+/* Cards admin */
+html.dark .admin-card {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+/* Titres et textes */
+html.dark .text-gray-900 {
+  color: #f1f5f9 !important;
+}
+
+html.dark .text-gray-800 {
+  color: #e2e8f0 !important;
+}
+
+html.dark .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+html.dark .text-gray-500 {
+  color: #64748b !important;
+}
+
+/* Fonds */
+html.dark .bg-gray-50 {
+  background-color: #0f172a !important;
+}
+
+html.dark .bg-gray-100 {
+  background-color: #1e293b !important;
+}
+
+html.dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+/* Gradient headers */
+html.dark .bg-gradient-to-r.from-gray-50 {
+  background: linear-gradient(to right, #1e293b, #334155) !important;
+}
+
+/* Bordures */
+html.dark .border-gray-200,
+html.dark .border-gray-100 {
+  border-color: #334155 !important;
+}
+
+html.dark .divide-gray-200 > * + *,
+html.dark .divide-gray-100 > * + * {
+  border-color: #334155 !important;
+}
+
+/* Inputs */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #334155 !important;
+  border-color: #475569 !important;
+  color: #f1f5f9 !important;
+}
+
+html.dark input::placeholder {
+  color: #64748b !important;
+}
+
+html.dark select option {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+}
+
+/* Boutons de filtre (marché) */
+html.dark .bg-indigo-50 {
+  background-color: rgba(99, 102, 241, 0.15) !important;
+}
+
+html.dark button.bg-white.text-gray-700 {
+  background-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark button.bg-white.text-gray-700:hover {
+  background-color: #475569 !important;
+}
+
+/* Tables */
+html.dark table {
+  background-color: #1e293b !important;
+}
+
+html.dark thead {
+  background-color: #0f172a !important;
+}
+
+html.dark thead .bg-gray-50 {
+  background-color: #0f172a !important;
+}
+
+html.dark tbody.bg-white {
+  background-color: #1e293b !important;
+}
+
+html.dark tbody tr {
+  border-color: #334155 !important;
+}
+
+html.dark tbody tr:hover {
+  background-color: #334155 !important;
+}
+
+/* Headers de colonnes */
+html.dark th {
+  color: #94a3b8 !important;
+}
+
+/* Icônes texte */
+html.dark .text-indigo-600 {
+  color: #818cf8 !important;
+}
+
+html.dark .text-green-600 {
+  color: #34d399 !important;
+}
+
+/* Boutons de pagination */
+html.dark button.border-gray-200 {
+  border-color: #475569 !important;
+  background-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+html.dark button.border-gray-200:hover {
+  background-color: #475569 !important;
+}
+
+/* Panneau de sélection */
+html.dark [data-support-search-target="selectionPanel"] {
+  background-color: #1e293b !important;
+}
+
+/* Section stats */
+html.dark .text-xs.uppercase.text-gray-500 {
+  color: #64748b !important;
+}
+
+/* Mobile cards dark mode */
+@media (max-width: 1023px) {
+  html.dark [data-support-search-target="tbody"] tr {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+  }
+  
+  html.dark [data-support-search-target="tbody"] tr:hover {
+    background: #334155 !important;
+  }
+  
+  html.dark [data-support-search-target="tbody"] td:first-child {
+    border-bottom-color: #475569 !important;
+  }
+  
+  html.dark [data-support-search-target="tbody"] td:not(:first-child)::before {
+    color: #94a3b8 !important;
+  }
+  
+  html.dark [data-support-search-target="tbody"] td:not(:first-child) > * {
+    color: #e2e8f0 !important;
+  }
+  
+  /* Selection cards dark */
+  html.dark [data-support-search-target="selectionBody"] tr {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    border-color: #065f46 !important;
+  }
+  
+  html.dark [data-support-search-target="selectionBody"] td:first-child {
+    color: #34d399 !important;
+    border-bottom-color: #065f46 !important;
+  }
+  
+  html.dark [data-support-search-target="selectionBody"] td:nth-child(6),
+  html.dark [data-support-search-target="selectionBody"] td:nth-child(7) {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.2) 100%) !important;
+    color: #6ee7b7 !important;
+  }
+}
+
+/* Texte du message de recherche vide */
+html.dark .text-lg.font-semibold.text-gray-900 {
+  color: #f1f5f9 !important;
+}
+
+/* Badges et indicateurs colorés */
+html.dark .text-indigo-600 {
+  color: #a5b4fc !important;
+}
+
+/* Liens */
+html.dark a:not([class*="bg-"]) {
+  color: #93c5fd !important;
+}
+
+html.dark a:not([class*="bg-"]):hover {
+  color: #bfdbfe !important;
+}
+</style>
+{% endblock %}
+
+

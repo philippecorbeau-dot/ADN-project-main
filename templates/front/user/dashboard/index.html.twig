@@ -1,0 +1,1484 @@
+{% extends 'front/user/dashboard/base.html.twig' %}
+
+{% block title %}Synthèse - ADN Family Office{% endblock %}
+
+{% block page_title %}
+    <span class="text-gray-900">Synthèse</span>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+/* ═══════════════════════════════════════════
+   PREMIUM DASHBOARD DESIGN SYSTEM
+   ═══════════════════════════════════════════ */
+
+/* ── Animated subtle background ── */
+.dash-page-bg {
+    position: relative;
+}
+.dash-page-bg::before {
+    content: '';
+    position: fixed;
+    top: 0; right: 0;
+    width: 50vw; height: 50vh;
+    background: radial-gradient(ellipse at top right, rgba(99,102,241,0.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+.dash-page-bg::after {
+    content: '';
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 40vw; height: 40vh;
+    background: radial-gradient(ellipse at bottom left, rgba(16,185,129,0.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Premium Card ── */
+.dash-card {
+    background: white;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(226,232,240,0.7);
+    box-shadow:
+        0 0 0 1px rgba(0,0,0,0.01),
+        0 1px 2px rgba(0,0,0,0.02),
+        0 4px 16px rgba(0,0,0,0.03);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+.dash-card:hover {
+    box-shadow:
+        0 0 0 1px rgba(0,0,0,0.02),
+        0 4px 8px rgba(0,0,0,0.04),
+        0 16px 48px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
+}
+
+/* Card with gradient top accent */
+.dash-card-accent::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+.dash-card-accent:hover::before {
+    opacity: 1;
+}
+
+/* ── Modern Tabs ── */
+.dash-tabs {
+    display: flex;
+    gap: 0.375rem;
+    background: rgba(241,245,249,0.7);
+    padding: 0.3125rem;
+    border-radius: 0.875rem;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(226,232,240,0.5);
+}
+.dash-tab {
+    position: relative;
+    padding: 0.625rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-radius: 0.625rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #64748b;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.dash-tab:hover {
+    color: #475569;
+    background: rgba(255,255,255,0.6);
+}
+.dash-tab-active {
+    color: #4f46e5 !important;
+    background: white !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+/* ── Section Title ── */
+.dash-section-title {
+    font-weight: 800;
+    font-size: 1.375rem;
+    color: #0f172a;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+}
+
+/* ── Hero Amount ── */
+.dash-amount-hero {
+    font-weight: 800;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+}
+
+/* ── Badge ── */
+.dash-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 1rem;
+    border-radius: 2rem;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: -0.01em;
+}
+.dash-badge-emerald {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16,185,129,0.25);
+}
+.dash-badge-indigo {
+    background: linear-gradient(135deg, #4338ca, #6366f1);
+    color: white;
+    box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+}
+
+/* ── Donut Chart Center Text ── */
+.donut-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.donut-center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    z-index: 2;
+}
+.donut-center-text .donut-amount {
+    font-weight: 800;
+    font-size: clamp(0.875rem, 1.5vw, 1.125rem);
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+.donut-center-text .donut-label {
+    font-size: 0.6875rem;
+    color: #94a3b8;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+}
+
+/* ── Legend Item ── */
+.dash-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.75rem;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+}
+.dash-legend:hover {
+    transform: translateX(4px);
+}
+.dash-legend-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+}
+
+/* ── Account Card ── */
+.dash-account-card {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid rgba(226,232,240,0.7);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dash-account-card:hover {
+    border-color: rgba(199,210,254,0.5);
+    box-shadow: 0 4px 16px rgba(99,102,241,0.06);
+}
+.dash-account-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.125rem 1.25rem;
+}
+.dash-account-body {
+    padding: 0.5rem 1.25rem 1rem;
+    border-top: 1px solid rgba(241,245,249,0.8);
+}
+
+/* ── Icon Container ── */
+.dash-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+/* ── Divider ── */
+.dash-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(226,232,240,0.8), transparent);
+}
+
+/* ── Distributor Accordion ── */
+.dash-dist-card {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid rgba(226,232,240,0.7);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.dash-dist-card:hover {
+    border-color: rgba(199,210,254,0.4);
+}
+.dash-dist-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.dash-dist-header:hover {
+    background: rgba(248,250,252,0.8);
+}
+
+/* ── Product Row ── */
+.dash-product-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1.25rem;
+    transition: all 0.2s ease;
+    border-top: 1px solid rgba(241,245,249,0.8);
+    text-decoration: none;
+    color: inherit;
+}
+.dash-product-row:hover {
+    background: linear-gradient(90deg, rgba(238,242,255,0.4), rgba(248,250,252,0.2));
+}
+
+/* ── Sparkline Container ── */
+.dash-sparkline {
+    background: linear-gradient(135deg, rgba(248,250,252,0.8), rgba(241,245,249,0.4));
+    border-radius: 0.75rem;
+    padding: 0.875rem 1rem;
+}
+
+/* ── Progress bar ── */
+.dash-progress {
+    height: 0.5rem;
+    border-radius: 1rem;
+    background: rgba(241,245,249,0.8);
+    overflow: hidden;
+}
+.dash-progress-bar {
+    height: 100%;
+    border-radius: 1rem;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Activity Timeline ── */
+.dash-activity-dot {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+/* ── Pulse Dot (data status) ── */
+.dash-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    position: relative;
+    flex-shrink: 0;
+}
+.dash-pulse::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: rgba(16,185,129,0.25);
+    animation: dashPulse 2s ease-in-out infinite;
+}
+@keyframes dashPulse {
+    0%, 100% { transform: scale(0.8); opacity: 1; }
+    50% { transform: scale(1.8); opacity: 0; }
+}
+
+/* ── Animate In (staggered) ── */
+.dash-animate-in {
+    animation: dashSlideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes dashSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.dash-delay-1 { animation-delay: 0.05s; }
+.dash-delay-2 { animation-delay: 0.1s; }
+.dash-delay-3 { animation-delay: 0.15s; }
+.dash-delay-4 { animation-delay: 0.2s; }
+.dash-delay-5 { animation-delay: 0.25s; }
+
+/* ── Subtle counter animation ── */
+.dash-number-glow {
+    transition: color 0.5s ease, text-shadow 0.5s ease;
+}
+.dash-number-glow.updated {
+    color: #4f46e5;
+    text-shadow: 0 0 20px rgba(99,102,241,0.2);
+}
+
+/* ── Responsive ── */
+@media (max-width: 767px) {
+    .dash-patrimoine-grid {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center;
+    }
+    .dash-donut-wrapper {
+        margin-bottom: 1.5rem;
+    }
+    .dash-legend {
+        justify-content: center;
+    }
+    .dash-section-title {
+        font-size: 1.125rem;
+    }
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+[x-cloak] { display: none !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div x-data="{ activeTab: 'synthese' }" class="dash-page-bg relative z-10">
+
+{# ═══════════════════════════════════════════
+   WELCOME BANNER + MODERN TABS
+   ═══════════════════════════════════════════ #}
+<div class="mb-8 dash-animate-in">
+    <div class="flex flex-col gap-5">
+        {# Welcome Row #}
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-400 mb-0.5">Bonjour 👋</p>
+                <p class="text-lg font-bold text-gray-900">{{ user.firstName ?? user.email }}</p>
+            </div>
+            <div id="refresh-status" class="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 rounded-full px-3 py-1.5">
+                <svg id="refresh-spinner" class="animate-spin w-3.5 h-3.5 text-indigo-500 hidden" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+                <span id="refresh-text"></span>
+            </div>
+        </div>
+
+        {# Modern Pill Tabs #}
+        <div class="dash-tabs" role="tablist">
+            <button @click="activeTab = 'synthese'"
+                    :class="activeTab === 'synthese' ? 'dash-tab-active' : ''"
+                    class="dash-tab" role="tab">
+                <span class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    Synthèse
+                </span>
+            </button>
+            <button @click="activeTab = 'details'"
+                    :class="activeTab === 'details' ? 'dash-tab-active' : ''"
+                    class="dash-tab" role="tab">
+                <span class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Détails
+                </span>
+            </button>
+        </div>
+    </div>
+</div>
+
+{# ═══════════════════════════════════════════════════════════════════
+   ONGLET 1 : SYNTHÈSE — Premium Financial Overview
+   ═══════════════════════════════════════════════════════════════════ #}
+<div x-show="activeTab === 'synthese'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0">
+
+{# ── Patrimoine & Comptes Grid ── #}
+<div class="grid grid-cols-1 xl:grid-cols-5 gap-6 mb-8">
+
+    {# ═══ LEFT: PATRIMOINE (3 cols) ═══ #}
+    <div class="xl:col-span-3 space-y-5">
+
+        {# Patrimoine KYC — rendu serveur si disponible #}
+        {% if patrimoineData and patrimoineData.hasData %}
+        <div class="dash-card dash-card-accent p-0 dash-animate-in dash-delay-1">
+            {# Card Header #}
+            <div class="px-7 pt-6 pb-0">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="dash-icon" style="background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+                        </div>
+                        <h2 class="dash-section-title">Patrimoine</h2>
+                    </div>
+                    <span class="dash-amount-hero">{{ patrimoineData.patrimoine|number_format(2, ',', ' ') }}&nbsp;€</span>
+                </div>
+            </div>
+
+            <div class="dash-divider"></div>
+
+            {# Actif Row #}
+            <div class="px-7 pt-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-400 uppercase tracking-wide">Actif</span>
+                    <span class="text-xl font-bold text-gray-900">{{ patrimoineData.actif|number_format(2, ',', ' ') }}&nbsp;€</span>
+                </div>
+            </div>
+
+            {# Donut Chart + Legend #}
+            <div class="px-7 py-6">
+                <div class="flex items-center gap-10 dash-patrimoine-grid" style="justify-content: center;">
+                    {# Donut #}
+                    <div class="donut-wrapper dash-donut-wrapper" id="patrimoineChartWrap" style="width: 180px; height: 180px; flex-shrink: 0;">
+                        <canvas id="patrimoineChart"></canvas>
+                        <div class="donut-center-text">
+                            <div class="donut-amount">{{ patrimoineData.actif|number_format(0, ',', ' ') }}&nbsp;€</div>
+                            <div class="donut-label">Actif total</div>
+                        </div>
+                    </div>
+
+                    {# Legend #}
+                    <div class="space-y-2 flex-1 min-w-0">
+                        {% if patrimoineData.immobilier.montant|default(0) > 0 %}
+                        <a href="{{ path('user_patrimoine_immobilier') }}" class="dash-legend group hover:bg-indigo-50/60">
+                            <div class="dash-legend-dot" style="background: linear-gradient(135deg, #3b82f6, #6366f1);"></div>
+                            <div class="flex-1 min-w-0">
+                                <span class="text-sm font-semibold text-gray-700 group-hover:text-indigo-700 transition-colors">Immobilier</span>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">{{ patrimoineData.immobilier.pourcentage }}&nbsp;%</span>
+                            <svg class="w-4 h-4 text-gray-300 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                        {% else %}
+                        <div class="dash-legend">
+                            <div class="dash-legend-dot" style="background: linear-gradient(135deg, #3b82f6, #6366f1);"></div>
+                            <div class="flex-1 min-w-0">
+                                <span class="text-sm font-semibold text-gray-700">Immobilier</span>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">{{ patrimoineData.immobilier.pourcentage }}&nbsp;%</span>
+                        </div>
+                        {% endif %}
+
+                        {% if patrimoineData.actifs_financiers.montant|default(0) > 0 %}
+                        <a href="{{ path('user_patrimoine_financier') }}" class="dash-legend group hover:bg-cyan-50/60">
+                            <div class="dash-legend-dot" style="background: linear-gradient(135deg, #06b6d4, #22d3ee);"></div>
+                            <div class="flex-1 min-w-0">
+                                <span class="text-sm font-semibold text-gray-700 group-hover:text-cyan-700 transition-colors">Actifs financiers</span>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">{{ patrimoineData.actifs_financiers.pourcentage }}&nbsp;%</span>
+                            <svg class="w-4 h-4 text-gray-300 group-hover:text-cyan-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                        {% else %}
+                        <div class="dash-legend">
+                            <div class="dash-legend-dot" style="background: linear-gradient(135deg, #06b6d4, #22d3ee);"></div>
+                            <div class="flex-1 min-w-0">
+                                <span class="text-sm font-semibold text-gray-700">Actifs financiers</span>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">{{ patrimoineData.actifs_financiers.pourcentage }}&nbsp;%</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {# Passif #}
+            <div class="dash-divider"></div>
+            <div class="px-7 py-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-400 uppercase tracking-wide">Passif</span>
+                    <span class="text-xl font-bold {% if patrimoineData.passif > 0 %}text-red-500{% else %}text-gray-900{% endif %}">{{ patrimoineData.passif|number_format(2, ',', ' ') }}&nbsp;€</span>
+                </div>
+            </div>
+
+            {# Data source badge #}
+            {% if patrimoineData.isO2S|default(false) %}
+            <div class="px-7 pb-5">
+                <div class="flex items-center gap-2.5 text-xs text-gray-400">
+                    <div class="dash-pulse"></div>
+                    <span>{{ patrimoineData.stockCount|default(0) }} éléments patrimoniaux</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% else %}
+        {# Placeholder patrimoine — rempli via AJAX, sinon simple encours #}
+        <div class="dash-animate-in dash-delay-1">
+            <div class="flex items-center gap-3 mb-4">
+                <h2 class="dash-section-title">Patrimoine</h2>
+            </div>
+
+            {# Zone patrimoine — remplie dynamiquement via AJAX #}
+            <div id="patrimoine-o2s-zone" class="hidden"></div>
+
+            {# Affichage par défaut #}
+            <div id="patrimoine-default-zone">
+                <div class="dash-card dash-card-accent p-7">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="dash-icon" style="background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));">
+                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <span class="text-sm font-medium text-gray-500 uppercase tracking-wide">Encours sous gestion</span>
+                        </div>
+                        <span id="kpi-encours" class="dash-amount-hero">{{ totalEncoursAll|number_format(2, ',', ' ') }}&nbsp;€</span>
+                    </div>
+                    {% if isO2SUser is defined and isO2SUser %}
+                    <div id="o2s-loading-indicator" class="flex items-center gap-3 pt-4 border-t border-gray-100">
+                        <svg class="animate-spin w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                        </svg>
+                        <span class="text-sm text-gray-400">Chargement du patrimoine…</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# ── PROFIL INVESTISSEUR ── #}
+        {% if investor is not null %}
+        {% set color = investor.color == 'green' ? '#10b981' : (investor.color == 'blue' ? '#6366f1' : (investor.color == 'orange' ? '#f97316' : '#8b5cf6')) %}
+        <div class="dash-card p-5 dash-animate-in dash-delay-2">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-sm" style="background: linear-gradient(135deg, {{ color }}, {{ color }}dd);">
+                        <span class="text-lg font-extrabold">{{ investor.score }}</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-sm">{{ investor.label }}</h3>
+                        <p class="text-xs text-gray-400">Profil investisseur</p>
+                    </div>
+                </div>
+                <a href="{{ path('user_profile') }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50">Détails →</a>
+            </div>
+            <div class="dash-progress">
+                <div class="dash-progress-bar" style="width: {{ investor.score > 100 ? 100 : investor.score }}%; background: linear-gradient(90deg, {{ color }}, {{ color }}bb);"></div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ═══ RIGHT: COMPTES (2 cols) ═══ #}
+    <div class="xl:col-span-2 space-y-4">
+        <div class="flex items-center justify-between mb-1 dash-animate-in dash-delay-2">
+            <h2 class="dash-section-title">Comptes</h2>
+            <span id="total-badge" class="dash-badge dash-badge-emerald">
+                {{ totalEncoursAll|number_format(2, ',', ' ') }}&nbsp;€
+            </span>
+        </div>
+
+        {# Comptes courants #}
+        <div id="synthese-comptes-courants" class="dash-account-card dash-animate-in dash-delay-3">
+            <div class="dash-account-header">
+                <div class="flex items-center gap-3">
+                    <div class="dash-icon" style="background: linear-gradient(135deg, rgba(100,116,139,0.08), rgba(148,163,184,0.08));">
+                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-gray-900 text-sm">Comptes courants</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="synthese-cc-total" class="text-base font-bold text-gray-400"></span>
+                    <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </div>
+            <div id="synthese-cc-body" class="dash-account-body text-center">
+                <div class="flex items-center justify-center gap-2 py-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300 animate-pulse"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300 animate-pulse" style="animation-delay: 0.2s"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300 animate-pulse" style="animation-delay: 0.4s"></div>
+                </div>
+            </div>
+        </div>
+
+        {# Épargne bancaire #}
+        <div id="synthese-epargne-bancaire" class="dash-account-card dash-animate-in dash-delay-4">
+            <div class="dash-account-header">
+                <div class="flex items-center gap-3">
+                    <div class="dash-icon" style="background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(99,102,241,0.08));">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-gray-900 text-sm">Épargne bancaire</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="synthese-eb-total" class="text-base font-bold text-gray-400"></span>
+                    <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </div>
+            <div id="synthese-eb-body" class="dash-account-body text-center">
+                <div class="flex items-center justify-center gap-2 py-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300 animate-pulse"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300 animate-pulse" style="animation-delay: 0.2s"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-gray-300 animate-pulse" style="animation-delay: 0.4s"></div>
+                </div>
+            </div>
+        </div>
+
+        {# Placements financiers — lien vers l'onglet Détails #}
+        <a href="#" @click.prevent="activeTab = 'details'" class="block dash-account-card group dash-animate-in dash-delay-5">
+            <div class="dash-account-header">
+                <div class="flex items-center gap-3">
+                    <div class="dash-icon" style="background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(20,184,166,0.08));">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                        </svg>
+                    </div>
+                    <span class="font-semibold text-gray-900 text-sm group-hover:text-emerald-700 transition-colors">Placements financiers</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="total-placements" class="text-base font-bold text-gray-900">{{ totalEncoursAll|number_format(2, ',', ' ') }}&nbsp;€</span>
+                    <svg class="w-4 h-4 text-gray-300 group-hover:text-emerald-500 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+{# ═══════════════════════════════════════════════════════════════════
+   SECTION OPPORTUNITÉS D'INVESTISSEMENT
+   ═══════════════════════════════════════════════════════════════════ #}
+<div class="mt-10 dash-animate-in" style="animation-delay: 0.35s;">
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+            <div class="dash-icon" style="background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(249,115,22,0.1));">
+                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+            </div>
+            <h2 class="dash-section-title">Opportunités d'investissement</h2>
+        </div>
+        <a href="{{ path('user_opportunities') }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 flex items-center gap-1.5">
+            Tout voir
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {# SCPI #}
+        <a href="{{ path('user_investment_scpi') }}" class="dash-card group p-5 block" onclick="trackOpportunityClick('SCPI', 'discover');">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.15));">
+                    <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <h3 class="font-bold text-gray-900 text-sm group-hover:text-emerald-700 transition-colors">SCPI</h3>
+                    <p class="text-xs text-gray-400 truncate">Immobilier professionnel</p>
+                </div>
+            </div>
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-400">Rendement</span>
+                    <span class="font-bold text-emerald-600">6-8%</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-400">Ticket</span>
+                    <span class="font-medium text-gray-700">1 000€</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-indigo-600 group-hover:text-indigo-700 pt-3 border-t border-gray-100/80 transition-colors">
+                Découvrir
+                <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+        </a>
+
+        {# PEA-PME #}
+        <a href="{{ path('user_investment_pea_pme') }}" class="dash-card group p-5 block" onclick="trackOpportunityClick('PEA-PME', 'discover');">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(37,99,235,0.15));">
+                    <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <h3 class="font-bold text-gray-900 text-sm group-hover:text-blue-700 transition-colors">PEA-PME</h3>
+                    <p class="text-xs text-gray-400 truncate">PME françaises</p>
+                </div>
+            </div>
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-400">Fiscalité</span>
+                    <span class="font-bold text-blue-600">Exonération</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-400">Plafond</span>
+                    <span class="font-medium text-gray-700">225 000€</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-indigo-600 group-hover:text-indigo-700 pt-3 border-t border-gray-100/80 transition-colors">
+                Découvrir
+                <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+        </a>
+
+        {# Assurance-vie #}
+        <a href="{{ path('user_investment_assurance_vie') }}" class="dash-card group p-5 block" onclick="trackOpportunityClick('Assurance-vie', 'discover');">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(124,58,237,0.15));">
+                    <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <h3 class="font-bold text-gray-900 text-sm group-hover:text-purple-700 transition-colors">Assurance-vie</h3>
+                    <p class="text-xs text-gray-400 truncate">Épargne flexible</p>
+                </div>
+            </div>
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-400">Fiscalité</span>
+                    <span class="font-bold text-purple-600">Après 8 ans</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-400">Transmission</span>
+                    <span class="font-medium text-gray-700">Hors succession</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-indigo-600 group-hover:text-indigo-700 pt-3 border-t border-gray-100/80 transition-colors">
+                Découvrir
+                <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+        </a>
+
+        {# PER #}
+        <a href="{{ path('user_investment_per') }}" class="dash-card group p-5 block" onclick="trackOpportunityClick('PER', 'discover');">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(234,88,12,0.15));">
+                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <h3 class="font-bold text-gray-900 text-sm group-hover:text-amber-700 transition-colors">PER</h3>
+                    <p class="text-xs text-gray-400 truncate">Plan retraite</p>
+                </div>
+            </div>
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-400">Déduction</span>
+                    <span class="font-bold text-amber-600">10% du revenu</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-gray-400">Sortie</span>
+                    <span class="font-medium text-gray-700">Rente / Capital</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-indigo-600 group-hover:text-indigo-700 pt-3 border-t border-gray-100/80 transition-colors">
+                Découvrir
+                <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+        </a>
+    </div>
+
+    {# CTA Banner #}
+    <div class="mt-6 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4" style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%);">
+        <div class="flex items-center gap-4 text-white">
+            <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="font-bold text-sm">Besoin de conseils personnalisés ?</p>
+                <p class="text-indigo-200 text-xs">Nos experts vous accompagnent dans vos choix d'investissement.</p>
+            </div>
+        </div>
+        <a href="{{ path('user_advisor') }}" class="bg-white text-indigo-700 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-50 transition-colors flex-shrink-0 shadow-lg shadow-indigo-900/20">
+            Prendre rendez-vous
+        </a>
+    </div>
+</div>
+
+</div>{# fin onglet synthèse #}
+
+{# ═══════════════════════════════════════════════════════════════════
+   ONGLET 2 : DÉTAILS — Vue détaillée des contrats
+   ═══════════════════════════════════════════════════════════════════ #}
+<div x-show="activeTab === 'details'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0">
+
+<div class="mb-8">
+    {# Header #}
+    <div class="flex items-center justify-between mb-6 dash-animate-in">
+        <div class="flex items-center gap-3">
+            <div class="dash-icon" style="background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(20,184,166,0.1));">
+                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                </svg>
+            </div>
+            <h2 class="dash-section-title">Placements financiers</h2>
+        </div>
+        <span class="dash-badge dash-badge-emerald">
+            {{ totalEncoursAll|number_format(2, ',', ' ') }}&nbsp;€
+        </span>
+    </div>
+
+    {# Distributor Accordions #}
+    {% if productsByDistributor is defined and productsByDistributor|length > 0 %}
+    <div class="space-y-4" x-data="{ openDist: '{{ productsByDistributor|keys|first }}' }">
+        {% for distName, distData in productsByDistributor %}
+        <div class="dash-dist-card dash-animate-in dash-delay-{{ loop.index }}">
+            {# Header distributeur #}
+            <button @click="openDist = openDist === '{{ distName }}' ? '' : '{{ distName }}'"
+                    class="dash-dist-header">
+                <div class="flex items-center gap-3">
+                    <div class="dash-icon" style="background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08));">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </div>
+                    <span class="font-bold text-gray-900">{{ distName }}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="font-bold text-gray-900 text-lg" data-dist-total="{{ distName }}">{{ distData.total|number_format(2, ',', ' ') }}&nbsp;€</span>
+                    <svg class="w-5 h-5 text-gray-400 transition-transform duration-300"
+                         :class="openDist === '{{ distName }}' ? 'rotate-180' : ''"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+            </button>
+
+            {# Produits sous ce distributeur #}
+            <div x-show="openDist === '{{ distName }}'" x-collapse>
+                {% for p in distData.products %}
+                <div class="border-t border-gray-100/80">
+                    <a href="{{ path('user_product_show', {id: p.id}) }}"
+                       class="dash-product-row group"
+                       data-product-id="{{ p.id }}">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors truncate text-sm">{{ p.alias ?? ('Produit #' ~ p.id) }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-gray-500">
+                                <span class="px-2 py-0.5 bg-gray-100/80 rounded-md text-gray-600 font-medium text-[11px]">{{ p.type|replace({'_': ' '}) }}</span>
+                                <span class="text-gray-400" data-valuation-date="{{ p.id }}">
+                                    {% if p.o2sValuationDate is defined and p.o2sValuationDate %}
+                                    Val. {{ p.o2sValuationDate|date('d/m/Y') }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 flex-shrink-0 ml-4 text-right">
+                            {% if p.versements is defined and p.versements is not null and p.versements > 0 %}
+                            <div class="hidden sm:block">
+                                <span class="text-[10px] text-gray-400 block uppercase tracking-wide">Versements</span>
+                                <span class="text-xs text-gray-600 font-medium">{{ p.versements|number_format(2, ',', ' ') }}&nbsp;€</span>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <span class="font-bold text-gray-900 text-sm dash-number-glow" data-product-amount="{{ p.id }}">{{ p.encours|number_format(2, ',', ' ') }}&nbsp;€</span>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-300 group-hover:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </a>
+                    {# Mini sparkline chart per contrat — rempli via AJAX #}
+                    <div class="px-5 pb-3 hidden" data-product-chart-wrap="{{ p.id }}">
+                        <div class="dash-sparkline">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-[10px] uppercase tracking-wider text-gray-400 font-medium">Évolution 6 mois</span>
+                                <span class="text-xs font-semibold" data-product-evo="{{ p.id }}"></span>
+                            </div>
+                            <div class="h-16">
+                                <canvas id="product-chart-{{ p.id }}"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="dash-card p-10 text-center dash-animate-in">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));">
+            <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+        </div>
+        <p class="text-gray-500 mb-5 text-sm">Aucun placement actif pour le moment.</p>
+        <a href="{{ path('user_opportunities') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:shadow-lg" style="background: linear-gradient(135deg, #4f46e5, #6366f1);">
+            Découvrir les opportunités
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+</div>{# fin onglet détails #}
+
+{# ── ACTIVITÉS RÉCENTES (visible sur les 2 onglets) ── #}
+{% if activities is defined and activities|length > 0 %}
+<div id="activities" class="mb-8 dash-animate-in" style="animation-delay: 0.3s;">
+    <h2 class="dash-section-title mb-5">Dernières activités</h2>
+    <div class="dash-card overflow-hidden">
+        {% for activity in activities %}
+        <div class="flex items-start gap-4 px-6 py-4 {{ not loop.last ? 'border-b border-gray-100/80' : '' }} hover:bg-gray-50/50 transition-colors">
+            <div class="dash-activity-dot mt-0.5
+                {% if activity.level == 'success' %}" style="background: linear-gradient(135deg, #059669, #10b981);"
+                {% elseif activity.level == 'warning' %}" style="background: linear-gradient(135deg, #d97706, #f59e0b);"
+                {% else %}" style="background: linear-gradient(135deg, #4f46e5, #6366f1);"{% endif %}>
+                {% if activity.level == 'success' %}✓
+                {% elseif activity.level == 'warning' %}!
+                {% else %}i{% endif %}
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-gray-900">{{ activity.title }}</p>
+                {% if activity.message %}
+                <p class="text-sm text-gray-500 mt-0.5">{{ activity.message }}</p>
+                {% endif %}
+                <p class="text-xs text-gray-400 mt-1.5">{{ activity.createdAt|date('d/m/Y à H:i') }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+</div>{# fin x-data #}
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+/* ─── Tracking des clics opportunités ─── */
+function trackOpportunityClick(productType, action) {
+    fetch('/api/investment/track-click', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: JSON.stringify({ product: productType, action: action })
+    }).catch(() => {});
+}
+
+const fmt = (n) => new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+const fmtPct = (n) => (n >= 0 ? '+' : '') + fmt(n) + ' %';
+
+{# ─── Patrimoine KYC chart (rendu immédiat si données KYC disponibles) ─── #}
+{% if patrimoineData is defined and patrimoineData and patrimoineData.hasData %}
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('patrimoineChart');
+    if (ctx) {
+        const patrimoineLinks = [
+            '{{ path('user_patrimoine_immobilier') }}',
+            '{{ path('user_patrimoine_financier') }}'
+        ];
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Immobilier', 'Actifs financiers'],
+                datasets: [{
+                    data: [{{ patrimoineData.immobilier.pourcentage }}, {{ patrimoineData.actifs_financiers.pourcentage }}],
+                    backgroundColor: [
+                        createGradientForDoughnut(ctx, '#3b82f6', '#6366f1'),
+                        createGradientForDoughnut(ctx, '#06b6d4', '#22d3ee')
+                    ],
+                    borderWidth: 4,
+                    borderColor: '#fff',
+                    hoverOffset: 12,
+                    hoverBorderWidth: 2,
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '72%',
+                animation: {
+                    animateRotate: true,
+                    duration: 1400,
+                    easing: 'easeOutQuart'
+                },
+                onHover: (event, elements) => {
+                    event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                },
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const idx = elements[0].index;
+                        if (patrimoineLinks[idx]) window.location.href = patrimoineLinks[idx];
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15,23,42,0.95)',
+                        padding: 14,
+                        cornerRadius: 10,
+                        displayColors: true,
+                        boxPadding: 6,
+                        titleFont: { size: 13, weight: '600' },
+                        bodyFont: { size: 12 },
+                        callbacks: {
+                            label: (ctx) => `${ctx.label}: ${ctx.parsed}% — Cliquer pour détails`
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+
+function createGradientForDoughnut(canvas, color1, color2) {
+    const el = canvas instanceof HTMLCanvasElement ? canvas : document.getElementById(canvas);
+    if (!el) return color1;
+    const ctx2d = el.getContext('2d');
+    const gradient = ctx2d.createLinearGradient(0, 0, el.width, el.height);
+    gradient.addColorStop(0, color1);
+    gradient.addColorStop(1, color2);
+    return gradient;
+}
+{% endif %}
+
+/* ─── Helpers graphiques ─── */
+function createLineChart(canvasId, labels, dataPoints, options = {}) {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return null;
+    const fmtLabels = labels.map(d => { const p = d.split('-'); return p[2]+'/'+p[1]; });
+
+    // Gradient fill
+    const ctx2d = ctx.getContext('2d');
+    const gradient = ctx2d.createLinearGradient(0, 0, 0, ctx.parentElement?.clientHeight || 64);
+    const baseColor = options.color || '#6366f1';
+    gradient.addColorStop(0, baseColor + '18');
+    gradient.addColorStop(1, baseColor + '02');
+
+    return new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: fmtLabels,
+            datasets: [{
+                data: dataPoints,
+                borderColor: baseColor,
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.4,
+                borderWidth: options.lineWidth || 2,
+                pointRadius: 0,
+                pointHoverRadius: options.hoverRadius || 5,
+                pointHoverBackgroundColor: baseColor,
+                pointHoverBorderColor: '#fff',
+                pointHoverBorderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(15,23,42,0.95)', padding: 12, cornerRadius: 8, displayColors: false,
+                    titleFont: { size: 11 }, bodyFont: { size: 12, weight: '600' },
+                    callbacks: { label: (c) => fmt(c.parsed.y) + ' €' }
+                }
+            },
+            scales: options.hideScales ? { x: { display: false }, y: { display: false } } : {
+                x: { grid: { display: false }, ticks: { font: { size: 10, weight: '500' }, color: '#94a3b8', maxTicksLimit: 8 } },
+                y: { grid: { color: 'rgba(241,245,249,0.8)', drawBorder: false }, ticks: { font: { size: 10 }, color: '#94a3b8', callback: (v) => (v / 1000).toFixed(0) + ' k€' } }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            }
+        }
+    });
+}
+
+{% if not (patrimoineData is defined and patrimoineData and patrimoineData.hasData) %}
+function createGradientForDoughnut(canvas, color1, color2) {
+    const el = canvas instanceof HTMLCanvasElement ? canvas : document.getElementById(canvas);
+    if (!el) return color1;
+    const ctx2d = el.getContext('2d');
+    const gradient = ctx2d.createLinearGradient(0, 0, el.width, el.height);
+    gradient.addColorStop(0, color1);
+    gradient.addColorStop(1, color2);
+    return gradient;
+}
+{% endif %}
+
+/* ─── 1. Rafraîchissement asynchrone des valorisations ─── */
+/* ─── 2. Chargement AJAX des données enrichies ─── */
+/* Les deux appels sont chaînés : refresh d'abord → puis enrichissement.
+   Cela garantit la cohérence entre les totaux produits et le patrimoine O2S. */
+document.addEventListener('DOMContentLoaded', function() {
+    const spinner = document.getElementById('refresh-spinner');
+    const statusText = document.getElementById('refresh-text');
+
+    if (spinner) spinner.classList.remove('hidden');
+    if (statusText) statusText.textContent = 'Mise à jour…';
+
+    // ─── Étape 1 : Rafraîchir les valorisations depuis l'API O2S ───
+    fetch('{{ path("user_api_refresh_valuations") }}', {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.success) return;
+        let anyChanged = false;
+
+        // Regrouper les encours par distributeur pour mettre à jour les sous-totaux
+        const distTotals = {};
+
+        (data.products || []).forEach(p => {
+            // Toujours mettre à jour les montants individuels (même si « pas changé » pour corriger le cache)
+            const amountEl = document.querySelector('[data-product-amount="' + p.id + '"]');
+            if (amountEl) {
+                amountEl.textContent = fmt(p.encours) + ' €';
+                if (p.changed) {
+                    amountEl.classList.add('updated');
+                    setTimeout(() => amountEl.classList.remove('updated'), 2500);
+                }
+            }
+            const dateEl = document.querySelector('[data-valuation-date="' + p.id + '"]');
+            if (dateEl && p.valuationDate) dateEl.textContent = 'Val. ' + p.valuationDate;
+
+            // Accumuler pour les sous-totaux distributeur
+            if (p.distributor) {
+                distTotals[p.distributor] = (distTotals[p.distributor] || 0) + (p.encours || 0);
+            }
+
+            if (p.changed) anyChanged = true;
+        });
+
+        // Mettre à jour les totaux globaux
+        const totalStr = fmt(data.totalEncours) + ' €';
+        ['total-badge', 'total-placements', 'kpi-encours'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = totalStr;
+        });
+
+        // Mettre à jour les sous-totaux distributeur
+        Object.entries(distTotals).forEach(([dist, total]) => {
+            const distEl = document.querySelector('[data-dist-total="' + dist + '"]');
+            if (distEl) distEl.textContent = fmt(total) + ' €';
+        });
+
+        if (spinner) spinner.classList.add('hidden');
+        if (statusText) {
+            statusText.textContent = anyChanged ? '✓ Mis à jour' : '✓ À jour';
+            statusText.classList.add('text-emerald-600');
+            setTimeout(() => { if (statusText) statusText.textContent = ''; }, 4000);
+        }
+    })
+    .catch(err => {
+        console.warn('Refresh valuations error:', err);
+        if (spinner) spinner.classList.add('hidden');
+        if (statusText) statusText.textContent = '';
+    })
+    .finally(() => {
+        // ─── Étape 2 : Charger les données enrichies APRÈS le refresh ───
+        loadO2SEnrichedData();
+    });
+});
+
+{% if isO2SUser is defined and isO2SUser %}
+function loadO2SEnrichedData() {
+    fetch('{{ path("user_api_dashboard_o2s_data") }}', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.success || !data.hasO2S) return;
+
+        // ─── AUTO-SYNC: Si des comptes ont été créés automatiquement, rafraîchir la page ───
+        if (data.autoSynced) {
+            console.info('Auto-sync: nouveaux comptes créés, rechargement de la page…');
+            window.location.reload();
+            return;
+        }
+
+        // ─── Mettre à jour le total des placements si disponible ───
+        if (data.totalPlacementsFinanciers !== undefined && data.totalPlacementsFinanciers > 0) {
+            const totalStr = fmt(data.totalPlacementsFinanciers) + ' €';
+            ['total-badge', 'total-placements'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = totalStr;
+            });
+        }
+
+        // Masquer les skeletons
+        document.querySelectorAll('#o2s-loading-indicator, #o2s-loading-details').forEach(el => el.remove());
+
+        // ═══ ONGLET SYNTHÈSE : patrimoine ═══
+
+        // ─── Patrimoine dans Synthèse ───
+        if (data.patrimoineData && data.patrimoineData.hasData) {
+            const pd = data.patrimoineData;
+            const o2sZone = document.getElementById('patrimoine-o2s-zone');
+            const defaultZone = document.getElementById('patrimoine-default-zone');
+            if (o2sZone) {
+                if (defaultZone) defaultZone.classList.add('hidden');
+
+                const immoPct = pd.immobilier?.pourcentage || 0;
+                const finPct  = pd.actifs_financiers?.pourcentage || 0;
+                const immoMontant = pd.immobilier?.montant || 0;
+                const finMontant  = pd.actifs_financiers?.montant || 0;
+                const passifMontant = pd.passif || 0;
+
+                // Mise à jour du titre Patrimoine avec le montant
+                const patrimoineHeader = o2sZone.closest('div')?.querySelector('h2');
+                if (patrimoineHeader && patrimoineHeader.textContent.trim() === 'Patrimoine') {
+                    patrimoineHeader.insertAdjacentHTML('afterend',
+                        `<span class="dash-badge dash-badge-indigo ml-3">${fmt(pd.patrimoine)} €</span>`);
+                }
+
+                o2sZone.innerHTML = `
+                <div class="dash-card dash-card-accent p-0">
+                    {# Card Header #}
+                    <div class="px-7 pt-6 pb-0">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-400 uppercase tracking-wide">Actif</span>
+                            <span class="dash-amount-hero">${fmt(pd.actif)} €</span>
+                        </div>
+                    </div>
+
+                    <div class="dash-divider"></div>
+
+                    {# Donut + Legend #}
+                    <div class="px-7 py-6">
+                        <div class="flex items-center gap-10 dash-patrimoine-grid" style="justify-content: center;">
+                            <div class="donut-wrapper" style="width: 180px; height: 180px; flex-shrink: 0;">
+                                <canvas id="patrimoine-o2s-donut"></canvas>
+                                <div class="donut-center-text">
+                                    <div class="donut-amount">${fmt(pd.actif)} €</div>
+                                    <div class="donut-label">Actif total</div>
+                                </div>
+                            </div>
+                            <div class="space-y-2 flex-1 min-w-0">
+                                <a href="{{ path('user_patrimoine_immobilier') }}" class="dash-legend group hover:bg-indigo-50/60">
+                                    <div class="dash-legend-dot" style="background: linear-gradient(135deg, #3b82f6, #6366f1);"></div>
+                                    <div class="flex-1 min-w-0">
+                                        <span class="text-sm font-semibold text-gray-700 group-hover:text-indigo-700 transition-colors">Immobilier</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-gray-900">${immoPct} %</span>
+                                    <svg class="w-4 h-4 text-gray-300 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </a>
+                                <a href="{{ path('user_patrimoine_financier') }}" class="dash-legend group hover:bg-cyan-50/60">
+                                    <div class="dash-legend-dot" style="background: linear-gradient(135deg, #06b6d4, #22d3ee);"></div>
+                                    <div class="flex-1 min-w-0">
+                                        <span class="text-sm font-semibold text-gray-700 group-hover:text-cyan-700 transition-colors">Actifs financiers</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-gray-900">${finPct} %</span>
+                                    <svg class="w-4 h-4 text-gray-300 group-hover:text-cyan-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Passif #}
+                    <div class="dash-divider"></div>
+                    <div class="px-7 py-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-400 uppercase tracking-wide">Passif</span>
+                            <span class="text-xl font-bold ${passifMontant > 0 ? 'text-red-500' : 'text-gray-900'}">${fmt(passifMontant)} €</span>
+                        </div>
+                    </div>
+
+                    {# Data badge #}
+                    <div class="px-7 pb-5">
+                        <div class="flex items-center gap-2.5 text-xs text-gray-400">
+                            <div class="dash-pulse"></div>
+                            <span>${pd.stockCount || 0} éléments patrimoniaux</span>
+                        </div>
+                    </div>
+                </div>`;
+                o2sZone.classList.remove('hidden');
+
+                // Initialiser le donut
+                const donutCtx = document.getElementById('patrimoine-o2s-donut');
+                const patrimoineLinks = [
+                    '{{ path('user_patrimoine_immobilier') }}',
+                    '{{ path('user_patrimoine_financier') }}'
+                ];
+                if (donutCtx && (immoPct > 0 || finPct > 0)) {
+                    new Chart(donutCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Immobilier', 'Actifs financiers'],
+                            datasets: [{
+                                data: [immoPct, finPct],
+                                backgroundColor: [
+                                    createGradientForDoughnut(donutCtx, '#3b82f6', '#6366f1'),
+                                    createGradientForDoughnut(donutCtx, '#06b6d4', '#22d3ee')
+                                ],
+                                borderWidth: 4,
+                                borderColor: '#fff',
+                                hoverOffset: 12,
+                                hoverBorderWidth: 2,
+                                borderRadius: 4,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            cutout: '72%',
+                            animation: { animateRotate: true, duration: 1400, easing: 'easeOutQuart' },
+                            onHover: (event, elements) => {
+                                event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                            },
+                            onClick: (event, elements) => {
+                                if (elements.length > 0) {
+                                    const idx = elements[0].index;
+                                    if (patrimoineLinks[idx]) window.location.href = patrimoineLinks[idx];
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(15,23,42,0.95)', padding: 14, cornerRadius: 10,
+                                    displayColors: true, boxPadding: 6,
+                                    callbacks: {
+                                        label: function(ctx) {
+                                            const val = ctx.dataIndex === 0 ? immoMontant : finMontant;
+                                            return ` ${ctx.parsed}% — ${fmt(val)} € — Cliquer pour détails`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // ─── Remplir Comptes courants dans Synthèse ───
+            const ccTotal = document.getElementById('synthese-cc-total');
+            const ccBody = document.getElementById('synthese-cc-body');
+            const ccMontant = pd.actifs_financiers?.comptes_courants || 0;
+            const ccStocks = pd.stocksByFinCategorie?.comptes_courants || [];
+            if (ccTotal) ccTotal.textContent = fmt(ccMontant) + ' €';
+            if (ccBody) {
+                if (ccStocks.length > 0) {
+                    ccBody.innerHTML = ccStocks.map(s => `
+                        <div class="flex items-center justify-between py-2.5 px-1 border-b border-gray-50 last:border-0">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-2 h-2 rounded-full" style="background: linear-gradient(135deg, #94a3b8, #64748b);"></div>
+                                <span class="text-sm text-gray-700">${s.libelle}</span>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">${fmt(s.valeur)} €</span>
+                        </div>
+                    `).join('');
+                } else {
+                    ccBody.innerHTML = '<p class="text-sm text-gray-400 py-2">Aucun compte courant.</p>';
+                }
+            }
+
+            // ─── Remplir Épargne bancaire dans Synthèse ───
+            const ebTotal = document.getElementById('synthese-eb-total');
+            const ebBody = document.getElementById('synthese-eb-body');
+            const ebMontant = pd.actifs_financiers?.epargne_bancaire || 0;
+            const ebStocks = pd.stocksByFinCategorie?.epargne_bancaire || [];
+            if (ebTotal) ebTotal.textContent = fmt(ebMontant) + ' €';
+            if (ebBody) {
+                if (ebStocks.length > 0) {
+                    ebBody.innerHTML = ebStocks.map(s => `
+                        <div class="flex items-center justify-between py-2.5 px-1 border-b border-gray-50 last:border-0">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-2 h-2 rounded-full" style="background: linear-gradient(135deg, #3b82f6, #6366f1);"></div>
+                                <span class="text-sm text-gray-700">${s.libelle}</span>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">${fmt(s.valeur)} €</span>
+                        </div>
+                    `).join('');
+                } else {
+                    ebBody.innerHTML = '<p class="text-sm text-gray-400 py-2">Aucune épargne bancaire.</p>';
+                }
+            }
+        } else {
+            // Pas de données patrimoine : afficher messages par défaut pour CC et EB
+            const ccBody = document.getElementById('synthese-cc-body');
+            const ebBody = document.getElementById('synthese-eb-body');
+            if (ccBody) ccBody.innerHTML = '<p class="text-sm text-gray-400 py-2">Aucun compte courant.</p>';
+            if (ebBody) ebBody.innerHTML = '<p class="text-sm text-gray-400 py-2">Aucune épargne bancaire.</p>';
+        }
+
+        // ═══ ONGLET DÉTAILS : sparklines par contrat ═══
+        const histories = data.perProductHistories || {};
+        Object.keys(histories).forEach(productId => {
+            const h = histories[productId];
+
+            if (h.chart && h.chart.length > 1) {
+                const wrap = document.querySelector('[data-product-chart-wrap="' + productId + '"]');
+                if (wrap) {
+                    wrap.classList.remove('hidden');
+                    if (h.evoPct !== null) {
+                        const evoEl = document.querySelector('[data-product-evo="' + productId + '"]');
+                        if (evoEl) {
+                            evoEl.textContent = fmtPct(h.evoPct);
+                            evoEl.className = 'text-xs font-semibold ' + (h.evoPct >= 0 ? 'text-emerald-600' : 'text-red-500');
+                        }
+                    }
+                    createLineChart('product-chart-' + productId, h.chart.map(p => p.date), h.chart.map(p => p.value), {
+                        lineWidth: 1.5, hoverRadius: 3, hideScales: true,
+                        color: h.evoPct >= 0 ? '#10b981' : '#ef4444'
+                    });
+                }
+            }
+        });
+    })
+    .catch(err => {
+        console.warn('Data load error:', err);
+        document.querySelectorAll('#o2s-loading-indicator, #o2s-loading-details').forEach(el => el.remove());
+    });
+}
+{% else %}
+function loadO2SEnrichedData() { /* Non-O2S user: rien à charger */ }
+{% endif %}
+</script>
+{% endblock %}

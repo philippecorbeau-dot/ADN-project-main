@@ -1,0 +1,282 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Profils Investisseurs{% endblock %}
+{% block page_title %}📊 Profils Investisseurs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .profile-card {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .profile-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .profile-prudent {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-left: 4px solid #64748b;
+        }
+        .profile-equilibre {
+            background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+            border-left: 4px solid #f59e0b;
+        }
+        .profile-dynamique {
+            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+            border-left: 4px solid #ea580c;
+        }
+        .profile-spe {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-left: 4px solid #dc2626;
+        }
+        .stats-animation {
+            animation: countUp 2s ease-out forwards;
+        }
+        @keyframes countUp {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto" x-data="investorProfiles()">
+    <!-- Header avec statistiques -->
+    <div class="mb-8">
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+            <!-- Total avec profil -->
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 text-center">
+                <div class="text-3xl font-bold text-blue-600 stats-animation">{{ totalWithProfile }}</div>
+                <div class="text-sm text-gray-500 mt-1">Total avec profil</div>
+                <div class="text-xs text-gray-400 mt-1">{{ ((totalWithProfile / totalUsers) * 100)|round }}% des utilisateurs</div>
+            </div>
+
+            <!-- Prudent -->
+            <div class="profile-card profile-prudent rounded-xl shadow-sm p-6 text-center">
+                <div class="text-2xl font-bold text-gray-700 stats-animation">{{ profileStats.PRUDENT }}</div>
+                <div class="text-sm text-gray-600 mt-1 font-medium">🛡️ Prudent</div>
+                <div class="text-xs text-gray-500 mt-1">{{ profileStats.PRUDENT > 0 ? ((profileStats.PRUDENT / totalWithProfile) * 100)|round : 0 }}%</div>
+            </div>
+
+            <!-- Équilibré -->
+            <div class="profile-card profile-equilibre rounded-xl shadow-sm p-6 text-center">
+                <div class="text-2xl font-bold text-yellow-700 stats-animation">{{ profileStats.EQUILIBRE }}</div>
+                <div class="text-sm text-yellow-800 mt-1 font-medium">⚖️ Équilibré</div>
+                <div class="text-xs text-yellow-600 mt-1">{{ profileStats.EQUILIBRE > 0 ? ((profileStats.EQUILIBRE / totalWithProfile) * 100)|round : 0 }}%</div>
+            </div>
+
+            <!-- Dynamique -->
+            <div class="profile-card profile-dynamique rounded-xl shadow-sm p-6 text-center">
+                <div class="text-2xl font-bold text-orange-700 stats-animation">{{ profileStats.DYNAMIQUE }}</div>
+                <div class="text-sm text-orange-800 mt-1 font-medium">🚀 Dynamique</div>
+                <div class="text-xs text-orange-600 mt-1">{{ profileStats.DYNAMIQUE > 0 ? ((profileStats.DYNAMIQUE / totalWithProfile) * 100)|round : 0 }}%</div>
+            </div>
+
+            <!-- Spéculateur -->
+            <div class="profile-card profile-spe rounded-xl shadow-sm p-6 text-center">
+                <div class="text-2xl font-bold text-red-700 stats-animation">{{ profileStats.SPE }}</div>
+                <div class="text-sm text-red-800 mt-1 font-medium">⚡ Spéculateur</div>
+                <div class="text-xs text-red-600 mt-1">{{ profileStats.SPE > 0 ? ((profileStats.SPE / totalWithProfile) * 100)|round : 0 }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+        <form method="GET" action="{{ path('admin_modern_investor_profiles') }}" class="space-y-4 lg:space-y-0 lg:flex lg:items-end lg:space-x-4">
+            <!-- Filtre par profil -->
+            <div class="flex-1">
+                <label for="profile" class="block text-sm font-medium text-gray-700 mb-1">Profil investisseur</label>
+                <select name="profile" id="profile" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="">Tous les profils</option>
+                    {% for key, label in profileTypes %}
+                        <option value="{{ key }}" {% if currentFilters.profile == key %}selected{% endif %}>
+                            {% if key == 'PRUDENT' %}🛡️{% elseif key == 'EQUILIBRE' %}⚖️{% elseif key == 'DYNAMIQUE' %}🚀{% elseif key == 'SPE' %}⚡{% endif %}
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filtre par statut -->
+            <div class="flex-1">
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Statut compte</label>
+                <select name="status" id="status" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="">Tous les statuts</option>
+                    <option value="active" {% if currentFilters.status == 'active' %}selected{% endif %}>Actifs</option>
+                    <option value="inactive" {% if currentFilters.status == 'inactive' %}selected{% endif %}>Inactifs</option>
+                </select>
+            </div>
+
+            <!-- Boutons -->
+            <div class="flex space-x-2">
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
+                    </svg>
+                    Filtrer
+                </button>
+                <a href="{{ path('admin_modern_investor_profiles') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Réinitialiser
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Résultats -->
+    <div class="mb-4">
+        <p class="text-sm text-gray-700">
+            <span class="font-medium">{{ users|length }}</span> investisseur(s) trouvé(s)
+            {% if currentFilters.profile or currentFilters.status %}
+                <span class="text-indigo-600">avec filtres</span>
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Liste des utilisateurs -->
+    {% if users|length > 0 %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for user in users %}
+                {% set profileClass = 'profile-' ~ user.investorProfile|lower %}
+                <div class="profile-card {{ profileClass }} rounded-xl shadow-sm overflow-hidden hover-lift">
+                    <div class="p-6">
+                        <!-- Avatar et info de base -->
+                        <div class="flex items-center mb-4">
+                            <div class="flex-shrink-0">
+                                {% set initials = (user.firstName ? user.firstName|slice(0,1) : '') ~ (user.lastName ? user.lastName|slice(0,1) : '') %}
+                                {% if initials == '' %}
+                                    {% set initials = user.email|slice(0,2)|upper %}
+                                {% endif %}
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-medium text-sm" style="background-color: #1C29A1;">
+                                    {{ initials|upper }}
+                                </div>
+                            </div>
+                            <div class="ml-4 flex-1 min-w-0">
+                                <h3 class="text-sm font-medium text-gray-900 truncate">
+                                    {{ user.firstName }} {{ user.lastName }}
+                                </h3>
+                                <p class="text-xs text-gray-500 truncate">{{ user.email }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Profil investisseur -->
+                        <div class="mb-4">
+                            {% set profileColors = {
+                                'PRUDENT': 'bg-gray-100 text-gray-800',
+                                'EQUILIBRE': 'bg-yellow-100 text-yellow-800',
+                                'DYNAMIQUE': 'bg-orange-100 text-orange-800',
+                                'SPE': 'bg-red-100 text-red-800'
+                            } %}
+                            {% set profileIcons = {
+                                'PRUDENT': '🛡️',
+                                'EQUILIBRE': '⚖️',
+                                'DYNAMIQUE': '🚀',
+                                'SPE': '⚡'
+                            } %}
+                            <div class="flex items-center justify-center">
+                                <span class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium {{ profileColors[user.investorProfile] ?? 'bg-gray-100 text-gray-800' }}">
+                                    {{ profileIcons[user.investorProfile] ?? '' }} {{ profileTypes[user.investorProfile] ?? user.investorProfile }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Badges de statut -->
+                        <div class="flex flex-wrap gap-2 mb-4 justify-center">
+                            {% if user.isVerified %}
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    ✓ Vérifié
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    ✗ Non vérifié
+                                </span>
+                            {% endif %}
+
+                            <!-- Étape KYC -->
+                            {% if user.stepKyc %}
+                                {% set currentStep = user.stepKyc ?? 0 %}
+                                {% if currentStep == 5 %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        KYC Complété
+                                    </span>
+                                {% elseif currentStep > 0 %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        KYC {{ currentStep }}/5
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+
+                        <!-- Score investisseur (si disponible) -->
+                        {% if user.investorScore is defined and user.investorScore %}
+                            <div class="mb-4 text-center">
+                                <div class="text-lg font-bold text-gray-700">Score: {{ user.investorScore }}/100</div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                    <div class="h-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-600" style="width: {{ user.investorScore }}%"></div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Métadonnées -->
+                        <div class="text-xs text-gray-500 mb-4 text-center">
+                            <p>Inscrit le {{ user.createdAt|date('d/m/Y') }}</p>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex space-x-2">
+                            <a href="{{ path('admin_modern_user_view', {id: user.id}) }}" 
+                               class="flex-1 bg-indigo-600 text-white text-center py-2 px-3 rounded-md text-xs font-medium hover:bg-indigo-700 transition-colors">
+                                👁️ Voir profil
+                            </a>
+                            <a href="{{ path('admin_modern_user_edit', {id: user.id}) }}" 
+                               class="flex-1 bg-gray-100 text-gray-700 text-center py-2 px-3 rounded-md text-xs font-medium hover:bg-gray-200 transition-colors">
+                                ✏️ Éditer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white shadow-sm rounded-xl border border-gray-100 p-12 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun profil investisseur trouvé</h3>
+            <p class="mt-1 text-sm text-gray-500">Essayez de modifier vos critères de recherche</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function investorProfiles() {
+            return {
+                // Fonction pour animer les compteurs
+                animateCounters() {
+                    document.querySelectorAll('.stats-animation').forEach((element, index) => {
+                        setTimeout(() => {
+                            element.style.animationDelay = `${index * 100}ms`;
+                        }, 100);
+                    });
+                }
+            }
+        }
+        
+        // Lancer l'animation au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation staggered pour les stats
+            const statsElements = document.querySelectorAll('.stats-animation');
+            statsElements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 200}ms`;
+            });
+        });
+    </script>
+{% endblock %}

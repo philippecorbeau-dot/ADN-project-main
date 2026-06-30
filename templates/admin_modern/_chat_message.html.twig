@@ -1,0 +1,27 @@
+{% if message.senderType == 'admin' %}
+    <!-- Message de l'admin (aligné à droite) -->
+    <div class="flex justify-end" data-message-id="{{ message.id }}">
+        <div class="flex items-end space-x-2 max-w-xs lg:max-w-md">
+            <div class="bg-indigo-600 text-white rounded-lg px-4 py-2 shadow-sm">
+                <p class="text-sm">{{ message.message|nl2br }}</p>
+                <p class="text-xs opacity-75 mt-1">{{ message.formattedTime }}</p>
+            </div>
+            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span class="text-white font-bold text-xs">ADN</span>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <!-- Message de l'utilisateur (aligné à gauche) -->
+    <div class="flex justify-start" data-message-id="{{ message.id }}">
+        <div class="flex items-end space-x-2 max-w-xs lg:max-w-md">
+            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                <span class="text-gray-700 font-bold text-xs">{{ message.senderInitials }}</span>
+            </div>
+            <div class="bg-white rounded-lg px-4 py-2 shadow-sm border">
+                <p class="text-sm text-gray-900">{{ message.message|nl2br }}</p>
+                <p class="text-xs text-gray-500 mt-1">{{ message.formattedTime }}</p>
+            </div>
+        </div>
+    </div>
+{% endif %}

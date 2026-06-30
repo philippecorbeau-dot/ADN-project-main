@@ -1,0 +1,72 @@
+{% extends 'emails/layout.html.twig' %}
+
+{% block title %}Nouvelle inscription - ADN Family Office{% endblock %}
+
+{% block header_class %}header-green{% endblock %}
+{% block header_title %}Nouvelle inscription{% endblock %}
+{% block header_subtitle %}Action requise pour activer MoneyPitch{% endblock %}
+
+{% block content %}
+    <p>Bonjour,</p>
+    
+    <p>
+        Un nouvel utilisateur vient de s'inscrire sur <strong>ADN Family Office</strong> et nécessite 
+        une activation de son compte <strong>MoneyPitch / O2S</strong> pour accéder à toutes les fonctionnalités.
+    </p>
+    
+    <!-- Carte utilisateur -->
+    <div class="user-card">
+        <div class="user-card-header">
+            <p class="user-name">{{ user.fullName }}</p>
+            <p class="user-subtitle">Nouveau membre ADN</p>
+        </div>
+        
+        <div class="user-detail">
+            <span class="detail-label">Email</span>
+            <span class="detail-value"><a href="mailto:{{ user.email }}">{{ user.email }}</a></span>
+        </div>
+        <div class="user-detail">
+            <span class="detail-label">Type de compte</span>
+            <span class="detail-value">{{ user.typeName|default('Particulier') }}</span>
+        </div>
+        <div class="user-detail">
+            <span class="detail-label">Date d'inscription</span>
+            <span class="detail-value">{{ user.createdAt|date('d/m/Y à H:i') }}</span>
+        </div>
+    </div>
+    
+    <!-- Actions requises -->
+    <div class="warning-box">
+        <p><strong>Actions à effectuer :</strong></p>
+        <ol class="action-steps">
+            <li class="action-step">
+                <span class="step-number">1</span>
+                <span>Connectez-vous à <strong>O2S</strong> (votre outil de gestion)</span>
+            </li>
+            <li class="action-step">
+                <span class="step-number">2</span>
+                <span>Créez le contact avec l'email <strong>{{ user.email }}</strong></span>
+            </li>
+            <li class="action-step">
+                <span class="step-number">3</span>
+                <span>Activez l'accès <strong>MoneyPitch</strong> pour ce nouveau client</span>
+            </li>
+        </ol>
+    </div>
+    
+    <!-- Bouton -->
+    <div class="cta-container">
+        <a href="{{ admin_url }}" class="cta-button cta-secondary">Voir la fiche utilisateur</a>
+        <p class="cta-hint">Accédez au back-office ADN pour gérer ce client</p>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <!-- Note -->
+    <div class="info-box">
+        <p style="font-size: 13px; color: #64748b; text-align: center;">
+            Cet email est envoyé automatiquement à chaque nouvelle inscription.<br>
+            Une fois le client activé sur O2S, il pourra accéder à MoneyPitch depuis son espace ADN.
+        </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,369 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Clients O2S - Administration{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+            <i class="fas fa-users me-2"></i>
+            Gestion des Clients O2S
+        </h1>
+        <div>
+            <button type="button" class="btn btn-primary" id="syncAllBtn">
+                <i class="fas fa-sync-alt me-1"></i>
+                Synchroniser tout
+            </button>
+        </div>
+    </div>
+
+    {# Statistiques #}
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white-50">Total Utilisateurs</h6>
+                            <h2 class="mb-0">{{ stats.totalUsers }}</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white-50">Liés à O2S</h6>
+                            <h2 class="mb-0">{{ stats.linkedUsers }}</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-link fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-white-50">Total Produits</h6>
+                            <h2 class="mb-0">{{ stats.totalProducts }}</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-briefcase fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-dark-50">Produits O2S</h6>
+                            <h2 class="mb-0">{{ stats.o2sProducts }}</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-cloud fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Filtres #}
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="btn-group" role="group">
+                <a href="{{ path('admin_o2s_clients', {filter: 'all'}) }}" 
+                   class="btn btn-{{ filter == 'all' ? 'primary' : 'outline-primary' }}">
+                    Tous
+                </a>
+                <a href="{{ path('admin_o2s_clients', {filter: 'linked'}) }}" 
+                   class="btn btn-{{ filter == 'linked' ? 'success' : 'outline-success' }}">
+                    <i class="fas fa-link me-1"></i> Liés O2S
+                </a>
+                <a href="{{ path('admin_o2s_clients', {filter: 'unlinked'}) }}" 
+                   class="btn btn-{{ filter == 'unlinked' ? 'secondary' : 'outline-secondary' }}">
+                    <i class="fas fa-unlink me-1"></i> Non liés
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# Liste des utilisateurs #}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Liste des clients ({{ users|length }})</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Statut O2S</th>
+                            <th>Dernière sync</th>
+                            <th>Produits</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>
+                                <strong>{{ user.fullName ?: 'N/A' }}</strong>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                {% if user.o2sContactId %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-link me-1"></i>Lié
+                                    </span>
+                                    <small class="text-muted d-block">{{ user.o2sContactId[:8] }}...</small>
+                                {% else %}
+                                    <span class="badge bg-secondary">Non lié</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.o2sSyncedAt %}
+                                    {{ user.o2sSyncedAt|date('d/m/Y H:i') }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set productCount = user.productAccounts|default([])|length %}
+                                <span class="badge bg-info">{{ productCount }}</span>
+                            </td>
+                            <td class="text-end">
+                                <a href="{{ path('admin_o2s_client_detail', {id: user.id}) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% if user.o2sContactId %}
+                                    <button type="button" class="btn btn-sm btn-outline-success sync-user-btn"
+                                            data-user-id="{{ user.id }}">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                {% else %}
+                                    <button type="button" class="btn btn-sm btn-outline-warning link-user-btn"
+                                            data-user-id="{{ user.id }}"
+                                            data-user-name="{{ user.fullName }}"
+                                            data-bs-toggle="modal" data-bs-target="#linkModal">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                Aucun utilisateur trouvé
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Modal de liaison O2S #}
+<div class="modal fade" id="linkModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Lier à un contact O2S</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Lier <strong id="linkUserName"></strong> à un contact O2S :</p>
+                <input type="hidden" id="linkUserId">
+                <div class="mb-3">
+                    <label class="form-label">Rechercher un contact O2S</label>
+                    <input type="text" class="form-control" id="o2sContactSearch" 
+                           placeholder="Nom ou email...">
+                </div>
+                <div id="o2sContactResults" class="list-group" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Résultats de recherche -->
+                </div>
+                <div class="mb-3 mt-3">
+                    <label class="form-label">Ou saisir l'ID du contact O2S directement</label>
+                    <input type="text" class="form-control" id="o2sContactIdInput" 
+                           placeholder="ex: 6fef4227-aedb-11ee-a200-246e960d0462">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="confirmLinkBtn">Lier</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Bouton de liaison
+    document.querySelectorAll('.link-user-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('linkUserId').value = this.dataset.userId;
+            document.getElementById('linkUserName').textContent = this.dataset.userName;
+            document.getElementById('o2sContactIdInput').value = '';
+            document.getElementById('o2sContactResults').innerHTML = '';
+        });
+    });
+
+    // Recherche de contacts O2S
+    let searchTimeout;
+    document.getElementById('o2sContactSearch').addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value;
+        if (query.length < 2) {
+            document.getElementById('o2sContactResults').innerHTML = '';
+            return;
+        }
+        searchTimeout = setTimeout(() => {
+            fetch('{{ path('admin_o2s_contacts_search') }}?q=' + encodeURIComponent(query))
+                .then(r => r.json())
+                .then(data => {
+                    const container = document.getElementById('o2sContactResults');
+                    if (data.contacts && data.contacts.length > 0) {
+                        container.innerHTML = data.contacts.map(c => `
+                            <button type="button" class="list-group-item list-group-item-action o2s-contact-item"
+                                    data-contact-id="${c.id}">
+                                <strong>${c.name || 'N/A'}</strong>
+                                <br><small class="text-muted">${c.email || 'Pas d\'email'}</small>
+                                <br><small class="text-muted">${c.id}</small>
+                            </button>
+                        `).join('');
+                        
+                        container.querySelectorAll('.o2s-contact-item').forEach(item => {
+                            item.addEventListener('click', function() {
+                                document.getElementById('o2sContactIdInput').value = this.dataset.contactId;
+                                container.querySelectorAll('.o2s-contact-item').forEach(i => i.classList.remove('active'));
+                                this.classList.add('active');
+                            });
+                        });
+                    } else {
+                        container.innerHTML = '<div class="list-group-item text-muted">Aucun contact trouvé</div>';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('o2sContactResults').innerHTML = 
+                        '<div class="list-group-item text-danger">Erreur de recherche</div>';
+                });
+        }, 300);
+    });
+
+    // Confirmation de liaison
+    document.getElementById('confirmLinkBtn').addEventListener('click', function() {
+        const userId = document.getElementById('linkUserId').value;
+        const contactId = document.getElementById('o2sContactIdInput').value;
+        
+        if (!contactId) {
+            alert('Veuillez sélectionner ou saisir un ID de contact O2S');
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('o2sContactId', contactId);
+        
+        fetch('{{ path('admin_o2s_client_link', {id: 0}) }}'.replace('/0/', '/' + userId + '/'), {
+            method: 'POST',
+            body: formData
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                alert('Utilisateur lié avec succès!');
+                location.reload();
+            } else {
+                alert('Erreur: ' + (data.error || 'Erreur inconnue'));
+            }
+        })
+        .catch(err => {
+            alert('Erreur réseau');
+            console.error(err);
+        });
+    });
+
+    // Sync individuel
+    document.querySelectorAll('.sync-user-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            const icon = this.querySelector('i');
+            icon.classList.add('fa-spin');
+            
+            fetch('{{ path('admin_o2s_client_sync', {id: 0}) }}'.replace('/0/', '/' + userId + '/'), {
+                method: 'POST'
+            })
+            .then(r => r.json())
+            .then(data => {
+                icon.classList.remove('fa-spin');
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('Erreur: ' + (data.error || 'Erreur inconnue'));
+                }
+            })
+            .catch(err => {
+                icon.classList.remove('fa-spin');
+                alert('Erreur réseau');
+            });
+        });
+    });
+
+    // Sync global
+    document.getElementById('syncAllBtn').addEventListener('click', function() {
+        if (!confirm('Êtes-vous sûr de vouloir synchroniser tous les contacts et comptes O2S ?')) {
+            return;
+        }
+        
+        const btn = this;
+        const icon = btn.querySelector('i');
+        btn.disabled = true;
+        icon.classList.add('fa-spin');
+        
+        fetch('{{ path('admin_o2s_sync_all') }}', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                icon.classList.remove('fa-spin');
+                if (data.success) {
+                    alert(`Synchronisation terminée!\nContacts: ${data.contacts.created} créés, ${data.contacts.updated} mis à jour\nComptes: ${data.comptes.created} créés, ${data.comptes.updated} mis à jour`);
+                    location.reload();
+                } else {
+                    alert('Erreur: ' + (data.error || 'Erreur inconnue'));
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                icon.classList.remove('fa-spin');
+                alert('Erreur réseau');
+            });
+    });
+});
+</script>
+{% endblock %}
+

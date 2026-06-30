@@ -1,0 +1,12 @@
+twig:
+    file_name_pattern: '*.twig'
+    form_themes:
+        - 'Form/tailwind_layout.html.twig'
+    globals:
+        # ID GA4 lu depuis la variable d'env GA4_MEASUREMENT_ID
+        # Si vide, aucun script GA n'est injecté (cf. base.html.twig)
+        ga4_measurement_id: '%env(default::string:GA4_MEASUREMENT_ID)%'
+
+when@test:
+    twig:
+        strict_variables: true

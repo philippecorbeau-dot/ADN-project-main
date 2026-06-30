@@ -1,0 +1,591 @@
+/* ===========================================
+   HEADER MODERNE OPTIMISÉ MOBILE - ADN FAMILY OFFICE
+   =========================================== */
+
+:root {
+  --header-height: 70px;
+  --header-height-mobile: 60px;
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --header-bg-scrolled: rgba(255, 255, 255, 0.98);
+  --header-border: rgba(0, 0, 0, 0.1);
+  --header-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --mobile-menu-bg: rgba(255, 255, 255, 0.98);
+  --mobile-overlay-bg: rgba(0, 0, 0, 0.6);
+}
+
+/* ===========================================
+   HEADER PRINCIPAL
+   =========================================== */
+
+.modern-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--header-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--header-border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: var(--header-height);
+}
+
+.modern-header.scrolled {
+  background: var(--header-bg-scrolled);
+  box-shadow: var(--header-shadow);
+}
+
+.modern-header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+/* ===========================================
+   LOGO MODERNE
+   =========================================== */
+
+.modern-logo-container {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.modern-logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.modern-logo-link:hover {
+  transform: scale(1.05);
+}
+
+.modern-logo-img {
+  height: 40px;
+  width: auto;
+  margin-right: 8px;
+}
+
+.modern-logo-text {
+  font-family: var(--font-primary, 'Plus Jakarta Sans', sans-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--adn-primary, #1C29A1);
+  display: none;
+}
+
+/* ===========================================
+   NAVIGATION DESKTOP
+   =========================================== */
+
+.modern-navigation {
+  display: none; /* Caché par défaut, affiché sur desktop */
+  align-items: center;
+}
+
+.modern-nav-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 1.5rem;
+}
+
+.modern-nav-item {
+  position: relative;
+}
+
+.modern-nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  font-family: var(--font-secondary, 'Inter', sans-serif);
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--adn-primary, #1C29A1);
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.modern-nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(28, 41, 161, 0.1), rgba(59, 130, 246, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modern-nav-link:hover::before {
+  opacity: 1;
+}
+
+.nav-link-indicator {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(135deg, var(--adn-primary, #1C29A1), var(--adn-secondary, #3B82F6));
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+.modern-nav-link:hover .nav-link-indicator {
+  width: 80%;
+}
+
+/* ===========================================
+   ACTIONS UTILISATEUR DESKTOP
+   =========================================== */
+
+.modern-header-actions {
+  display: none; /* Caché par défaut, affiché sur desktop */
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modern-btn-primary,
+.modern-btn-secondary {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-family: var(--font-secondary, 'Inter', sans-serif);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.modern-btn-primary {
+  background: linear-gradient(135deg, var(--adn-primary, #1C29A1), var(--adn-secondary, #3B82F6));
+  color: white;
+  box-shadow: 0 2px 8px 0 rgba(28, 41, 161, 0.3);
+}
+
+.modern-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px 0 rgba(28, 41, 161, 0.4);
+}
+
+.modern-btn-secondary {
+  background: transparent;
+  color: var(--adn-primary, #1C29A1);
+  border-color: rgba(28, 41, 161, 0.3);
+}
+
+.modern-btn-secondary:hover {
+  background: rgba(28, 41, 161, 0.05);
+  border-color: rgba(28, 41, 161, 0.5);
+}
+
+/* ===========================================
+   MENU MOBILE HAMBURGER
+   =========================================== */
+
+.mobile-menu-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1002;
+  transition: all 0.3s ease;
+}
+
+.hamburger-line {
+  width: 22px;
+  height: 2px;
+  background: var(--adn-primary, #1C29A1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 1px;
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: scale(0);
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ===========================================
+   OVERLAY ET MENU MOBILE
+   =========================================== */
+
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--mobile-overlay-bg);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1001;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.mobile-menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-menu-content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 320px;
+  height: 100%;
+  background: var(--mobile-menu-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-menu-overlay.active .mobile-menu-content {
+  transform: translateX(0);
+}
+
+/* ===========================================
+   HEADER MOBILE MENU
+   =========================================== */
+
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(28, 41, 161, 0.05), rgba(59, 130, 246, 0.05));
+}
+
+.mobile-logo {
+  height: 35px;
+  width: auto;
+}
+
+.mobile-menu-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--adn-primary, #1C29A1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.mobile-menu-close:hover {
+  background: rgba(28, 41, 161, 0.1);
+}
+
+/* ===========================================
+   NAVIGATION MOBILE
+   =========================================== */
+
+.mobile-navigation {
+  padding: 1.5rem;
+}
+
+.mobile-nav-link {
+  display: block;
+  padding: 1rem 0;
+  text-decoration: none;
+  color: var(--adn-primary, #1C29A1);
+  font-family: var(--font-secondary, 'Inter', sans-serif);
+  font-weight: 500;
+  font-size: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.mobile-nav-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(135deg, var(--adn-primary, #1C29A1), var(--adn-secondary, #3B82F6));
+  transform: translateY(-50%);
+  transition: width 0.3s ease;
+}
+
+.mobile-nav-link:hover::before {
+  width: 30px;
+}
+
+.mobile-nav-link:hover {
+  color: var(--adn-secondary, #3B82F6);
+  padding-left: 40px;
+}
+
+/* ===========================================
+   BOUTONS AUTH MOBILE
+   =========================================== */
+
+.mobile-auth-buttons {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0 0.5rem;
+}
+
+.mobile-btn-primary,
+.mobile-btn-secondary {
+  padding: 0.875rem 1.5rem;
+  text-align: center;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-btn-primary {
+  background: linear-gradient(135deg, var(--adn-primary, #1C29A1), var(--adn-secondary, #3B82F6));
+  color: white;
+  box-shadow: 0 4px 15px rgba(28, 41, 161, 0.3);
+}
+
+.mobile-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(28, 41, 161, 0.4);
+}
+
+.mobile-btn-secondary {
+  background: transparent;
+  color: var(--adn-primary, #1C29A1);
+  border: 1px solid rgba(28, 41, 161, 0.3);
+}
+
+.mobile-btn-secondary:hover {
+  background: rgba(28, 41, 161, 0.05);
+  border-color: rgba(28, 41, 161, 0.5);
+}
+
+/* ===========================================
+   RESPONSIVE BREAKPOINTS
+   =========================================== */
+
+/* Tablet et plus */
+@media (min-width: 768px) {
+  .modern-header {
+    height: var(--header-height);
+  }
+  
+  .modern-logo-img {
+    height: 45px;
+    margin-right: 10px;
+  }
+  
+  .modern-logo-text {
+    display: block;
+  }
+  
+  .modern-navigation {
+    display: flex;
+  }
+  
+  .modern-header-actions {
+    display: flex;
+  }
+  
+  .mobile-menu-toggle {
+    display: none;
+  }
+  
+  .modern-nav-list {
+    gap: 2rem;
+  }
+  
+  .modern-nav-link {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+  
+  .modern-btn-primary,
+  .modern-btn-secondary {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+/* Desktop large */
+@media (min-width: 1024px) {
+  .modern-header-container {
+    padding: 0 1.5rem;
+  }
+  
+  .modern-logo-img {
+    height: 50px;
+    margin-right: 12px;
+  }
+  
+  .modern-logo-text {
+    font-size: 1.2rem;
+  }
+}
+
+/* Mobile très petit */
+@media (max-width: 480px) {
+  .modern-header {
+    height: var(--header-height-mobile);
+  }
+  
+  .modern-header-container {
+    padding: 0 0.75rem;
+  }
+  
+  .modern-logo-img {
+    height: 32px;
+    margin-right: 6px;
+  }
+  
+  .mobile-menu-content {
+    max-width: 280px;
+  }
+  
+  .mobile-navigation {
+    padding: 1rem;
+  }
+  
+  .mobile-nav-link {
+    font-size: 0.95rem;
+  }
+}
+
+/* ===========================================
+   ANIMATIONS AVANCÉES
+   =========================================== */
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===========================================
+   EFFETS DE PERFORMANCE
+   =========================================== */
+
+.modern-header,
+.mobile-menu-overlay,
+.mobile-menu-content {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* ===========================================
+   STATES D'ACCESSIBILITÉ
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .modern-header,
+  .mobile-menu-overlay,
+  .mobile-menu-content,
+  .hamburger-line,
+  .modern-nav-link,
+  .modern-btn-primary,
+  .modern-btn-secondary,
+  .mobile-nav-link {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.modern-nav-link:focus,
+.modern-btn-primary:focus,
+.modern-btn-secondary:focus,
+.mobile-nav-link:focus,
+.mobile-btn-primary:focus,
+.mobile-btn-secondary:focus,
+.mobile-menu-toggle:focus {
+  outline: 2px solid var(--adn-primary, #1C29A1);
+  outline-offset: 2px;
+}
+
+/* ===========================================
+   DARK MODE SUPPORT (pour future évolution)
+   =========================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --header-bg: rgba(15, 23, 81, 0.95);
+    --header-bg-scrolled: rgba(15, 23, 81, 0.98);
+    --header-border: rgba(255, 255, 255, 0.1);
+    --mobile-menu-bg: rgba(15, 23, 81, 0.98);
+    --mobile-overlay-bg: rgba(0, 0, 0, 0.8);
+  }
+  
+  .modern-logo-text,
+  .modern-nav-link,
+  .mobile-nav-link {
+    color: #f8fafc;
+  }
+  
+  .hamburger-line {
+    background: #f8fafc;
+  }
+}

@@ -1,0 +1,42 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Nouvelle demande de contact' %}
+
+{% block content %}
+    <h1>🔔 Nouvelle demande de contact</h1>
+    
+    <p>Bonjour l'équipe,</p>
+    
+    <p>Vous avez reçu une nouvelle demande de contact via le formulaire du site.</p>
+    
+    <div class="info-box">
+        <p><strong>👤 Informations du contact :</strong></p>
+        <p style="margin-top: 10px;">
+            <strong>Nom :</strong> {{ contact.firstname }} {{ contact.lastname }}<br>
+            <strong>Email :</strong> <a href="mailto:{{ contact.email }}">{{ contact.email }}</a><br>
+            {% if contact.phone %}<strong>Téléphone :</strong> {{ contact.phone }}<br>{% endif %}
+            <strong>Société :</strong> {{ contact.company|default('Non renseigné') }}
+        </p>
+    </div>
+    
+    <h2>📨 Message</h2>
+    
+    <div style="background-color: #f8fafc; border-left: 4px solid #3B82F6; padding: 20px; margin: 20px 0; border-radius: 4px;">
+        <p style="color: #1e293b; font-style: italic; margin: 0; white-space: pre-wrap;">{{ contact.message }}</p>
+    </div>
+    
+    {% if contact.subject %}
+    <p><strong>Sujet :</strong> {{ contact.subject }}</p>
+    {% endif %}
+    
+    <div class="button-container">
+        <a href="mailto:{{ contact.email }}" class="button">Répondre au contact</a>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p style="font-size: 13px; color: #64748b; text-align: center;">
+        Date de réception : {{ "now"|date('d/m/Y à H:i') }}
+    </p>
+{% endblock %}
+

@@ -1,0 +1,506 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}📊 Tracking Inscriptions - Admin{% endblock %}
+
+{% block page_title %}Tracking Inscriptions{% endblock %}
+
+{% block content %}
+<div class="min-h-screen tracking-page-container">
+    <!-- Header avec stats -->
+    <div class="tracking-header-card sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold tracking-title">
+                            Tracking des Inscriptions
+                        </h1>
+                        <p class="text-xs sm:text-sm tracking-subtitle mt-0.5">Suivi en temps réel des utilisateurs en cours d'inscription</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Stats rapides -->
+                    <div class="flex items-center gap-3">
+                        <div class="bg-gradient-to-br from-emerald-50 to-green-100 border border-emerald-200 rounded-xl px-4 py-2.5 shadow-sm">
+                            <div class="text-xs text-emerald-600 font-medium">Total</div>
+                            <div class="text-xl sm:text-2xl font-bold text-emerald-700" id="total-count">{{ trackings|length }}</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-amber-50 to-yellow-100 border border-amber-200 rounded-xl px-4 py-2.5 shadow-sm">
+                            <div class="text-xs text-amber-600 font-medium">En cours</div>
+                            <div class="text-xl sm:text-2xl font-bold text-amber-700" id="active-count">{{ activeCount }}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bouton refresh -->
+                    <button onclick="refreshTracking()" id="refresh-btn" 
+                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 transform hover:scale-105 active:scale-95">
+                        <svg id="refresh-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        <span class="font-medium">Actualiser</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicateur temps réel -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div class="flex items-center gap-2 text-sm text-gray-500">
+            <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+            </span>
+            <span id="last-update">Actualisation automatique toutes les 5 secondes</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="hidden mb-4">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <svg class="animate-spin h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-sm text-blue-700 font-medium">Chargement des données en cours...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="hidden lg:block">
+            <div class="bg-white/80 backdrop-blur-lg shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gradient-to-r from-gray-50 via-indigo-50/50 to-purple-50/50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Utilisateur</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Statut</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Activité</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">IP</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tracking-table-body" class="divide-y divide-gray-100">
+                            <!-- Contenu chargé dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile/Tablet Card View -->
+        <div class="lg:hidden space-y-4" id="tracking-cards-container">
+            <!-- Contenu chargé dynamiquement -->
+        </div>
+
+        <!-- Empty state initial -->
+        <div id="empty-state" class="hidden">
+            <div class="tracking-card rounded-2xl shadow-xl border p-8 sm:p-12 text-center">
+                <div class="w-20 h-20 mx-auto tracking-icon-bg rounded-full flex items-center justify-center mb-6">
+                    <svg class="h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold tracking-card-title mb-2">Aucune inscription en cours</h3>
+                <p class="tracking-card-text max-w-md mx-auto">Les nouvelles inscriptions apparaîtront ici en temps réel dès qu'un utilisateur commencera le processus d'inscription.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Container principal */
+    .tracking-page-container {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #eef2ff 100%);
+    }
+    
+    /* Header card */
+    .tracking-header-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Titre */
+    .tracking-title {
+        background: linear-gradient(135deg, #1e293b 0%, #4f46e5 50%, #7c3aed 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Sous-titre */
+    .tracking-subtitle {
+        color: #64748b;
+    }
+    
+    /* ===== DARK MODE ===== */
+    html.dark .tracking-page-container {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%) !important;
+    }
+    
+    html.dark .tracking-header-card {
+        background: rgba(30, 41, 59, 0.95) !important;
+        border-color: rgba(71, 85, 105, 0.5) !important;
+    }
+    
+    html.dark .tracking-title {
+        background: linear-gradient(135deg, #f1f5f9 0%, #a5b4fc 50%, #c4b5fd 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+    }
+    
+    html.dark .tracking-subtitle {
+        color: #94a3b8 !important;
+    }
+    
+    /* Cards en dark mode */
+    html.dark .bg-white\/80 {
+        background: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    html.dark .bg-gradient-to-br.from-emerald-50,
+    html.dark .bg-gradient-to-br.from-green-100 {
+        background: rgba(16, 185, 129, 0.15) !important;
+        border-color: rgba(16, 185, 129, 0.3) !important;
+    }
+    
+    html.dark .bg-gradient-to-br.from-amber-50,
+    html.dark .bg-gradient-to-br.from-yellow-100 {
+        background: rgba(245, 158, 11, 0.15) !important;
+        border-color: rgba(245, 158, 11, 0.3) !important;
+    }
+    
+    html.dark .text-emerald-600,
+    html.dark .text-emerald-700,
+    html.dark .text-green-600,
+    html.dark .text-green-700 {
+        color: #34d399 !important;
+    }
+    
+    html.dark .text-amber-600,
+    html.dark .text-amber-700,
+    html.dark .text-yellow-600,
+    html.dark .text-yellow-700 {
+        color: #fbbf24 !important;
+    }
+    
+    /* Table desktop */
+    html.dark .bg-white\/80.backdrop-blur-lg {
+        background: rgba(30, 41, 59, 0.9) !important;
+        border-color: #334155 !important;
+    }
+    
+    /* Empty state */
+    html.dark #empty-state .bg-white\/80 {
+        background: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    html.dark #empty-state .text-gray-900 {
+        color: #f1f5f9 !important;
+    }
+    
+    html.dark #empty-state .bg-gradient-to-br.from-gray-100 {
+        background: rgba(71, 85, 105, 0.5) !important;
+    }
+    
+    /* Loading indicator */
+    html.dark .bg-gradient-to-r.from-blue-50 {
+        background: rgba(99, 102, 241, 0.15) !important;
+        border-color: rgba(99, 102, 241, 0.3) !important;
+    }
+    
+    html.dark .text-blue-700 {
+        color: #93c5fd !important;
+    }
+    
+    /* Tracking cards */
+    .tracking-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-color: #e5e7eb;
+    }
+    
+    html.dark .tracking-card {
+        background: rgba(30, 41, 59, 0.9) !important;
+        border-color: #334155 !important;
+    }
+    
+    .tracking-icon-bg {
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    }
+    
+    html.dark .tracking-icon-bg {
+        background: linear-gradient(135deg, #334155 0%, #475569 100%) !important;
+    }
+    
+    html.dark .tracking-icon-bg svg {
+        color: #94a3b8 !important;
+    }
+    
+    .tracking-card-title {
+        color: #111827;
+    }
+    
+    html.dark .tracking-card-title {
+        color: #f1f5f9 !important;
+    }
+    
+    .tracking-card-text {
+        color: #6b7280;
+    }
+    
+    html.dark .tracking-card-text {
+        color: #94a3b8 !important;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .tracking-row {
+        transition: all 0.2s ease;
+    }
+    .tracking-row:hover {
+        background: linear-gradient(90deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+    }
+    
+    html.dark .tracking-row:hover {
+        background: linear-gradient(90deg, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%) !important;
+    }
+    
+    .tracking-row.new-entry {
+        animation: highlight 2s ease-out;
+    }
+    @keyframes highlight {
+        0% { background-color: rgba(16, 185, 129, 0.2); }
+        100% { background-color: transparent; }
+    }
+    .badge-pulse {
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+</style>
+
+<script>
+let refreshInterval;
+let isRefreshing = false;
+let knownIds = new Set();
+
+// Initialiser avec les IDs connus
+{% for tracking in trackings %}
+knownIds.add({{ tracking.id }});
+{% endfor %}
+
+function refreshTracking() {
+    if (isRefreshing) return;
+    
+    isRefreshing = true;
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const refreshIcon = document.getElementById('refresh-icon');
+    
+    if (loadingIndicator) loadingIndicator.classList.remove('hidden');
+    if (refreshBtn) refreshBtn.disabled = true;
+    if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+    fetch('{{ path('api_registration_tracking_list') }}?limit=100')
+        .then(response => {
+            if (!response.ok) throw new Error('Erreur HTTP: ' + response.status);
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                updateTable(data.data);
+                updateCards(data.data);
+                updateCounts(data.data);
+                updateLastUpdate();
+            } else {
+                console.error('Erreur API:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors du rafraîchissement:', error);
+        })
+        .finally(() => {
+            isRefreshing = false;
+            if (loadingIndicator) loadingIndicator.classList.add('hidden');
+            if (refreshBtn) refreshBtn.disabled = false;
+            if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+        });
+}
+
+function updateLastUpdate() {
+    const el = document.getElementById('last-update');
+    if (el) {
+        const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        el.textContent = `Dernière mise à jour : ${now}`;
+    }
+}
+
+function updateCounts(trackings) {
+    const total = document.getElementById('total-count');
+    const active = document.getElementById('active-count');
+    
+    if (total) {
+        total.textContent = trackings.length;
+        total.classList.add('scale-110');
+        setTimeout(() => total.classList.remove('scale-110'), 300);
+    }
+    
+    if (active) {
+        const activeCount = trackings.filter(t => !t.completed).length;
+        active.textContent = activeCount;
+        active.classList.add('scale-110');
+        setTimeout(() => active.classList.remove('scale-110'), 300);
+    }
+}
+
+function updateTable(trackings) {
+    const tbody = document.getElementById('tracking-table-body');
+    const emptyState = document.getElementById('empty-state');
+    
+    if (!tbody) return;
+    
+    if (trackings.length === 0) {
+        tbody.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+    
+    if (emptyState) emptyState.classList.add('hidden');
+
+    tbody.innerHTML = trackings.map(tracking => {
+        const isNew = !knownIds.has(tracking.id);
+        if (isNew) knownIds.add(tracking.id);
+        
+        const initials = ((tracking.firstName?.[0] || '') + (tracking.lastName?.[0] || '')).toUpperCase() || '?';
+        const fullName = [(tracking.firstName || ''), (tracking.lastName || '')].filter(Boolean).join(' ') || 'Non renseigné';
+        const createdAt = tracking.createdAt ? new Date(tracking.createdAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+        
+        const profileBadge = tracking.profileType 
+            ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${tracking.profileType === 'Particulier' ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-purple-100 text-purple-700 border border-purple-200'}">${tracking.profileType}</span>`
+            : '<span class="text-gray-400 text-sm">-</span>';
+        
+        const statusBadge = tracking.completed
+            ? '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>Complété</span>'
+            : '<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200 badge-pulse"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>En cours</span>';
+
+        return `
+            <tr class="tracking-row ${isNew ? 'new-entry' : ''}" data-tracking-id="${tracking.id}">
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                            ${initials}
+                        </div>
+                        <span class="text-sm font-semibold text-gray-900">${fullName}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="text-sm text-gray-600">${tracking.email || '<span class="text-gray-400">-</span>'}</span>
+                </td>
+                <td class="px-6 py-4">${profileBadge}</td>
+                <td class="px-6 py-4">${statusBadge}</td>
+                <td class="px-6 py-4">
+                    <span class="text-sm text-gray-600">${createdAt}</span>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">${tracking.ipAddress || '-'}</span>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function updateCards(trackings) {
+    const container = document.getElementById('tracking-cards-container');
+    const emptyState = document.getElementById('empty-state');
+    
+    if (!container) return;
+    
+    if (trackings.length === 0) {
+        container.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+    
+    if (emptyState) emptyState.classList.add('hidden');
+
+    container.innerHTML = trackings.map(tracking => {
+        const isNew = !knownIds.has(tracking.id);
+        const initials = ((tracking.firstName?.[0] || '') + (tracking.lastName?.[0] || '')).toUpperCase() || '?';
+        const fullName = [(tracking.firstName || ''), (tracking.lastName || '')].filter(Boolean).join(' ') || 'Non renseigné';
+        const createdAt = tracking.createdAt ? new Date(tracking.createdAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+        
+        const profileBadge = tracking.profileType 
+            ? `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${tracking.profileType === 'Particulier' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}">${tracking.profileType}</span>`
+            : '<span class="text-gray-400 text-sm">-</span>';
+        
+        const statusBadge = tracking.completed
+            ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>Complété</span>'
+            : '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 badge-pulse"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>En cours</span>';
+
+        return `
+            <div class="bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-100 p-4 ${isNew ? 'ring-2 ring-emerald-400 ring-offset-2' : ''}" data-tracking-id="${tracking.id}">
+                <div class="flex items-start justify-between gap-3 mb-4">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-base shadow-lg flex-shrink-0">
+                            ${initials}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-base font-bold text-gray-900 truncate">${fullName}</div>
+                            <div class="text-sm text-gray-500 truncate">${tracking.email || 'Email non renseigné'}</div>
+                        </div>
+                    </div>
+                    ${statusBadge}
+                </div>
+                <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+                    <div>
+                        <div class="text-xs text-gray-500 font-medium mb-1">Type</div>
+                        ${profileBadge}
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 font-medium mb-1">Activité</div>
+                        <div class="text-sm font-medium text-gray-900">${createdAt}</div>
+                    </div>
+                </div>
+                ${tracking.ipAddress ? `
+                <div class="mt-3 pt-3 border-t border-gray-100">
+                    <div class="text-xs text-gray-500 font-medium mb-1">Adresse IP</div>
+                    <div class="text-xs font-mono text-gray-600 bg-gray-100 px-2 py-1 rounded inline-block">${tracking.ipAddress}</div>
+                </div>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', () => {
+    // Première actualisation immédiate
+    refreshTracking();
+    // Puis toutes les 5 secondes
+    refreshInterval = setInterval(refreshTracking, 5000);
+});
+
+// Nettoyer l'intervalle quand on quitte la page
+window.addEventListener('beforeunload', () => {
+    if (refreshInterval) {
+        clearInterval(refreshInterval);
+    }
+});
+</script>
+{% endblock %}

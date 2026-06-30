@@ -1,0 +1,57 @@
+{% extends 'front/user/knowledge/layout.html.twig' %}
+
+{% block step_title %}Niveau d'éducation{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Introduction -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-info-circle text-blue-600 mt-1"></i>
+            <div class="flex-1">
+                <h3 class="font-semibold text-blue-800 mb-2">Informations sur le niveau d'éducation</h3>
+                <p class="text-sm text-blue-700">
+                    Cette question nous permet d'évaluer votre niveau de formation selon les critères MIF2 (Art. 55 du Règlement Délégué MIF 2 2017/565).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulaire -->
+    <form method="post" class="space-y-6">
+        {{ form_start(form) }}
+        
+        <!-- Question principale -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                    {{ form_label(form.level) }}
+                </h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Quel est votre niveau d'études ? (Art. 55 du Règlement Délégué MIF 2 2017/565)
+                </p>
+            </div>
+            <div class="space-y-3">
+                {{ form_widget(form.level) }}
+            </div>
+        </div>
+
+        <!-- Boutons de navigation -->
+        <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+            <a href="{{ path('knowledge_market_abuse') }}" 
+               class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                <i class="fa-solid fa-arrow-left mr-2"></i>
+                Précédent
+            </a>
+            
+            <button type="submit" 
+                    class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105">
+                Suivant
+                <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </form>
+</div>
+{% endblock %} 

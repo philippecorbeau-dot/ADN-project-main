@@ -1,0 +1,214 @@
+/* User Dashboard Styles */
+
+/* Animation pour les cartes */
+.hover-lift {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Navigation active */
+.nav-item-active {
+    background: linear-gradient(135deg, #1C29A1 0%, #3B82F6 100%);
+    color: white !important;
+    box-shadow: 0 4px 14px 0 rgba(28, 41, 161, 0.39);
+}
+
+/* Effet glass pour les modales */
+.glass {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Gradient de fond */
+.gradient-bg {
+    background: linear-gradient(135deg, #1C29A1 0%, #3B82F6 100%);
+}
+
+/* Animations des barres de progression */
+.progress-bar-animate {
+    animation: progressFill 1.5s ease-out forwards;
+}
+
+@keyframes progressFill {
+    from {
+        width: 0%;
+    }
+    to {
+        width: var(--progress-width);
+    }
+}
+
+/* Styling pour les avatars */
+.user-avatar {
+    background: linear-gradient(135deg, #1C29A1 0%, #3B82F6 100%);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Styling pour les badges de statut */
+.status-badge {
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-validated {
+    background-color: #10b981;
+    color: white;
+}
+
+.status-pending {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.status-refused {
+    background-color: #ef4444;
+    color: white;
+}
+
+/* Effets de hover pour les boutons */
+.btn-primary {
+    background: linear-gradient(135deg, #1C29A1 0%, #3B82F6 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(28, 41, 161, 0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(28, 41, 161, 0.3);
+}
+
+/* Responsive sidebar */
+@media (max-width: 1024px) {
+    .sidebar-mobile {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar-mobile.open {
+        transform: translateX(0);
+    }
+}
+
+/* Animations d'entrée pour les éléments */
+.fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Styling spécial pour les documents */
+.document-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+}
+
+.document-card:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+/* Styling pour les FAQ accordions */
+.faq-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.faq-button {
+    width: 100%;
+    text-align: left;
+    padding: 1rem;
+    background: white;
+    border: none;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.faq-button:hover {
+    background-color: #f9fafb;
+}
+
+.faq-content {
+    padding: 0 1rem 1rem 1rem;
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+/* Animations spéciales pour les statistiques */
+.stat-number {
+    font-weight: 700;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #1C29A1 0%, #3B82F6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Responsive design amélioré */
+@media (max-width: 768px) {
+    .mobile-stack {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .mobile-full {
+        width: 100%;
+    }
+    
+    .mobile-text-center {
+        text-align: center;
+    }
+}
+
+/* Dark mode support (pour plus tard) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #1f2937;
+        --bg-secondary: #374151;
+        --text-primary: #f9fafb;
+        --text-secondary: #d1d5db;
+    }
+}
+

@@ -1,0 +1,483 @@
+{% extends 'base.html.twig' %}
+
+{# =============== SEO OPTIMISÉ POUR LA PAGE DÉTAIL SERVICE =============== #}
+{% set seo_description = serviceMetaDescription|default(serviceLabel ~ ' par ADN Family Office Paris. Expertise patrimoniale, conseils personnalisés et accompagnement sur-mesure.') %}
+
+{# Title court: "{service} | ADN Family Office Paris" pour rester sous 60 chars m\u00eame avec services longs #}
+{% block title %}{{ serviceLabel }} | ADN Family Office Paris{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block og_title %}{{ serviceLabel }} - {{ categoryLabel }} | ADN Family Office{% endblock %}
+{% block og_description %}{{ seo_description }}{% endblock %}
+{% block og_type %}article{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/modern-homepage.css') }}">
+    <style>
+        .service-hero {
+            /* Dégradé conforme charte ADN */
+            background: linear-gradient(135deg, #101A50 0%, #0057FF 40%, #1F299C 70%, #0D5EED 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="gradient" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1)"/><stop offset="100%" style="stop-color:rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23gradient)"/><circle cx="800" cy="300" r="150" fill="url(%23gradient)"/><circle cx="600" cy="700" r="120" fill="url(%23gradient)"/></svg>') no-repeat center center / cover;
+            animation: floatingBg 20s ease-in-out infinite;
+        }
+        
+        @keyframes floatingBg {
+            0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); }
+            33% { transform: translateY(-20px) scale(1.05) rotate(1deg); }
+            66% { transform: translateY(10px) scale(0.98) rotate(-1deg); }
+        }
+        
+        .service-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Styles pour les nouvelles sections */
+        .expertise-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .expertise-item:hover .bg-blue-100,
+        .expertise-item:hover .bg-indigo-100,
+        .expertise-item:hover .bg-purple-100,
+        .expertise-item:hover .bg-green-100,
+        .expertise-item:hover .bg-amber-100,
+        .expertise-item:hover .bg-teal-100 {
+            transform: scale(1.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .process-step-modern:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-card-modern:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .process-step {
+            position: relative;
+            padding-left: 4rem;
+        }
+        
+        .process-step::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, #3B82F6, #6366F1);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .process-steps {
+            counter-reset: step-counter;
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+        
+        /* Animations pour les nouveaux éléments */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .animate-slide-up {
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+        
+        .animate-fade-scale {
+            animation: fadeInScale 0.8s ease-out forwards;
+        }
+        
+        /* Effet de glassmorphisme pour les cartes */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        /* Gradient de texte moderne */
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Styles responsifs améliorés */
+        @media (max-width: 768px) {
+            .expertise-item {
+                padding: 1rem;
+            }
+            
+            .process-step-modern .bg-white {
+                padding: 1.5rem;
+            }
+            
+            .feature-card-modern {
+                padding: 1.5rem;
+            }
+            
+            .service-hero {
+                padding: 2rem 0;
+            }
+            
+            .modern-container {
+                padding: 0 1rem;
+            }
+            
+            /* Grids responsives */
+            .grid.lg\\:grid-cols-2 {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .grid.lg\\:grid-cols-4 {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .grid.lg\\:grid-cols-3 {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .expertise-item .flex {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.75rem;
+            }
+            
+            .expertise-item .bg-blue-100,
+            .expertise-item .bg-indigo-100,
+            .expertise-item .bg-purple-100,
+            .expertise-item .bg-green-100,
+            .expertise-item .bg-amber-100,
+            .expertise-item .bg-teal-100,
+            .expertise-item .bg-rose-100,
+            .expertise-item .bg-pink-100,
+            .expertise-item .bg-red-100,
+            .expertise-item .bg-orange-100,
+            .expertise-item .bg-yellow-100,
+            .expertise-item .bg-cyan-100,
+            .expertise-item .bg-emerald-100 {
+                margin: 0 auto;
+            }
+            
+            .service-hero {
+                padding: 1.5rem 0;
+            }
+            
+            .modern-container {
+                padding: 0 0.75rem;
+            }
+            
+            /* Textes plus petits sur mobile */
+            h1 {
+                font-size: 2rem !important;
+                line-height: 1.2 !important;
+            }
+            
+            h2 {
+                font-size: 1.75rem !important;
+                line-height: 1.3 !important;
+            }
+            
+            h3 {
+                font-size: 1.5rem !important;
+            }
+            
+            /* Bouton CTA responsive amélioré */
+            .group.relative.inline-flex {
+                padding: 1rem 2rem !important;
+                font-size: 1rem !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Hero Section -->
+    <section class="service-hero py-20">
+        <div class="modern-container service-content">
+            <!-- Breadcrumb -->
+            <nav class="text-sm text-white/80 mb-8">
+                <a href="{{ path('app_home') }}" class="text-white/90 hover:text-white">Accueil</a>
+                <span class="mx-2">/</span>
+                <a href="{{ path('services_index') }}" class="text-white/90 hover:text-white">Services</a>
+                <span class="mx-2">/</span>
+                <a href="{{ path('service_category', {category: categoryKey}) }}" class="text-white/90 hover:text-white">{{ categoryLabel }}</a>
+                <span class="mx-2">/</span>
+                <span class="text-white">{{ serviceLabel }}</span>
+            </nav>
+
+            <div class="max-w-4xl">
+                <h1 class="text-5xl font-bold text-white mb-6 leading-tight">
+                    {{ serviceLabel }}
+                </h1>
+                <p class="text-xl text-white/90 mb-8 leading-relaxed max-w-2xl">
+                    {% include 'services/content/_hero_descriptions.html.twig' %}
+                </p>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenu Principal -->
+    <section id="details" class="py-20 bg-white">
+        <div class="modern-container">
+            {% include 'services/content/_service_content.html.twig' %}
+        </div>
+    </section>
+
+    <!-- Section CTA Moderne -->
+    <section class="py-20 bg-gradient-to-br from-gray-50 to-white" id="contact">
+        <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;><defs><pattern id=&quot;dots&quot; patternUnits=&quot;userSpaceOnUse&quot; width=&quot;20&quot; height=&quot;20&quot;><circle cx=&quot;10&quot; cy=&quot;10&quot; r=&quot;1&quot; fill=&quot;%231C29A1&quot; opacity=&quot;0.05&quot;/></pattern></defs><rect width=&quot;100&quot; height=&quot;100&quot; fill=&quot;url(%23dots)&quot;/></svg>'); opacity: 0.3;"></div>
+        
+        <div class="modern-container relative z-10">
+            <div class="text-center">
+                <!-- Titre principal -->
+                {# Mapping des accroches CTA par service pour assurer accords et formulations naturelles #}
+                {% set ctaPhraseMap = {
+                    'optimisation-fiscale':        { 'lead': 'Prêt à optimiser', 'highlight': 'votre fiscalité' },
+                    'strategies-investissement':   { 'lead': 'Prêt à optimiser', 'highlight': "vos stratégies d'investissement" },
+                    'diversification':             { 'lead': 'Prêt à optimiser', 'highlight': 'votre diversification patrimoniale' },
+                    'conseil-patrimonial':         { 'lead': 'Prêt à optimiser', 'highlight': 'votre patrimoine' },
+                    'immobilier-residentiel':      { 'lead': 'Prêt à optimiser', 'highlight': 'vos investissements résidentiels' },
+                    'immobilier-commercial':       { 'lead': 'Prêt à optimiser', 'highlight': 'vos investissements commerciaux' },
+                    'scpi-opci':                   { 'lead': 'Prêt à optimiser', 'highlight': 'vos investissements SCPI & OPCI' },
+                    'defiscalisation-immobiliere': { 'lead': 'Prêt à optimiser', 'highlight': 'votre défiscalisation immobilière' },
+                    'planification-successorale':  { 'lead': 'Prêt à optimiser', 'highlight': 'votre planification successorale' },
+                    'donations-familiales':        { 'lead': 'Prêt à optimiser', 'highlight': 'vos donations familiales' },
+                    'holdings-familiaux':          { 'lead': 'Prêt à structurer', 'highlight': 'votre société familliale' },
+                    'capital-investissement':      { 'lead': 'Prêt à optimiser', 'highlight': 'votre capital investissement' },
+                    'investissement-startup':      { 'lead': 'Prêt à optimiser', 'highlight': 'vos investissements en startups' },
+                    'fonds-prives':                { 'lead': 'Prêt à optimiser', 'highlight': 'vos investissements en fonds privés' },
+                    'gestion-de-portefeuille':     { 'lead': 'Prêt à optimiser', 'highlight': 'votre gestion de portefeuille' },
+                    'assurance-vie':               { 'lead': 'Prêt à optimiser', 'highlight': 'votre assurance vie' },
+                    'placements-financiers':       { 'lead': 'Prêt à optimiser', 'highlight': 'vos placements financiers' },
+                    'optimisation-remuneration':   { 'lead': 'Prêt à optimiser', 'highlight': 'votre rémunération' },
+                    'gestion-tresorerie':          { 'lead': 'Prêt à optimiser', 'highlight': 'votre gestion de trésorerie' },
+                    'aide-au-developpement':       { 'lead': 'Prêt à optimiser', 'highlight': 'votre stratégie de croissance' },
+                    'session':                     { 'lead': 'Prêt à préparer', 'highlight': 'la transmission de votre patrimoine professionnel' }
+                } %}
+                {% set ctaPhrase = ctaPhraseMap[serviceSlug|default('')]
+                    |default({ 'lead': 'Prêt à optimiser', 'highlight': 'votre ' ~ (serviceLabel|lower) }) %}
+                <div class="mb-8">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4 leading-tight text-gray-900">
+                        {{ ctaPhrase.lead }}
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">{{ ctaPhrase.highlight }}</span> ?
+                    </h2>
+                    <p class="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                        Nos experts sont à votre disposition pour vous accompagner dans votre projet. 
+                        Bénéficiez d'un premier conseil personnalisé et gratuit.
+                    </p>
+                </div>
+                
+                <!-- Statistiques de confiance (valeurs dynamiques) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-indigo-600 mb-2">{{ annees_expertise() }}+</div>
+                        <div class="text-gray-600">Années d'expertise</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-purple-600 mb-2">{{ clients_accompagnes() }}</div>
+                        <div class="text-gray-600">Clients accompagnés</div>
+                    </div>
+                </div>
+                
+                <!-- Bouton CTA unique moderne et responsive -->
+                <div class="flex justify-center mb-12 px-4">
+                    <a href="{{ path('app_contact') }}" 
+                       class="group relative inline-flex items-center justify-center w-full max-w-md px-8 py-4 sm:px-10 sm:py-5 text-lg sm:text-xl font-bold text-white rounded-2xl transform hover:scale-105 transition-all duration-300 shadow-2xl border-2 border-blue-400/30"
+                       style="background: linear-gradient(135deg, #1C29A1 0%, #2D3FDB 100%); box-shadow: 0 20px 40px rgba(28, 41, 161, 0.3);"
+                       onmouseover="this.style.background='linear-gradient(135deg, #0F1751 0%, #1C29A1 100%)'; this.style.boxShadow='0 25px 50px rgba(28, 41, 161, 0.4)';"
+                       onmouseout="this.style.background='linear-gradient(135deg, #1C29A1 0%, #2D3FDB 100%)'; this.style.boxShadow='0 20px 40px rgba(28, 41, 161, 0.3)';"
+                       >
+                        <span class="relative z-10 flex items-center justify-center w-full">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="font-bold">Prendre rendez-vous</span>
+                        </span>
+                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/10 to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </a>
+                </div>
+                
+                <!-- Garanties et avantages -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+                        <div class="text-3xl mb-3">🔒</div>
+                        <div class="font-semibold mb-2 text-gray-900">Confidentialité garantie</div>
+                        <div class="text-sm text-gray-600">Vos données sont protégées</div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+                        <div class="text-3xl mb-3">⚡</div>
+                        <div class="font-semibold mb-2 text-gray-900">Réponse rapide</div>
+                        <div class="text-sm text-gray-600">Réponse sous 24h garantie</div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+                        <div class="text-3xl mb-3">🎯</div>
+                        <div class="font-semibold mb-2 text-gray-900">Conseil personnalisé</div>
+                        <div class="text-sm text-gray-600">Solutions sur-mesure</div>
+                    </div>
+                </div>
+                
+                <!-- Contact info -->
+                <div class="mt-12 pt-8 border-t border-gray-200">
+                    <p class="text-gray-700 mb-4">Ou contactez-nous directement :</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-6 text-sm">
+                        <a href="mailto:contact@adnfamilyoffice.fr" class="flex items-center justify-center text-gray-600 hover:text-indigo-600 transition-colors">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            contact@adnfamilyoffice.fr
+                        </a>
+                        <span class="hidden sm:inline text-gray-400">•</span>
+                        <a href="tel:+33626482591" class="flex items-center justify-center text-gray-600 hover:text-indigo-600 transition-colors">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            +33 6 26 48 25 91
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schema.org JSON-LD Service -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "{{ serviceLabel }}",
+        "description": "{{ seo_description }}",
+        "provider": {
+            "@type": "Organization",
+            "name": "ADN Family Office",
+            "url": "{{ url('app_home') }}",
+            "telephone": "+33-7-55-60-89-47",
+            "email": "contact@adnfamilyoffice.fr",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "140 bis rue de Rennes",
+                "addressLocality": "Paris",
+                "postalCode": "75006",
+                "addressCountry": "FR"
+            }
+        },
+        "serviceType": "{{ categoryLabel }}",
+        "category": "Gestion de patrimoine",
+        "areaServed": {
+            "@type": "Country",
+            "name": "France"
+        },
+        "url": "{{ url('service_detail', {category: categoryKey, slug: serviceSlug}) }}",
+        "offers": {
+            "@type": "Offer",
+            "name": "Consultation {{ serviceLabel }}",
+            "description": "Conseil personnalisé en {{ serviceLabel | lower }} par nos experts patrimoniaux",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock"
+        }
+    }
+    </script>
+    
+    <!-- Schema.org JSON-LD BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Accueil",
+                "item": "{{ url('app_home') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Services",
+                "item": "{{ url('services_index') }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": "{{ categoryLabel }}",
+                "item": "{{ url('service_category', {category: categoryKey}) }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "name": "{{ serviceLabel }}",
+                "item": "{{ url('service_detail', {category: categoryKey, slug: serviceSlug}) }}"
+            }
+        ]
+    }
+    </script>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('assets/modern-homepage.js') }}"></script>
+{% endblock %}

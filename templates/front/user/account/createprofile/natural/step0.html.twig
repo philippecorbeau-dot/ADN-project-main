@@ -1,0 +1,117 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% block progress %}{% endblock %}
+{% block body %}
+    <div class="container pt-28">
+        <div class="rounded-xl bg-white p-6 md:p-10">
+            <div class="rounded-xl bg-gray-200 mb-8">
+                <div class="flex flex-col md:flex-row gap-x-2 p-6 bg-ellipse-w bg-no-repeat bg-[length:250px] bg-[bottom_-9rem_right_-6rem]">
+                    <div>
+                        <span class="text-lg font-bold mb-2 block">{% trans %}Comment ça marche ?{% endtrans %}</span>
+                        {% if user.isPro %}
+                            <ul class="flex flex-col gap-y-2">
+                                <li class="inline-flex items-center gap-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-none">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span>{% trans with {'%sbold%' : '<span class="font-bold">', '%ebold%' : '</span>'} %}La validation de votre profil ne prendra que %sbold%quelques minutes%ebold%{% endtrans %}</span>
+                                </li>
+                                <li class="inline-flex items-center gap-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-none">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span>{% trans with {'%sbold%' : '<span class="font-bold">', '%ebold%' : '</span>'} %}%sbold%Vos données sont en sécurité.%ebold% Toutes vos réponses sont nécessaires à la vérification de votre profil investisseur dans le cadre de la réglementation et dans le but vous accompagner au mieux dans votre stratégie d'investissement.{% endtrans %}</span>
+                                </li>
+                                <li class="inline-flex items-center gap-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-none">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span>{% trans with {'%sbold%' : '<span class="fon t-bold">', '%ebold%' : '</span>'} %}Vous pouvez interrompre ce processus à tout moment. Nous %sbold%sauvegarderons%ebold% votre progression et vous pourrez y revenir plus tard !{% endtrans %}</span>
+                                </li>
+                                <li>
+                                    <div class="">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 inline flex-none">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                        </svg>
+                                        {% trans with {'%sbold%' : '<span class="font-bold flex-none">', '%ebold%' : '</span>'} %}Vous aurez besoin des %sbold%documents suivants :%ebold%{% endtrans %}
+                                    </div>
+                                    <ul class="pl-5 list-disc ml-7">
+                                        <li>{% trans %}Pièce d'identité du dirigeant{% endtrans %}</li>
+                                        <li>{% trans %}Kbis de moins de 3 mois{% endtrans %}</li>
+                                        <li>{% trans %}Statuts à jour et signés{% endtrans %}</li>
+                                        <li>{% trans %}Déclaration des bénéficiaires effectifs{% endtrans %}</li>
+                                    </ul>
+                                </li>
+                                <li class="inline-flex items-center gap-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-none">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span>{% trans with {'%sbold%' : '<span class="font-bold">', '%ebold%' : '</span>'} %}Une fois vos documents transmis, vous serez notifié de la validation de votre profil investisseur.{% endtrans %}</span>
+                                </li>    
+                            </ul>
+                        {% else %}
+                            <ul class="flex flex-col gap-y-2">
+                                <li class="inline-flex items-center gap-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-none">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span>{% trans %}La validation de votre profil ne prend que quelques minutes et vos données sont sécurisées. Nous avons besoin de toutes vos réponses pour vérifier votre profil d'investisseur, dans le respect des réglementations. Notre objectif est de vous accompagner au mieux dans votre stratégie d'investissement.{% endtrans %}</span>
+                                </li>
+                                <li class="inline-flex items-center gap-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-none">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span>{% trans %}Vous êtes maître de votre temps. Vous pouvez interrompre ce processus à tout moment. Votre progression sera sauvegardée pour que vous puissiez revenir plus tard.{% endtrans %}</span>
+                                </li>
+                                <li>
+                                    <div class="inline-flex items-center gap-x-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-none">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                        </svg>
+                                        <div>
+                                            {% trans %}Vous aurez besoin seulement de deux documents :{% endtrans %}
+                                        </div>
+                                    </div>
+                                    <ul class="pl-5 list-disc ml-7">
+                                        <li>{% trans %}Un justificatif de domicile datant de moins de 3 mois{% endtrans %}</li>
+                                        <li>{% trans %}Une pièce d'identité{% endtrans %}</li>
+                                    </ul>
+                                </li>
+                                <li class="inline-flex items-center gap-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 flex-none">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span>{% trans %}Une fois vos documents transmis, vous recevrez une notification de validation de votre profil (cela peut prendre jusqu'à 48 heures).{% endtrans %}</span>
+                                </li>
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="mb-8 p-6 bg-gray-100 rounded-xl text-sm">
+                <h2 class="font-bold mb-2">Mentions légales</h2>
+                <p>Les données à caractère personnel qui vous sont demandées sont nécessaires au conseiller en gestion de patrimoine (ci-après le « Conseiller ») pour le suivi et la gestion de la relation client.<br>
+                Elles sont destinées au Conseiller, responsable du traitement et peuvent être requises par la réglementation ou nécessaires à la conclusion ou l'exécution d'un contrat.<br>
+                Elles pourront être communiquées, pour ces mêmes finalités, aux sous-traitants du Conseiller, lesquels traitent vos données pour le compte du Conseiller et selon ses instructions.<br>
+                Les données sont conservées pour la durée nécessaire à la réalisation des finalités pour lesquelles elles ont été collectées, puis jusqu'aux termes des délais de prescription légaux.<br>
+                Vous bénéficiez d'un droit d'accès, de rectification, d'effacement des informations qui vous concernent ainsi que d'un droit à la limitation des traitements que vous pouvez exercer en adressant un courriel ou un courrier au Conseiller, précisant vos coordonnées (identité et justificatif d'identité).<br>
+                Vous avez le droit d'introduire une réclamation auprès de la Cnil autorité de contrôle en charge du respect des obligations en matière de données à caractère personnel.</p>
+                <h2 class="font-bold mt-4 mb-2">Règlement Général sur la Protection des Données (RGPD)</h2>
+                <p>Les informations recueillies sur ce formulaire sont sauvegardées en base de données pour connaître votre situation familiale, financière et patrimoniale.<br>
+                Ces informations vont permettre de vous conseiller pour votre gestion de patrimoine au mieux de vos intérêts.<br>
+                Vos informations personnelles seront conservées aussi longtemps que nécessaire pendant la durée de l'exécution de nos prestations, sauf si :</p>
+                <ul class="list-disc ml-7 mb-2">
+                    <li>Vous exercez votre droit de suppression des données vous concernant, dans les conditions décrites ci-après ;</li>
+                    <li>Une durée de conservation plus longue est autorisée ou imposée en vertu d'une disposition légale ou réglementaire.</li>
+                </ul>
+                <p>Conformément à la loi « informatique et libertés », vous pouvez exercer votre droit d'accès aux données vous concernant et les faire rectifier en envoyant un e-mail à votre conseiller.<br>
+                Nous vous informons de l'existence de la liste d'opposition au démarchage téléphonique « Bloctel », sur laquelle vous pouvez vous inscrire ici :
+                <a href="https://www.bloctel.gouv.fr/" target="_blank" class="text-blue-600 underline">https://www.bloctel.gouv.fr/</a></p>
+            </div>
+            <div class="text-right">
+                <a class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md" href="{{ path('user_create_profile', {'step': 1}) }}">
+                    {% trans %}Continuer{% endtrans %}
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

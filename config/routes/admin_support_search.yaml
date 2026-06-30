@@ -1,0 +1,5 @@
+admin_support_search:
+    resource: ../../src/Controller/Admin/SupportSearchController.php
+    type: annotation
+    prefix: /admin
+

@@ -1,0 +1,31 @@
+ADN FAMILY OFFICE - Nouvelle demande de contact
+=================================================================
+
+Bonjour l'équipe,
+
+Vous avez reçu une nouvelle demande de contact via le formulaire du site.
+
+INFORMATIONS DU CONTACT :
+------------------------
+Nom : {{ contact.firstname }} {{ contact.lastname }}
+Email : {{ contact.email }}
+{% if contact.phone %}Téléphone : {{ contact.phone }}{% endif %}
+Société : {{ contact.company|default('Non renseigné') }}
+
+{% if contact.subject %}
+SUJET :
+{{ contact.subject }}
+{% endif %}
+
+MESSAGE :
+------------------------
+{{ contact.message }}
+------------------------
+
+Date de réception : {{ "now"|date('d/m/Y à H:i') }}
+
+Répondre à : {{ contact.email }}
+
+---
+ADN Family Office - Email automatique
+

@@ -1,0 +1,330 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conditions Générales de Vente - ADN Family Office{% endblock %}
+
+{% block body %}
+<style>
+    .legal-page {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 100vh;
+        padding: 4rem 0;
+    }
+    
+    .legal-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 2rem;
+        padding: 3rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    }
+    
+    .legal-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .legal-header h1 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 0.75rem;
+    }
+    
+    .legal-header .subtitle {
+        color: #64748b;
+        font-size: 1.125rem;
+    }
+    
+    .legal-section {
+        margin-bottom: 2.5rem;
+    }
+    
+    .legal-section h2 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1C29A1;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .legal-section h2::before {
+        content: '';
+        width: 4px;
+        height: 1.5rem;
+        background: linear-gradient(135deg, #3B82F6, #1C29A1);
+        border-radius: 2px;
+    }
+    
+    .legal-section h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #374151;
+        margin: 1.5rem 0 0.75rem 0;
+    }
+    
+    .legal-section p {
+        color: #4b5563;
+        line-height: 1.75;
+        margin-bottom: 1rem;
+    }
+    
+    .legal-section ul {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+    }
+    
+    .legal-section ul li {
+        padding: 0.5rem 0 0.5rem 2rem;
+        position: relative;
+        color: #4b5563;
+    }
+    
+    .legal-section ul li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #3B82F6;
+        font-weight: bold;
+        font-size: 1.125rem;
+    }
+    
+    .info-box {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border-left: 4px solid #3B82F6;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .info-box p {
+        margin: 0.5rem 0;
+        color: #1e40af;
+    }
+    
+    .info-box strong {
+        color: #1e3a8a;
+    }
+    
+    .article-number {
+        background: linear-gradient(135deg, #3B82F6, #1C29A1);
+        color: white;
+        font-weight: 700;
+        font-size: 0.875rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.5rem;
+        margin-right: 0.5rem;
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #3B82F6;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid #3B82F6;
+        border-radius: 0.75rem;
+        transition: all 0.2s;
+        margin-top: 2rem;
+    }
+    
+    .back-link:hover {
+        background: #3B82F6;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+        .legal-page {
+            padding: 2rem 1rem;
+        }
+        
+        .legal-container {
+            padding: 2rem 1.5rem;
+            border-radius: 1.5rem;
+        }
+        
+        .legal-header h1 {
+            font-size: 2rem;
+        }
+        
+        .legal-section h2 {
+            font-size: 1.25rem;
+        }
+    }
+</style>
+
+<div class="legal-page">
+    <div class="legal-container">
+        <div class="legal-header">
+            <h1>📄 Conditions Générales de Vente</h1>
+            <p class="subtitle">Modalités d'exécution de nos prestations</p>
+        </div>
+        
+        <div class="legal-content">
+            <div class="info-box">
+                <p><strong>Dernière mise à jour :</strong> Novembre 2025</p>
+                <p>Les présentes Conditions Générales de Vente (CGV) régissent les relations contractuelles entre ADN Family Office et ses clients dans le cadre des prestations de conseil en gestion de patrimoine.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 1</span> Objet</h2>
+                <p>Les présentes CGV ont pour objet de définir les modalités et conditions dans lesquelles ADN Family Office fournit ses prestations de conseil en gestion de patrimoine, d'investissement financier et immobilier, ainsi que de courtage en assurance.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 2</span> Prestations proposées</h2>
+                <p>ADN Family Office propose notamment les prestations suivantes :</p>
+                <ul>
+                    <li>Audit patrimonial global</li>
+                    <li>Conseil en stratégie patrimoniale et fiscale</li>
+                    <li>Conseil en investissements financiers</li>
+                    <li>Conseil en investissements immobiliers</li>
+                    <li>Courtage en assurance vie et prévoyance</li>
+                    <li>Accompagnement en transmission et succession</li>
+                    <li>Conseil stratégique du dirigeant</li>
+                </ul>
+                <p>Les prestations font l'objet d'une proposition détaillée et d'un mandat ou contrat spécifique.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 3</span> Conditions préalables</h2>
+                <h3>3.1 Identification du client</h3>
+                <p>Conformément à la réglementation en vigueur (LCB-FT), ADN Family Office procède à l'identification de ses clients et à la vérification de leur identité avant toute entrée en relation d'affaires.</p>
+                
+                <h3>3.2 Évaluation des connaissances (MIF 2)</h3>
+                <p>Dans le cadre du conseil en investissement, ADN Family Office évalue :</p>
+                <ul>
+                    <li>Les connaissances et l'expérience du client en matière financière</li>
+                    <li>Sa situation financière et ses capacités de perte</li>
+                    <li>Ses objectifs d'investissement</li>
+                </ul>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 4</span> Tarification et honoraires</h2>
+                <h3>4.1 Modalités de facturation</h3>
+                <p>Les honoraires d'ADN Family Office peuvent être facturés selon les modalités suivantes :</p>
+                <ul>
+                    <li><strong>Honoraires forfaitaires :</strong> montant fixe pour une mission déterminée</li>
+                    <li><strong>Honoraires au temps passé :</strong> taux horaire convenu</li>
+                    <li><strong>Rétrocessions :</strong> commissions perçues auprès des partenaires (transparence totale)</li>
+                    <li><strong>Formule mixte :</strong> combinaison des modes précédents</li>
+                </ul>
+                
+                <h3>4.2 Devis et acceptation</h3>
+                <p>Tout engagement fait l'objet d'un devis détaillé ou d'un mandat précisant :</p>
+                <ul>
+                    <li>La nature et l'étendue de la mission</li>
+                    <li>Les modalités de rémunération</li>
+                    <li>Les conditions de révision éventuelle</li>
+                    <li>La durée de la mission</li>
+                </ul>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 5</span> Modalités de paiement</h2>
+                <p>Les honoraires sont payables selon les modalités définies au mandat ou contrat :</p>
+                <ul>
+                    <li>Paiement à la commande (missions ponctuelles)</li>
+                    <li>Paiement fractionné selon échéancier</li>
+                    <li>Prélèvement automatique (missions récurrentes)</li>
+                </ul>
+                <p>Tout retard de paiement entraînera l'application de pénalités de retard au taux légal en vigueur.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 6</span> Obligations et responsabilités</h2>
+                <h3>6.1 Obligations d'ADN Family Office</h3>
+                <p>ADN Family Office s'engage à :</p>
+                <ul>
+                    <li>Exécuter ses missions avec compétence et professionnalisme</li>
+                    <li>Respecter la réglementation applicable (AMF, ACPR)</li>
+                    <li>Agir dans l'intérêt exclusif du client</li>
+                    <li>Gérer les situations de conflits d'intérêts avec transparence</li>
+                    <li>Respecter la confidentialité des informations</li>
+                </ul>
+                
+                <h3>6.2 Nature de l'obligation</h3>
+                <p>ADN Family Office est tenu à une <strong>obligation de moyens</strong>. La société met en œuvre tous les moyens nécessaires à la bonne exécution de sa mission, sans garantir un résultat déterminé, notamment en matière de performance financière.</p>
+                
+                <h3>6.3 Obligations du client</h3>
+                <p>Le client s'engage à :</p>
+                <ul>
+                    <li>Fournir des informations exactes et complètes</li>
+                    <li>Informer ADN Family Office de tout changement de situation</li>
+                    <li>Respecter les échéances de paiement</li>
+                    <li>Prendre ses décisions en connaissance de cause</li>
+                </ul>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 7</span> Confidentialité</h2>
+                <p>ADN Family Office s'engage à respecter la confidentialité de toutes les informations communiquées par le client, sauf obligation légale ou réglementaire de divulgation.</p>
+                <p>Cette obligation de confidentialité subsiste au-delà de la fin de la relation contractuelle.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 8</span> Durée et résiliation</h2>
+                <h3>8.1 Durée</h3>
+                <p>Les contrats peuvent être :</p>
+                <ul>
+                    <li><strong>À durée déterminée :</strong> pour une mission précise</li>
+                    <li><strong>À durée indéterminée :</strong> pour un accompagnement continu</li>
+                </ul>
+                
+                <h3>8.2 Résiliation</h3>
+                <p>Les contrats à durée indéterminée peuvent être résiliés par l'une ou l'autre des parties moyennant un préavis de 3 mois, sauf disposition contraire.</p>
+                <p>En cas de manquement grave, la résiliation peut intervenir sans préavis.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 9</span> Réclamations</h2>
+                <p>Toute réclamation doit être adressée par écrit à :</p>
+                <div class="info-box">
+                    <p><strong>ADN Family Office</strong><br>
+                    140 bis rue de Rennes<br>
+                    75006 Paris<br>
+                    Email : <a href="mailto:contact@adnfamilyoffice.fr" style="color: #1e40af; text-decoration: underline;">contact@adnfamilyoffice.fr</a></p>
+                </div>
+                <p>ADN Family Office s'engage à accuser réception de la réclamation sous 10 jours ouvrables et à y répondre dans un délai de 2 mois.</p>
+                
+                <h3>9.1 Médiation</h3>
+                <p>En cas de litige non résolu, le client peut saisir le médiateur de l'ANACOFI :<br>
+                <a href="https://www.anacofi.asso.fr" target="_blank" style="color: #3B82F6;">www.anacofi.asso.fr</a></p>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 10</span> Protection des données</h2>
+                <p>Le traitement des données personnelles est régi par notre <a href="{{ path('legal_privacy') }}" style="color: #3B82F6; font-weight: 600;">Politique de confidentialité</a>, conformément au RGPD.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 11</span> Droit applicable et litiges</h2>
+                <p>Les présentes CGV sont soumises au droit français.</p>
+                <p>En cas de litige et à défaut de résolution amiable, compétence est attribuée aux tribunaux de Paris, nonobstant pluralité de défendeurs ou appel en garantie.</p>
+            </div>
+            
+            <div class="legal-section">
+                <h2><span class="article-number">Article 12</span> Modification des CGV</h2>
+                <p>ADN Family Office se réserve le droit de modifier les présentes CGV à tout moment. Les nouvelles CGV seront communiquées aux clients et s'appliqueront aux missions futures.</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="{{ path('app_home') }}" class="back-link">
+                ← Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

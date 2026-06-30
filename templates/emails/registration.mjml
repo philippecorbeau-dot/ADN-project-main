@@ -1,0 +1,19 @@
+<mjml>
+    <mj-body>
+        <mj-section>
+            <mj-column>
+                <mj-text>
+                    Bonjour {{ user.firstName|escape|capitalize }},
+                    Merci de vous être inscrit. Cliquez ci-dessous pour activer votre compte.
+                </mj-text>
+                <mj-button href="{{ signedUrl|raw }}">
+                    Activer mon compte
+                </mj-button>
+                <mj-text>
+                    Le lien expire dans {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+                </mj-text>
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>
+

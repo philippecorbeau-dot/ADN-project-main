@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion à MoneyPitch - ADN Family Office</title>
+    <link rel="icon" href="{{ asset('assets/favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('assets/favicon.ico') }}" sizes="any">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --adn-primary: #1C29A1;
+            --adn-primary-light: #3B82F6;
+            --adn-purple: #7C3AED;
+            --adn-purple-light: #A78BFA;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0F1751 0%, #1C29A1 30%, #2D3FDB 70%, #3B82F6 100%);
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo {
+            height: 45px;
+            filter: brightness(0) invert(1);
+            opacity: 0.95;
+        }
+
+        /* Container principal */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        /* Card */
+        .transition-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Icône */
+        .transition-icon {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--adn-purple) 0%, var(--adn-purple-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px -5px rgba(124, 58, 237, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .transition-icon::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--adn-purple), var(--adn-purple-light));
+            opacity: 0.3;
+            animation: ripple 2s ease-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .transition-icon svg {
+            width: 45px;
+            height: 45px;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Titre */
+        .transition-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--adn-purple), var(--adn-purple-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        /* Message */
+        .transition-message {
+            color: #64748B;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Email badge */
+        .email-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #F3E8FF 0%, #E9D5FF 100%);
+            color: var(--adn-purple);
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border: 1px solid #DDD6FE;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #E9D5FF;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--adn-purple), var(--adn-purple-light));
+            border-radius: 3px;
+            animation: progress 1.5s ease-in-out forwards;
+        }
+
+        @keyframes progress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            color: #8B5CF6;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* Loader dots */
+        .loader {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .loader-dot {
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(135deg, var(--adn-purple), var(--adn-purple-light));
+            border-radius: 50%;
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+
+        .loader-dot:nth-child(1) { animation-delay: 0s; }
+        .loader-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loader-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Info */
+        .transition-info {
+            background: #F5F3FF;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .transition-info p {
+            font-size: 0.875rem;
+            color: #6D28D9;
+            line-height: 1.5;
+        }
+
+        /* Note */
+        .transition-note {
+            font-size: 0.8rem;
+            color: #94A3B8;
+            line-height: 1.5;
+        }
+
+        .transition-note a {
+            color: var(--adn-purple);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .transition-note a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .logo {
+                height: 35px;
+            }
+
+            .transition-card {
+                padding: 1.5rem;
+                border-radius: 1rem;
+                margin: 0 0.5rem;
+            }
+
+            .transition-icon {
+                width: 70px;
+                height: 70px;
+            }
+
+            .transition-icon svg {
+                width: 35px;
+                height: 35px;
+            }
+
+            .transition-title {
+                font-size: 1.35rem;
+            }
+
+            .transition-message {
+                font-size: 0.95rem;
+            }
+
+            .email-badge {
+                font-size: 0.85rem;
+                padding: 0.625rem 1.25rem;
+            }
+        }
+
+        /* Particules */
+        .particle {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; top: 60%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 70%; top: 30%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 80%; top: 70%; animation-delay: 6s; }
+        .particle:nth-child(5) { left: 50%; top: 80%; animation-delay: 8s; }
+        .particle:nth-child(6) { left: 90%; top: 40%; animation-delay: 1s; }
+        .particle:nth-child(7) { left: 5%; top: 50%; animation-delay: 3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            50% { transform: translateY(-20px) translateX(10px); opacity: 0.6; }
+        }
+
+        /* Security indicator */
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.75rem;
+            color: #10B981;
+            background: #ECFDF5;
+            padding: 0.375rem 0.75rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .security-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particules -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="{{ path('app_home') }}">
+            <img src="{{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }}" alt="ADN Family Office" class="logo">
+        </a>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="main-container">
+        <div class="transition-card">
+            <div class="transition-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                    <polyline points="15 3 21 3 21 9"/>
+                    <line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+            </div>
+
+            <h1 class="transition-title">Connexion à MoneyPitch</h1>
+            
+            <p class="transition-message">
+                Vous allez être connecté à votre espace MoneyPitch pour accéder à vos investissements.
+            </p>
+
+            <div class="security-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <path d="M9 12l2 2 4-4"/>
+                </svg>
+                Connexion sécurisée
+            </div>
+
+            <div class="email-badge">
+                📧 {{ user_email }}
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-text">Connexion en cours...</div>
+            </div>
+
+            <div class="loader">
+                <div class="loader-dot"></div>
+                <div class="loader-dot"></div>
+                <div class="loader-dot"></div>
+            </div>
+
+            <div class="transition-info">
+                <p>🔒 Vos identifiants sont transmis de manière sécurisée à MoneyPitch.</p>
+            </div>
+
+            <p class="transition-note">
+                Un problème ? <a href="{{ path('app_logout') }}">Se déconnecter</a> ou <a href="mailto:contact@adnfamilyoffice.fr">Nous contacter</a>
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© {{ 'now'|date('Y') }} <a href="{{ path('app_home') }}">ADN Family Office</a></p>
+    </footer>
+
+    <!-- Formulaire pour soumettre vers MoneyPitch -->
+    <form id="moneypitchForm" method="post" action="{{ moneypitch_url }}" style="display: none;">
+        <input type="hidden" name="redirect" value="{{ redirect_url }}">
+        <input type="hidden" name="returnurl" value="{{ return_url }}">
+        <input type="hidden" name="crypted" value="0">
+        <input type="hidden" name="login" value="{{ user_email }}">
+        <input type="hidden" name="password" value="{{ user_password }}">
+    </form>
+
+    <script>
+        // Auto-submit après l'animation de la barre de progression
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressText = document.querySelector('.progress-text');
+            
+            setTimeout(function() {
+                // Mettre à jour le texte de progression
+                if (progressText) {
+                    progressText.textContent = 'Redirection vers MoneyPitch...';
+                }
+                
+                // Soumettre le formulaire
+                document.getElementById('moneypitchForm').submit();
+            }, 1800);
+        });
+    </script>
+</body>
+</html>
+

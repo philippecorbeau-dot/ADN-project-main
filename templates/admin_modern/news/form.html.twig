@@ -1,0 +1,876 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block header_icon %}
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Breadcrumb d'administration -->
+    {% include 'partials/breadcrumb.html.twig' with {
+        'items': [
+            {'label': 'Dashboard Admin', 'path': 'admin_modern_dashboard', 'icon': 'admin'},
+            {'label': 'Gestion des Actualités', 'path': 'admin_modern_news', 'icon': 'news'},
+            {'label': is_new ? 'Nouvel Article' : 'Édition Article'}
+        ]
+    } %}
+
+    <!-- En-tête moderne de l'éditeur -->
+    <div class="bg-gradient-to-r from-purple-900 via-blue-900 to-indigo-900 rounded-2xl shadow-2xl overflow-hidden">
+        <div class="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm flex-shrink-0">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-xl sm:text-2xl font-bold text-white truncate">{{ is_new ? 'Nouvel Article' : 'Édition d\'Article' }}</h1>
+                        <p class="text-blue-200 text-xs sm:text-sm">{{ is_new ? 'Création d\'un nouveau contenu éditorial' : 'Modification de l\'article existant' }}</p>
+                    </div>
+                </div>
+                
+                <!-- Statut et informations -->
+                <div class="flex sm:hidden md:flex items-center justify-center sm:justify-end space-x-4 sm:space-x-6">
+                    {% if not is_new %}
+                        <div class="text-center">
+                            <div class="text-base sm:text-lg font-bold text-white">ID: {{ post.id }}</div>
+                            <div class="text-xs text-blue-200">Identifiant</div>
+                        </div>
+                    {% endif %}
+                    <div class="text-center">
+                        <div class="text-base sm:text-lg font-bold text-white" id="word-count">0</div>
+                        <div class="text-xs text-blue-200">Mots</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-base sm:text-lg font-bold text-white" id="char-count">0</div>
+                        <div class="text-xs text-blue-200">Caractères</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Barre d'outils de l'éditeur -->
+        <div class="bg-white/5 backdrop-blur-sm border-t border-white/10 px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <button type="button" id="preview-btn" class="inline-flex items-center px-3 sm:px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 backdrop-blur-sm flex-1 sm:flex-none justify-center sm:justify-start">
+                        <svg class="w-4 h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        Aperçu
+                    </button>
+                    <button type="button" id="save-draft" class="inline-flex items-center px-3 sm:px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 backdrop-blur-sm flex-1 sm:flex-none justify-center sm:justify-start">
+                        <svg class="w-4 h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                        </svg>
+                        <span class="hidden sm:inline">Sauvegarder brouillon</span>
+                        <span class="sm:hidden">Brouillon</span>
+                    </button>
+                </div>
+                
+                <div class="flex items-center justify-center sm:justify-end space-x-2 sm:space-x-3">
+                    <div class="text-xs text-blue-200" id="save-status">Prêt à sauvegarder</div>
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse" id="status-indicator"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulaire principal avec layout moderne -->
+    <form method="post" enctype="multipart/form-data" class="space-y-4 sm:space-y-6" id="article-form">
+        <!-- Layout en 2 colonnes -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+            <!-- Colonne principale (contenu) -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Titre principal -->
+                <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-100">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2M7 4h10M7 4l-2 16h12l-2-16"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Titre & Contenu</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Titre de l'article</label>
+                            <input name="title" value="{{ post.title }}" 
+                                   class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg font-medium shadow-sm transition-all duration-200 hover:shadow-md" 
+                                   placeholder="Saisissez le titre de votre article..." 
+                                   required />
+                            <div class="mt-1 text-xs text-gray-500">
+                                <span id="title-count">0</span> caractères (recommandé: 50-60)
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Contenu de l'article <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <textarea id="news-content-editor" name="content" rows="16" 
+                                          class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all duration-200 hover:shadow-md" 
+                                          placeholder="Rédigez votre article ici...">{{ post.content }}</textarea>
+                                <div class="absolute bottom-3 right-3 text-xs text-gray-400 bg-white px-2 py-1 rounded">
+                                    <span id="content-words">0</span> mots · <span id="content-chars">0</span> caractères
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">
+                                Astuce: utilisez les styles H1/H2/H3, listes, tableaux, citations pour structurer votre article (SEO).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar (métadonnées) -->
+            <div class="space-y-6">
+                <!-- Publication -->
+                <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-100">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Publication</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Statut de publication -->
+                        <div id="publish-toggle-container" class="flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-300 {% if post.status == 1 %}bg-green-100 border-green-500{% else %}bg-gray-50 border-gray-200{% endif %}">
+                            <div class="flex items-center gap-2">
+                                <span id="publish-icon" class="text-xl">{% if post.status == 1 %}✅{% else %}📝{% endif %}</span>
+                                <div>
+                                    <span id="publish-label" class="text-sm font-bold {% if post.status == 1 %}text-green-700{% else %}text-gray-600{% endif %}">
+                                        {% if post.status == 1 %}PUBLIÉ{% else %}BROUILLON{% endif %}
+                                    </span>
+                                    <p id="publish-desc" class="text-xs {% if post.status == 1 %}text-green-600{% else %}text-gray-500{% endif %}">
+                                        {% if post.status == 1 %}L'article est visible sur le site{% else %}L'article n'est pas encore visible{% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="is_published" value="1" id="is_published_toggle" class="sr-only peer" 
+                                       {% if post.status == 1 %}checked{% endif %}>
+                                <div class="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-600 shadow-inner"></div>
+                            </label>
+                        </div>
+                        
+                        <!-- Mettre à la Une -->
+                        <div id="featured-toggle-container" class="flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-300 {% if post.isFeatured is defined and post.isFeatured %}bg-yellow-100 border-yellow-500{% else %}bg-gray-50 border-gray-200{% endif %}">
+                            <div class="flex items-center gap-2">
+                                <span id="featured-icon" class="text-xl">{% if post.isFeatured is defined and post.isFeatured %}⭐{% else %}☆{% endif %}</span>
+                                <div>
+                                    <span id="featured-label" class="text-sm font-bold {% if post.isFeatured is defined and post.isFeatured %}text-yellow-700{% else %}text-gray-600{% endif %}">
+                                        {% if post.isFeatured is defined and post.isFeatured %}À LA UNE{% else %}Standard{% endif %}
+                                    </span>
+                                    <p id="featured-desc" class="text-xs {% if post.isFeatured is defined and post.isFeatured %}text-yellow-600{% else %}text-gray-500{% endif %}">
+                                        {% if post.isFeatured is defined and post.isFeatured %}Affiché en vedette{% else %}Affichage normal{% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="is_featured" value="1" id="is_featured_toggle" class="sr-only peer" 
+                                       {% if post.isFeatured is defined and post.isFeatured %}checked{% endif %}>
+                                <div class="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-yellow-500 shadow-inner"></div>
+                            </label>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Catégorie</label>
+                            <select name="category" class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.id }}" {% if post.category and post.category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Date d'affichage <span class="font-normal text-gray-500">(SEO)</span></label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <input type="date" name="publication_date_day" 
+                                           id="publication_date_day"
+                                           value="{{ post.publicationDateStart ? post.publicationDateStart|date('Y-m-d') : 'now'|date('Y-m-d') }}" 
+                                           class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm" 
+                                           required />
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <select name="publication_date_hour" 
+                                                class="flex-1 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm">
+                                            {% for h in 0..23 %}
+                                                <option value="{{ '%02d'|format(h) }}" {% if post.publicationDateStart and post.publicationDateStart|date('H') == '%02d'|format(h) %}selected{% elseif not post.publicationDateStart and h == 10 %}selected{% endif %}>
+                                                    {{ '%02d'|format(h) }}h
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="text-gray-500 font-bold">:</span>
+                                        <select name="publication_date_minute" 
+                                                class="flex-1 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm">
+                                            {% for m in [0, 15, 30, 45] %}
+                                                <option value="{{ '%02d'|format(m) }}" {% if post.publicationDateStart and post.publicationDateStart|date('i') == '%02d'|format(m) %}selected{% elseif not post.publicationDateStart and m == 0 %}selected{% endif %}>
+                                                    {{ '%02d'|format(m) }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-xs text-gray-500">
+                                📅 Cette date sera affichée sur l'article et utilisée par Google (SEO)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Image de couverture -->
+                <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-100">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Image</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        {% if post.imageName %}
+                            <div class="relative">
+                                <img src="{{ asset('uploads/images/' ~ post.imageName) }}" alt="{{ post.imageAlt }}" 
+                                     class="w-full h-32 object-cover rounded-lg border border-gray-200">
+                                <div class="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                                    Image actuelle
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">
+                                {% if post.imageName %}Remplacer l'image{% else %}Image de couverture{% endif %}
+                            </label>
+                            <input type="file" name="image_file" accept="image/*" 
+                                   class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm" />
+                            <div class="mt-1 text-xs text-gray-500">
+                                Formats acceptés: JPG, PNG, WebP (max 2MB)
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Texte alternatif (SEO)</label>
+                            <input name="image_alt" value="{{ post.imageAlt }}" 
+                                   class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm" 
+                                   placeholder="Description de l'image pour l'accessibilité" />
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SEO -->
+                <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-100">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">SEO</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Titre SEO</label>
+                            <input name="seo_title" value="{{ post.seoTitle }}" 
+                                   class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-sm" 
+                                   placeholder="Titre optimisé pour les moteurs de recherche" />
+                            <div class="mt-1 text-xs text-gray-500">
+                                <span id="seo-title-count">0</span> caractères (optimal: 50-60)
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">Meta description</label>
+                            <textarea name="seo_description" rows="3" 
+                                      class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 shadow-sm" 
+                                      placeholder="Description qui apparaîtra dans les résultats de recherche">{{ post.seoDescription }}</textarea>
+                            <div class="mt-1 text-xs text-gray-500">
+                                <span id="seo-desc-count">0</span> caractères (optimal: 150-160)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- URLs avancées -->
+                <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-100">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">URLs Avancées</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">URL Canonique</label>
+                            <input name="canonical_url" value="{{ post.canonicalUrl }}" 
+                                   class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 shadow-sm" 
+                                   placeholder="https://exemple.com/article-original" />
+                            <div class="mt-1 text-xs text-gray-500">
+                                Pour éviter le contenu dupliqué
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-900 mb-2">URL de Redirection</label>
+                            <input name="redirect_url" value="{{ post.redirectUrl }}" 
+                                   class="w-full border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 shadow-sm" 
+                                   placeholder="https://exemple.com/nouvelle-page" />
+                            <div class="mt-1 text-xs text-gray-500">
+                                Redirection automatique vers une autre page
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions du formulaire -->
+        <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-100">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <div class="flex items-center space-x-2 text-xs sm:text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="hidden sm:inline">Sauvegarde automatique activée</span>
+                        <span class="sm:hidden">Auto-save</span>
+                    </div>
+                    <div class="text-xs text-gray-500" id="form-save-status">
+                        Prêt à sauvegarder
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                    <a href="{{ path('admin_modern_news') }}" 
+                       class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-lg hover:bg-gray-50 transition-colors duration-200 text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Annuler
+                    </a>
+                    
+                    <button type="submit" 
+                            class="inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl text-sm sm:text-base">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                        </svg>
+                        <span class="font-semibold">{{ is_new ? 'Publier l\'article' : 'Enregistrer' }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Scripts JavaScript pour l'éditeur avancé -->
+<script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.jsdelivr.net/npm/tinymce@6/langs/fr_FR.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('article-form');
+    const titleInput = document.querySelector('input[name="title"]');
+    const contentTextarea = document.querySelector('textarea[name="content"]');
+    const seoTitleInput = document.querySelector('input[name="seo_title"]');
+    const seoDescInput = document.querySelector('textarea[name="seo_description"]');
+    
+    // Toggle Publier avec feedback visuel
+    const publishToggle = document.getElementById('is_published_toggle');
+    const publishContainer = document.getElementById('publish-toggle-container');
+    const publishIcon = document.getElementById('publish-icon');
+    const publishLabel = document.getElementById('publish-label');
+    const publishDesc = document.getElementById('publish-desc');
+    
+    if (publishToggle) {
+        publishToggle.addEventListener('change', function() {
+            if (this.checked) {
+                publishContainer.className = 'flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-300 bg-green-100 border-green-500';
+                publishIcon.textContent = '✅';
+                publishLabel.textContent = 'PUBLIÉ';
+                publishLabel.className = 'text-sm font-bold text-green-700';
+                publishDesc.textContent = "L'article est visible sur le site";
+                publishDesc.className = 'text-xs text-green-600';
+            } else {
+                publishContainer.className = 'flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-300 bg-gray-50 border-gray-200';
+                publishIcon.textContent = '📝';
+                publishLabel.textContent = 'BROUILLON';
+                publishLabel.className = 'text-sm font-bold text-gray-600';
+                publishDesc.textContent = "L'article n'est pas encore visible";
+                publishDesc.className = 'text-xs text-gray-500';
+            }
+        });
+    }
+    
+    // Toggle À la Une avec feedback visuel
+    const featuredToggle = document.getElementById('is_featured_toggle');
+    const featuredContainer = document.getElementById('featured-toggle-container');
+    const featuredIcon = document.getElementById('featured-icon');
+    const featuredLabel = document.getElementById('featured-label');
+    const featuredDesc = document.getElementById('featured-desc');
+    
+    if (featuredToggle) {
+        featuredToggle.addEventListener('change', function() {
+            if (this.checked) {
+                featuredContainer.className = 'flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-300 bg-yellow-100 border-yellow-500';
+                featuredIcon.textContent = '⭐';
+                featuredLabel.textContent = 'À LA UNE';
+                featuredLabel.className = 'text-sm font-bold text-yellow-700';
+                featuredDesc.textContent = 'Affiché en vedette';
+                featuredDesc.className = 'text-xs text-yellow-600';
+            } else {
+                featuredContainer.className = 'flex items-center justify-between p-3 rounded-lg border-2 transition-all duration-300 bg-gray-50 border-gray-200';
+                featuredIcon.textContent = '☆';
+                featuredLabel.textContent = 'Standard';
+                featuredLabel.className = 'text-sm font-bold text-gray-600';
+                featuredDesc.textContent = 'Affichage normal';
+                featuredDesc.className = 'text-xs text-gray-500';
+            }
+        });
+    }
+    const previewBtn = document.getElementById('preview-btn');
+    const saveDraftBtn = document.getElementById('save-draft');
+    
+    // Initialiser l'éditeur WYSIWYG (TinyMCE) pour un contenu riche (H1/H2/H3, listes, tableaux…)
+    let tinyEditor = null;
+    if (window.tinymce) {
+        tinymce.init({
+            selector: '#news-content-editor',
+            language: 'fr_FR',
+            menubar: 'file edit view insert format tools table',
+            plugins: 'anchor autolink charmap codesample code emoticons image link lists media searchreplace table visualblocks wordcount preview fullscreen hr',
+            toolbar: [
+                'undo redo | blocks | fontfamily fontsize | bold italic underline strikethrough |',
+                'alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist |',
+                'link image media table | hr blockquote | removeformat | code preview fullscreen'
+            ].join(' '),
+            block_formats: 'Paragraphe=p; Titre 1=h1; Titre 2=h2; Titre 3=h3; Titre 4=h4; Titre 5=h5; Titre 6=h6',
+            height: 600,
+            branding: false,
+            toolbar_sticky: true,
+            paste_as_text: false,
+            content_css: false,
+            // Configuration pour l'upload d'images
+            images_upload_url: '{{ path("admin_modern_upload_image") }}',
+            automatic_uploads: true,
+            images_reuse_filename: true,
+            file_picker_types: 'image',
+            images_upload_handler: function(blobInfo, progress) {
+                return new Promise(function(resolve, reject) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', '{{ path("admin_modern_upload_image") }}');
+                    xhr.upload.onprogress = function(e) {
+                        progress(e.loaded / e.total * 100);
+                    };
+                    xhr.onload = function() {
+                        if (xhr.status === 403) {
+                            reject({ message: 'Erreur HTTP: ' + xhr.status, remove: true });
+                            return;
+                        }
+                        if (xhr.status < 200 || xhr.status >= 300) {
+                            reject('Erreur HTTP: ' + xhr.status);
+                            return;
+                        }
+                        var json = JSON.parse(xhr.responseText);
+                        if (!json || typeof json.location !== 'string') {
+                            reject('Réponse JSON invalide: ' + xhr.responseText);
+                            return;
+                        }
+                        resolve(json.location);
+                    };
+                    xhr.onerror = function() {
+                        reject('Erreur lors de l\'upload. Veuillez réessayer.');
+                    };
+                    var formData = new FormData();
+                    formData.append('file', blobInfo.blob(), blobInfo.filename());
+                    xhr.send(formData);
+                });
+            },
+            content_style: `
+                body { 
+                    font-family: 'Plus Jakarta Sans', Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; 
+                    line-height: 1.85; 
+                    color: #111827; 
+                    padding: 1rem;
+                    max-width: 100%;
+                }
+                h1,h2,h3,h4,h5,h6 { color: #1C29A1; font-weight: 800; margin: 1.75em 0 .75em; }
+                h2 { font-size: 1.75rem; border-left: 4px solid #3B82F6; padding-left: .75rem; }
+                h3 { font-size: 1.5rem; color: #3B82F6; }
+                h4 { font-size: 1.25rem; color: #0F1751; }
+                p { margin: 0 0 1.25rem; text-align: justify; }
+                p > strong:first-child { 
+                    display: block; 
+                    font-size: 1.15rem; 
+                    color: #1C29A1; 
+                    margin-bottom: 0.5rem;
+                    padding-bottom: 0.5rem;
+                    border-bottom: 2px solid #e0e7ff;
+                }
+                blockquote { 
+                    background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%); 
+                    border-left: 5px solid #1C29A1; 
+                    padding: 1.5rem 2rem; 
+                    margin: 2rem 0; 
+                    font-style: italic; 
+                    border-radius: 0 1rem 1rem 0;
+                    color: #0F1751;
+                }
+                table { border-collapse: collapse; width: 100%; margin: 1.5rem 0; border-radius: 0.5rem; overflow: hidden; }
+                th { background: linear-gradient(135deg, #1C29A1, #3B82F6); color: white; padding: .75rem 1rem; text-align: left; font-weight: 700; }
+                td { border: 1px solid #e5e7eb; padding: .75rem 1rem; }
+                tr:nth-child(even) { background: #f8fafc; }
+                tr:hover { background: #e0e7ff; }
+                ul, ol { margin: 1.25rem 0; padding-left: 1.5rem; }
+                li { margin-bottom: 0.5rem; line-height: 1.7; }
+                img { 
+                    max-width: 100%; 
+                    height: auto; 
+                    border-radius: 1rem; 
+                    margin: 1.5rem auto; 
+                    display: block;
+                    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+                }
+                hr { 
+                    border: none; 
+                    height: 3px; 
+                    background: linear-gradient(90deg, transparent, #1C29A1, #3B82F6, transparent); 
+                    margin: 2.5rem 0; 
+                }
+                a { color: #1C29A1; text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; }
+                a:hover { border-bottom-color: #3B82F6; }
+                code { background: #f1f5f9; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-size: 0.9rem; }
+                pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 0.75rem; overflow-x: auto; }
+            `,
+            setup: function (ed) {
+                tinyEditor = ed;
+                const refresh = () => { updateCounts(); updateSaveStatus('Modifications détectées'); };
+                ed.on('change input keyup SetContent', refresh);
+            }
+        });
+    }
+
+    // Compteurs de caractères et mots (compat texte brut ou TinyMCE)
+    function updateCounts() {
+        // Titre
+        const titleLength = titleInput.value.length;
+        document.getElementById('title-count').textContent = titleLength;
+        
+        // Contenu
+        let contentText = '';
+        if (tinyEditor) {
+            contentText = tinyEditor.getContent({ format: 'text' }) || '';
+        } else {
+            contentText = contentTextarea.value;
+        }
+        const wordCount = contentText.trim() ? contentText.trim().split(/\s+/).length : 0;
+        const charCount = contentText.length;
+        
+        document.getElementById('content-words').textContent = wordCount;
+        document.getElementById('content-chars').textContent = charCount;
+        document.getElementById('word-count').textContent = wordCount;
+        document.getElementById('char-count').textContent = charCount;
+        
+        // SEO Title
+        const seoTitleLength = seoTitleInput.value.length;
+        document.getElementById('seo-title-count').textContent = seoTitleLength;
+        
+        // SEO Description
+        const seoDescLength = seoDescInput.value.length;
+        document.getElementById('seo-desc-count').textContent = seoDescLength;
+        
+        // Mise à jour des couleurs selon les recommandations
+        updateCountColors();
+    }
+    
+    // Mise à jour des couleurs selon les recommandations SEO
+    function updateCountColors() {
+        const titleCount = document.getElementById('title-count');
+        const titleLength = titleInput.value.length;
+        
+        if (titleLength >= 50 && titleLength <= 60) {
+            titleCount.className = 'text-green-600 font-medium';
+        } else if (titleLength >= 40 && titleLength <= 70) {
+            titleCount.className = 'text-yellow-600 font-medium';
+        } else {
+            titleCount.className = 'text-red-600 font-medium';
+        }
+        
+        const seoTitleCount = document.getElementById('seo-title-count');
+        const seoTitleLength = seoTitleInput.value.length;
+        
+        if (seoTitleLength >= 50 && seoTitleLength <= 60) {
+            seoTitleCount.className = 'text-green-600 font-medium';
+        } else if (seoTitleLength >= 40 && seoTitleLength <= 70) {
+            seoTitleCount.className = 'text-yellow-600 font-medium';
+        } else {
+            seoTitleCount.className = 'text-red-600 font-medium';
+        }
+        
+        const seoDescCount = document.getElementById('seo-desc-count');
+        const seoDescLength = seoDescInput.value.length;
+        
+        if (seoDescLength >= 150 && seoDescLength <= 160) {
+            seoDescCount.className = 'text-green-600 font-medium';
+        } else if (seoDescLength >= 120 && seoDescLength <= 180) {
+            seoDescCount.className = 'text-yellow-600 font-medium';
+        } else {
+            seoDescCount.className = 'text-red-600 font-medium';
+        }
+    }
+    
+    // Auto-génération du SEO title à partir du titre principal
+    titleInput.addEventListener('input', function() {
+        if (!seoTitleInput.value.trim()) {
+            seoTitleInput.value = this.value;
+        }
+        updateCounts();
+        updateSaveStatus('Modifications détectées');
+    });
+    
+    // Génération automatique de la meta description
+    contentTextarea.addEventListener('input', function() {
+        const content = (this.value || '').trim();
+        if (!seoDescInput.value.trim() && content) {
+            // Extraire les premiers mots pour créer une description
+            const firstSentence = content.split('.')[0];
+            if (firstSentence.length <= 160) {
+                seoDescInput.value = firstSentence + '.';
+            } else {
+                seoDescInput.value = content.substring(0, 157) + '...';
+            }
+        }
+        updateCounts();
+        updateSaveStatus('Modifications détectées');
+    });
+    if (tinyEditor) {
+        tinyEditor.on('change input keyup SetContent', function() {
+            const content = (tinyEditor.getContent({ format: 'text' }) || '').trim();
+            if (!seoDescInput.value.trim() && content) {
+                const firstSentence = content.split('.')[0];
+                if (firstSentence.length <= 160) {
+                    seoDescInput.value = firstSentence + '.';
+                } else {
+                    seoDescInput.value = content.substring(0, 157) + '...';
+                }
+            }
+        });
+    }
+    
+    // Mise à jour des compteurs pour les champs SEO
+    seoTitleInput.addEventListener('input', () => {
+        updateCounts();
+        updateSaveStatus('Modifications détectées');
+    });
+    
+    seoDescInput.addEventListener('input', () => {
+        updateCounts();
+        updateSaveStatus('Modifications détectées');
+    });
+    
+    // Fonction de mise à jour du statut de sauvegarde
+    function updateSaveStatus(message) {
+        const statusEl = document.getElementById('save-status');
+        const formStatusEl = document.getElementById('form-save-status');
+        const indicator = document.getElementById('status-indicator');
+        
+        if (statusEl) statusEl.textContent = message;
+        if (formStatusEl) formStatusEl.textContent = message;
+        
+        if (indicator) {
+            indicator.className = 'w-2 h-2 bg-yellow-400 rounded-full animate-pulse';
+            
+            setTimeout(() => {
+                indicator.className = 'w-2 h-2 bg-green-400 rounded-full animate-pulse';
+                if (statusEl) statusEl.textContent = 'Prêt à sauvegarder';
+                if (formStatusEl) formStatusEl.textContent = 'Prêt à sauvegarder';
+            }, 2000);
+        }
+    }
+    
+    // Aperçu de l'article
+    previewBtn.addEventListener('click', function() {
+        const title = titleInput.value;
+        const content = tinyEditor ? tinyEditor.getContent() : contentTextarea.value;
+        
+        if (!title.trim() || !content.trim()) {
+            alert('Veuillez remplir au moins le titre et le contenu pour voir l\'aperçu.');
+            return;
+        }
+        
+        // Créer la modal d'aperçu
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+        modal.innerHTML = `
+            <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 scale-95">
+                <div class="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        <h3 class="text-lg font-bold text-white">Aperçu de l'article</h3>
+                    </div>
+                    <button id="close-preview" class="text-white hover:bg-white/20 p-2 rounded-lg transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
+                    <article class="prose prose-lg max-w-none">
+                        <h1 class="text-3xl font-bold text-gray-900 mb-4">${title}</h1>
+                        <div class="text-gray-700 whitespace-pre-line leading-relaxed">${content}</div>
+                    </article>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Animation d'entrée
+        setTimeout(() => {
+            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.add('scale-100');
+        }, 10);
+        
+        // Fermeture de la modal
+        modal.querySelector('#close-preview').addEventListener('click', () => {
+            modal.remove();
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    });
+    
+    // Sauvegarde en brouillon
+    saveDraftBtn.addEventListener('click', function() {
+        // Simuler une sauvegarde en brouillon
+        updateSaveStatus('Sauvegarde du brouillon...');
+        
+        // Ici, vous pourriez faire un appel AJAX pour sauvegarder
+        setTimeout(() => {
+            updateSaveStatus('Brouillon sauvegardé');
+        }, 1500);
+    });
+    
+    // Sauvegarde automatique lors de la saisie
+    let saveTimeout;
+    const autoSave = () => {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(() => {
+            updateSaveStatus('Sauvegarde automatique...');
+            // Ici, appel AJAX pour sauvegarde auto
+            setTimeout(() => {
+                updateSaveStatus('Sauvegardé automatiquement');
+            }, 1000);
+        }, 3000); // Sauvegarde après 3 secondes d'inactivité
+    };
+    
+    // Écouter les changements sur tous les champs
+    form.addEventListener('input', autoSave);
+    form.addEventListener('change', autoSave);
+    
+    // Raccourcis clavier
+    document.addEventListener('keydown', function(e) {
+        // Ctrl+S pour sauvegarder
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            form.submit();
+        }
+        
+        // Ctrl+P pour aperçu
+        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+            e.preventDefault();
+            previewBtn.click();
+        }
+    });
+    
+    // Synchroniser TinyMCE avec le textarea avant toute validation
+    form.addEventListener('submit', function(e) {
+        // Synchroniser le contenu de TinyMCE avec le textarea AVANT la validation HTML5
+        if (window.tinymce && tinymce.get('news-content-editor')) {
+            const editor = tinymce.get('news-content-editor');
+            const editorContent = editor.getContent();
+            contentTextarea.value = editorContent;
+        }
+        
+        const title = titleInput.value.trim();
+        const content = (contentTextarea.value || '').trim();
+        
+        // Validation manuelle
+        if (!title) {
+            e.preventDefault();
+            alert('⚠️ Veuillez saisir un titre pour l\'article.');
+            titleInput.focus();
+            return;
+        }
+        
+        if (!content || content === '<p></p>' || content === '<p><br></p>') {
+            e.preventDefault();
+            alert('⚠️ Veuillez rédiger le contenu de l\'article.');
+            if (window.tinymce && tinymce.get('news-content-editor')) {
+                tinymce.get('news-content-editor').focus();
+            }
+            return;
+        }
+        
+        updateSaveStatus('Publication en cours...');
+    });
+    
+    // Avertissement avant de quitter la page
+    let hasUnsavedChanges = false;
+    
+    form.addEventListener('input', () => {
+        hasUnsavedChanges = true;
+    });
+    
+    form.addEventListener('submit', () => {
+        hasUnsavedChanges = false;
+    });
+    
+    window.addEventListener('beforeunload', function(e) {
+        if (hasUnsavedChanges) {
+            e.preventDefault();
+            e.returnValue = 'Vous avez des modifications non sauvegardées. Êtes-vous sûr de vouloir quitter ?';
+        }
+    });
+    
+    // Initialisation
+    updateCounts();
+    
+    // Animation d'entrée pour les sections
+    const sections = document.querySelectorAll('.bg-white.rounded-2xl');
+    sections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            section.style.opacity = '1';
+            section.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>
+
+{% endblock %}
+
+

@@ -1,0 +1,899 @@
+{# Module Header Moderne Réutilisable - ADN Family Office #}
+
+<!-- HEADER MODERNE SIMPLE -->
+<header class="clean-modern-header">
+    <div class="header-container">
+        <!-- Logo -->
+        <div class="logo-section">
+            <a href="{{ path('app_home') }}" class="logo-link" aria-label="ADN Family Office - Accueil">
+                <img 
+                    src="{{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }}" 
+                    srcset="{{ asset('build/theme/images/ADN_Logo.png') }} 1x, {{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }} 2x" 
+                    alt="ADN Family Office" 
+                    class="logo-img"
+                    height="40"
+                    loading="eager"
+                    decoding="async"
+                    fetchpriority="high"
+                    onerror="this.onerror=null;this.src='{{ asset('build/theme/images/ADN_Logo.png') }}'"
+                >
+            </a>
+        </div>
+        
+        <!-- Navigation Desktop -->
+        <nav class="desktop-nav">
+            <div class="nav-item dropdown-container">
+                <a href="#services" class="nav-link">
+                    Services
+                    <svg class="dropdown-arrow" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-content">
+                        <div class="dropdown-section">
+                            <h4>🏛️ Gestion de patrimoine</h4>
+                            <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'optimisation-fiscale'}) }}">Optimisation fiscale</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'strategies-investissement'}) }}">Stratégies d'investissement</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'diversification'}) }}">Diversification</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'conseil-patrimonial'}) }}">Conseil patrimonial</a>
+                        </div>
+                        <div class="dropdown-section">
+                            <h4>🏢 Gestion immobilière</h4>
+                            <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'immobilier-residentiel'}) }}">Immobilier résidentiel</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'immobilier-commercial'}) }}">Immobilier commercial</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'scpi-opci'}) }}">SCPI & OPCI</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'defiscalisation-immobiliere'}) }}">Défiscalisation immobilière</a>
+                        </div>
+                        <div class="dropdown-section">
+                            <h4>👥 Transmission & succession</h4>
+                            <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'planification-successorale'}) }}">Planification successorale</a>
+                            <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'donations-familiales'}) }}">Donations familiales</a>
+                            <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'holdings-familiaux'}) }}">Société familliale</a>
+                        </div>
+                        <div class="dropdown-section">
+                            <h4>⚙️ Conseil stratégique du dirigeant</h4>
+                            <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'optimisation-remuneration'}) }}">Optimisation rémunération</a>
+                            <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'gestion-tresorerie'}) }}">Gestion trésorière</a>
+                            <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'aide-au-developpement'}) }}">Aide au développement</a>
+                            <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'session'}) }}">Cession</a>
+                        </div>
+                        <div class="dropdown-section">
+                            <h4>🚀 Private equity</h4>
+                            <a href="{{ path('service_detail', {category: 'private-equity', slug: 'capital-investissement'}) }}">Capital investissement</a>
+                            <a href="{{ path('service_detail', {category: 'private-equity', slug: 'investissement-startup'}) }}">Investissement startup</a>
+                            <a href="{{ path('service_detail', {category: 'private-equity', slug: 'fonds-prives'}) }}">Fonds privés</a>
+                        </div>
+                        <div class="dropdown-section">
+                            <h4>💼 Investissements financiers</h4>
+                            <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'gestion-de-portefeuille'}) }}">Gestion de portefeuille</a>
+                            <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'assurance-vie'}) }}">Assurance vie</a>
+                            <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'placements-financiers'}) }}">Placements financiers</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{{ path('app_expertise') }}" class="nav-link">Expertise</a>
+            </div>
+            
+            <div class="nav-item dropdown-container">
+                <a href="{{ path('news_index') }}" class="nav-link">
+                    Actualités
+                    <svg class="dropdown-arrow" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                </a>
+                <div class="dropdown-menu">
+                    <div class="dropdown-content">
+                        <div class="dropdown-section">
+                            <h4>Actualités financières</h4>
+                            <a href="{{ path('news_category', {slug: 'fiscalite'}) }}">Fiscalité</a>
+                            <a href="{{ path('news_category', {slug: 'marches-financiers'}) }}">Marchés financiers</a>
+                            <a href="{{ path('news_category', {slug: 'evolutions-reglementaires'}) }}">Évolutions réglementaires</a>
+                        </div>
+                        <div class="dropdown-section">
+                            <h4>Insights</h4>
+                            <a href="{{ path('news_category', {slug: 'analyses-de-marche'}) }}">Analyses de marché</a>
+                            <a href="{{ path('news_category', {slug: 'tendances-sectorielles'}) }}">Tendances sectorielles</a>
+                            <a href="{{ path('news_category', {slug: 'conseils-d-experts'}) }}">Conseils d'experts</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
+            </div>
+        </nav>
+        
+        <!-- Actions -->
+        <div class="header-actions">
+            {% if app.user %}
+                {# Afficher "Mon espace" seulement si l'utilisateur n'est pas redirigé vers MoneyPitch #}
+                {% if not app.user.shouldRedirectToMoneyPitch() %}
+                    <a href="{{ path('user_dashboard') }}" class="btn-primary">Mon espace</a>
+                {% endif %}
+                <a href="{{ path('app_logout') }}" class="btn-secondary">Déconnexion</a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="btn-secondary">Se connecter</a>
+                <a href="{{ path('app_register') }}" class="btn-primary">S'inscrire</a>
+            {% endif %}
+        </div>
+        
+        <!-- Menu Mobile -->
+        <button class="mobile-toggle" id="mobileToggle">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+    </div>
+    
+    <!-- Menu Mobile Overlay -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-content">
+            <div class="mobile-header">
+                <div class="mobile-logo-container">
+                    <img 
+                        src="{{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }}" 
+                        srcset="{{ asset('build/theme/images/ADN_Logo.png') }} 1x, {{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }} 2x" 
+                        alt="ADN" 
+                        class="mobile-logo"
+                        height="35"
+                        loading="eager"
+                        decoding="async"
+                        fetchpriority="high"
+                        onerror="this.onerror=null;this.src='{{ asset('build/theme/images/ADN_Logo.png') }}'"
+                    >
+                </div>
+                <button class="mobile-close" id="mobileClose">&times;</button>
+            </div>
+            <nav class="mobile-nav">
+                <!-- Services avec sous-menu -->
+                <div class="mobile-dropdown">
+                    <a href="#services" class="mobile-link mobile-dropdown-toggle" role="button" aria-expanded="false">
+                        Services
+                        <svg class="mobile-dropdown-arrow" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                    </a>
+                    <div class="mobile-submenu" aria-hidden="true">
+                        <div class="mobile-submenu-section">
+                            <h4>🏛️ Gestion de patrimoine</h4>
+                            <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'optimisation-fiscale'}) }}">Optimisation fiscale</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'strategies-investissement'}) }}">Stratégies d'investissement</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'diversification'}) }}">Diversification</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'conseil-patrimonial'}) }}">Conseil patrimonial</a>
+                        </div>
+                        <div class="mobile-submenu-section">
+                            <h4>🏢 Gestion immobilière</h4>
+                            <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'immobilier-residentiel'}) }}">Immobilier résidentiel</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'immobilier-commercial'}) }}">Immobilier commercial</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'scpi-opci'}) }}">SCPI & OPCI</a>
+                            <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'defiscalisation-immobiliere'}) }}">Défiscalisation immobilière</a>
+                        </div>
+                        <div class="mobile-submenu-section">
+                            <h4>👥 Transmission & succession</h4>
+                            <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'planification-successorale'}) }}">Planification successorale</a>
+                            <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'donations-familiales'}) }}">Donations familiales</a>
+                            <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'holdings-familiaux'}) }}">Société familliale</a>
+                        </div>
+                        <div class="mobile-submenu-section">
+                            <h4>⚙️ Conseil stratégique du dirigeant</h4>
+                            <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'optimisation-remuneration'}) }}">Optimisation rémunération</a>
+                            <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'gestion-tresorerie'}) }}">Gestion trésorière</a>
+                            <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'aide-au-developpement'}) }}">Aide au développement</a>
+                            <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'session'}) }}">Cession</a>
+                        </div>
+                        <div class="mobile-submenu-section">
+                            <h4>🚀 Private equity</h4>
+                            <a href="{{ path('service_detail', {category: 'private-equity', slug: 'capital-investissement'}) }}">Capital investissement</a>
+                            <a href="{{ path('service_detail', {category: 'private-equity', slug: 'investissement-startup'}) }}">Investissement startup</a>
+                            <a href="{{ path('service_detail', {category: 'private-equity', slug: 'fonds-prives'}) }}">Fonds privés</a>
+                        </div>
+                        <div class="mobile-submenu-section">
+                            <h4>💼 Investissements financiers</h4>
+                            <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'gestion-de-portefeuille'}) }}">Gestion de portefeuille</a>
+                            <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'assurance-vie'}) }}">Assurance vie</a>
+                            <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'placements-financiers'}) }}">Placements financiers</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Expertise -->
+                <a href="{{ path('app_expertise') }}" class="mobile-link">Expertise</a>
+                
+                <!-- Actualités avec sous-menu -->
+                <div class="mobile-dropdown">
+                    <a href="{{ path('news_index') }}" class="mobile-link mobile-dropdown-toggle">
+                        Actualités
+                        <svg class="mobile-dropdown-arrow" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                    </a>
+                    <div class="mobile-submenu">
+                        <div class="mobile-submenu-section">
+                            <h4>Actualités financières</h4>
+                            <a href="{{ path('news_category', {slug: 'fiscalite'}) }}">Fiscalité</a>
+                            <a href="{{ path('news_category', {slug: 'marches-financiers'}) }}">Marchés financiers</a>
+                            <a href="{{ path('news_category', {slug: 'evolutions-reglementaires'}) }}">Évolutions réglementaires</a>
+                        </div>
+                        <div class="mobile-submenu-section">
+                            <h4>Insights</h4>
+                            <a href="{{ path('news_category', {slug: 'analyses-de-marche'}) }}">Analyses de marché</a>
+                            <a href="{{ path('news_category', {slug: 'tendances-sectorielles'}) }}">Tendances sectorielles</a>
+                            <a href="{{ path('news_category', {slug: 'conseils-d-experts'}) }}">Conseils d'experts</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact -->
+                <a href="{{ path('app_contact') }}" class="mobile-link">Contact</a>
+            </nav>
+            
+            <!-- Actions utilisateur -->
+            <div class="mobile-actions">
+                {% if app.user %}
+                    {# Afficher "Mon espace" seulement si l'utilisateur n'est pas redirigé vers MoneyPitch #}
+                    {% if not app.user.shouldRedirectToMoneyPitch() %}
+                    <a href="{{ path('user_dashboard') }}" class="mobile-btn-primary">
+                        <svg class="mobile-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        Mon espace
+                    </a>
+                    {% endif %}
+                    <a href="{{ path('app_logout') }}" class="mobile-btn-secondary mobile-btn-logout">
+                        <svg class="mobile-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Déconnexion
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="mobile-btn-secondary">Se connecter</a>
+                    <a href="{{ path('app_register') }}" class="mobile-btn-primary">S'inscrire</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+/* Header moderne */
+.clean-modern-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.logo-link:hover {
+    transform: scale(1.05);
+}
+
+.logo-img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.desktop-nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.nav-item {
+    position: relative;
+}
+
+.nav-link {
+    color: #1C29A1;
+    text-decoration: none;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-link:hover {
+    background: rgba(28, 41, 161, 0.1);
+    color: #1C29A1;
+}
+
+.dropdown-arrow {
+    transition: transform 0.3s ease;
+    opacity: 0.7;
+}
+
+.dropdown-container:hover .dropdown-arrow {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+/* Menu déroulant moderne */
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    min-width: 650px;
+    backdrop-filter: blur(20px);
+}
+
+.dropdown-container:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.dropdown-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.dropdown-section h4 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    color: #1C29A1;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    border-bottom: 2px solid rgba(28, 41, 161, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+.dropdown-section a {
+    display: block;
+    padding: 0.5rem 0;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-radius: 0.25rem;
+    padding-left: 0.5rem;
+    margin-left: -0.5rem;
+}
+
+.dropdown-section a:hover {
+    color: #1C29A1;
+    background: rgba(28, 41, 161, 0.05);
+    padding-left: 1rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.btn-primary {
+    background: #1C29A1;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1a237e;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(28, 41, 161, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #1C29A1;
+    border: 2px solid #1C29A1;
+}
+
+.btn-secondary:hover {
+    background: #1C29A1;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Menu mobile */
+.mobile-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.hamburger-line {
+    width: 24px;
+    height: 2px;
+    background: #1C29A1;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 100%;
+    background: white;
+    padding: 2rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+
+.mobile-menu.active .mobile-content {
+    transform: translateX(0);
+}
+
+/* Empêche le contenu de la page de recouvrir le panneau mobile */
+main, .modern-hero, .news-hero, .service-hero {
+    position: relative;
+    z-index: 1;
+}
+
+.mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mobile-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mobile-logo {
+    height: 35px;
+}
+
+.mobile-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #1C29A1;
+    cursor: pointer;
+}
+
+.mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.mobile-link {
+    color: #1C29A1;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: color 0.3s ease;
+}
+
+.mobile-link:hover {
+    color: #3B82F6;
+}
+
+/* Styles pour les sous-menus mobiles */
+.mobile-dropdown {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.mobile-dropdown-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.mobile-dropdown-arrow {
+    transition: transform 0.3s ease;
+    opacity: 0.7;
+    margin-left: 0.5rem;
+}
+
+.mobile-dropdown.active .mobile-dropdown-arrow {
+    transform: rotate(180deg);
+    opacity: 1;
+}
+
+.mobile-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, padding 0.3s ease, opacity 0.3s ease;
+    background: #f8fafc;
+    margin: 0 -2rem;
+    padding: 0 2rem;
+    opacity: 0;
+}
+
+.mobile-dropdown.active .mobile-submenu {
+    max-height: none;
+    height: auto;
+    padding: 1rem 2rem;
+    opacity: 1;
+    max-height: 1200px; /* Hauteur très grande pour transition */
+}
+
+.mobile-submenu-section {
+    margin-bottom: 1.5rem;
+}
+
+.mobile-submenu-section:last-child {
+    margin-bottom: 0;
+}
+
+.mobile-submenu-section h4 {
+    color: #1C29A1;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid rgba(28, 41, 161, 0.2);
+}
+
+.mobile-submenu-section a {
+    display: block;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.5rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.mobile-submenu-section a:hover {
+    color: #1C29A1;
+    border-left-color: #1C29A1;
+    background: rgba(28, 41, 161, 0.05);
+    padding-left: 1.25rem;
+}
+
+.mobile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mobile-btn-primary,
+.mobile-btn-secondary {
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.mobile-btn-primary {
+    background: linear-gradient(135deg, #1C29A1, #3B82F6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.mobile-btn-secondary {
+    background: transparent;
+    color: #1C29A1;
+    border: 1px solid rgba(28, 41, 161, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.mobile-btn-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.mobile-btn-logout {
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.mobile-btn-logout:hover {
+    background: rgba(220, 38, 38, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dropdown-menu {
+        min-width: 500px;
+    }
+    
+    .dropdown-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 880px) {
+    .dropdown-menu {
+        min-width: 400px;
+    }
+    
+    .dropdown-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .dropdown-section h4 {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .dropdown-section a {
+        font-size: 0.8rem;
+        padding: 0.25rem 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .desktop-nav,
+    .header-actions {
+        display: none;
+    }
+    
+    .mobile-toggle {
+        display: flex;
+    }
+    
+    .header-container {
+        padding: 0 1rem;
+        height: 70px;
+    }
+    
+    .logo-img {
+        height: 35px;
+        margin-right: 0;
+    }
+    
+    .clean-modern-header {
+        height: 70px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-content {
+        width: 100%;
+        padding: 1.5rem;
+    }
+    
+    .header-container {
+        padding: 0 0.75rem;
+        height: 60px;
+    }
+    
+    .logo-img {
+        height: 30px;
+    }
+    
+    .clean-modern-header {
+        height: 60px;
+    }
+    
+    .mobile-toggle {
+        padding: 0.75rem;
+    }
+    
+    .hamburger-line {
+        width: 20px;
+        height: 2px;
+    }
+    
+    /* Ajustements pour les sous-menus sur petits écrans */
+    .mobile-submenu-section {
+        margin-bottom: 1rem;
+    }
+    
+    .mobile-submenu-section h4 {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .mobile-submenu-section a {
+        font-size: 0.8rem;
+        padding: 0.4rem 0;
+        padding-left: 0.75rem;
+    }
+    
+    .mobile-submenu-section a:hover {
+        padding-left: 1rem;
+    }
+    
+    .mobile-dropdown.active .mobile-submenu {
+        max-height: 1000px;
+        padding: 0.75rem 1.5rem;
+        height: auto;
+    }
+}
+</style>
+
+<script>
+// Indique globalement que le module header moderne gère déjà le menu mobile
+window.__adnHeaderModulePresent = true;
+document.addEventListener('DOMContentLoaded', function() {
+    
+    
+    const mobileToggle = document.getElementById('mobileToggle');
+    let mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.getElementById('mobileClose');
+    
+    // Vérifications de sécurité
+    if (!mobileToggle || !mobileMenu || !mobileClose) { return; }
+    
+    const submenuSections = document.querySelectorAll('.mobile-submenu-section');
+
+    // Déplacer le panneau mobile en dehors du header pour éviter tout clipping/z-index
+    try {
+        if (mobileMenu && mobileMenu.parentElement && mobileMenu.parentElement.tagName !== 'BODY') {
+            document.body.appendChild(mobileMenu);
+        }
+    } catch (e) { /* no-op */ }
+    
+    // Fonction pour ouvrir le menu
+    function openMobileMenu() {
+        mobileMenu.classList.add('active');
+        mobileToggle.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Fonction pour fermer le menu
+    function closeMobileMenu() {
+        mobileMenu.classList.remove('active');
+        mobileToggle.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        // Fermer tous les sous-menus
+        document.querySelectorAll('.mobile-dropdown.active').forEach(dropdown => {
+            dropdown.classList.remove('active');
+        });
+    }
+    
+    // Event listener pour le bouton hamburger
+    mobileToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (mobileMenu.classList.contains('active')) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
+    });
+    
+    // Event listener pour le bouton de fermeture
+    mobileClose.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeMobileMenu();
+    });
+    
+    // Event listener pour fermer en cliquant sur l'overlay
+    mobileMenu.addEventListener('click', function(e) {
+        if (e.target === mobileMenu) {
+            closeMobileMenu();
+        }
+    });
+    
+    // Gestion des sous-menus mobiles
+    document.querySelectorAll('.mobile-dropdown-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropdown = this.closest('.mobile-dropdown');
+            const submenu = dropdown && dropdown.querySelector('.mobile-submenu');
+            const isActive = dropdown && dropdown.classList.contains('active');
+            document.querySelectorAll('.mobile-dropdown.active').forEach(activeDropdown => {
+                if (activeDropdown !== dropdown) {
+                    activeDropdown.classList.remove('active');
+                    const sm = activeDropdown.querySelector('.mobile-submenu');
+                    if (sm) sm.setAttribute('aria-hidden', 'true');
+                    const btn = activeDropdown.querySelector('.mobile-dropdown-toggle');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+            if (dropdown) dropdown.classList.toggle('active', !isActive);
+            if (submenu) submenu.setAttribute('aria-hidden', isActive ? 'true' : 'false');
+            this.setAttribute('aria-expanded', isActive ? 'false' : 'true');
+        });
+    });
+    
+    // Fermer le menu mobile avec la touche Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+});
+</script>

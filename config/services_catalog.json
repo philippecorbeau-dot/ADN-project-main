@@ -1,0 +1,122 @@
+{
+  "gestion-de-patrimoine": {
+    "label": "Gestion de patrimoine",
+    "meta_description": "Services complets de gestion de patrimoine par ADN Family Office : optimisation fiscale, stratégies d'investissement et conseil patrimonial personnalisé à Paris.",
+    "items": {
+      "optimisation-fiscale": {
+        "label": "Optimisation fiscale",
+        "meta_description": "Réduisez votre imposition légalement avec nos stratégies d'optimisation fiscale : IFI, impôt sur le revenu, plus-values. Conseil expert ADN Family Office Paris."
+      },
+      "strategies-investissement": {
+        "label": "Stratégies d'investissement",
+        "meta_description": "Construisez votre stratégie d'investissement sur-mesure : allocation d'actifs, diversification, performance optimisée. Expertise ADN Family Office."
+      },
+      "diversification": {
+        "label": "Diversification",
+        "meta_description": "Diversifiez votre patrimoine intelligemment : immobilier, actions, obligations, private equity. Réduction des risques avec ADN Family Office."
+      },
+      "conseil-patrimonial": {
+        "label": "Conseil patrimonial",
+        "meta_description": "Bilan patrimonial complet et conseil personnalisé : analyse de votre situation, objectifs et recommandations sur-mesure. ADN Family Office Paris."
+      }
+    }
+  },
+  "gestion-immobiliere": {
+    "label": "Gestion immobilière",
+    "meta_description": "Expertise en gestion immobilière : investissement résidentiel, commercial, SCPI et défiscalisation. ADN Family Office, votre partenaire immobilier à Paris.",
+    "items": {
+      "immobilier-residentiel": {
+        "label": "Immobilier résidentiel",
+        "meta_description": "Investissez dans l'immobilier résidentiel : sélection de biens, financement optimisé, gestion locative. Accompagnement complet ADN Family Office."
+      },
+      "immobilier-commercial": {
+        "label": "Immobilier commercial",
+        "meta_description": "Immobilier commercial : bureaux, commerces, entrepôts. Rendements attractifs et sécurisés avec l'expertise ADN Family Office."
+      },
+      "scpi-opci": {
+        "label": "SCPI & OPCI",
+        "meta_description": "Investissez en SCPI et OPCI : immobilier papier accessible, diversification et rendements réguliers. Sélection experte ADN Family Office."
+      },
+      "defiscalisation-immobiliere": {
+        "label": "Défiscalisation immobilière",
+        "meta_description": "Défiscalisez avec l'immobilier : Pinel, Denormandie, Malraux, monuments historiques. Conseil fiscal expert ADN Family Office Paris."
+      }
+    }
+  },
+  "transmission-succession": {
+    "label": "Transmission & succession",
+    "meta_description": "Planification successorale et transmission de patrimoine : optimisation fiscale, donations et stratégies familiales par ADN Family Office.",
+    "items": {
+      "planification-successorale": {
+        "label": "Planification successorale",
+        "meta_description": "Préparez votre succession sereinement : audit patrimonial, stratégies de transmission, réduction des droits. Conseil ADN Family Office."
+      },
+      "donations-familiales": {
+        "label": "Donations familiales",
+        "meta_description": "Organisez vos donations familiales : donation partage, démembrement, assurance-vie. Optimisation fiscale ADN Family Office Paris."
+      },
+      "holdings-familiaux": {
+        "label": "Société familliale",
+        "meta_description": "Créez et gérez votre société familliale : structuration patrimoniale, gouvernance, transmission d'entreprise. Expertise ADN Family Office."
+      }
+    }
+  },
+  "private-equity": {
+    "label": "Private equity",
+    "meta_description": "Accédez au private equity avec ADN Family Office : capital investissement, startups, fonds privés. Opportunités exclusives et rendements attractifs.",
+    "items": {
+      "capital-investissement": {
+        "label": "Capital investissement",
+        "meta_description": "Investissez en capital investissement : LBO, capital développement, build-up. Accès aux meilleures opportunités avec ADN Family Office."
+      },
+      "investissement-startup": {
+        "label": "Investissement startup",
+        "meta_description": "Financez les startups de demain : seed, série A, scale-up. Due diligence rigoureuse et accompagnement ADN Family Office."
+      },
+      "fonds-prives": {
+        "label": "Fonds privés",
+        "meta_description": "Accédez aux fonds d'investissement privés : venture capital, infrastructure, dette privée. Sélection premium ADN Family Office."
+      }
+    }
+  },
+  "investissements-financiers": {
+    "label": "Investissements financiers",
+    "meta_description": "Solutions d'investissements financiers : gestion de portefeuille, assurance-vie et placements diversifiés. ADN Family Office Paris.",
+    "items": {
+      "gestion-de-portefeuille": {
+        "label": "Gestion de portefeuille",
+        "meta_description": "Gestion de portefeuille sur-mesure : allocation tactique, stock picking, gestion sous mandat. Performance optimisée ADN Family Office."
+      },
+      "assurance-vie": {
+        "label": "Assurance vie",
+        "meta_description": "Optimisez votre assurance-vie : sélection des meilleurs contrats, arbitrage, transmission. Conseil indépendant ADN Family Office."
+      },
+      "placements-financiers": {
+        "label": "Placements financiers",
+        "meta_description": "Placements financiers diversifiés : PEA, compte-titres, produits structurés. Solutions adaptées à vos objectifs ADN Family Office."
+      }
+    }
+  },
+  "conseil-strategique-du-dirigeant": {
+    "label": "Conseil stratégique du dirigeant",
+    "meta_description": "Conseil stratégique pour dirigeants : rémunération optimisée, trésorerie, développement et cession d'entreprise. ADN Family Office Paris.",
+    "items": {
+      "optimisation-remuneration": {
+        "label": "Optimisation rémunération",
+        "meta_description": "Optimisez votre rémunération de dirigeant : salaire, dividendes, intéressement, épargne salariale. Conseil fiscal ADN Family Office."
+      },
+      "gestion-tresorerie": {
+        "label": "Gestion trésorière",
+        "meta_description": "Gérez la trésorerie de votre entreprise : placements, financement, cash pooling. Solutions sur-mesure ADN Family Office."
+      },
+      "aide-au-developpement": {
+        "label": "Aide au développement",
+        "meta_description": "Développez votre entreprise : stratégie de croissance, levée de fonds, acquisition. Accompagnement ADN Family Office Paris."
+      },
+      "session": {
+        "label": "Cession",
+        "meta_description": "Préparez et réussissez la cession de votre entreprise : valorisation, négociation, optimisation fiscale. Expert ADN Family Office."
+      }
+    }
+  }
+}

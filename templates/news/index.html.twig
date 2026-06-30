@@ -1,0 +1,772 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ seo.title }}{% endblock %}
+{% block meta_description %}{{ seo.description }}{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ seo.canonical }}">{% endblock %}
+
+{% block page_styles %}
+    <!-- Styles modernes pour les actualités -->
+    <style>
+        :root {
+            --adn-primary: #1C29A1;
+            --adn-primary-light: #2D3FDB;
+            --adn-primary-dark: #0F1751;
+            --adn-secondary: #3B82F6;
+            --adn-accent: #6366F1;
+            --adn-success: #10B981;
+            --adn-warning: #F59E0B;
+            --adn-error: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #1C29A1 0%, #3B82F6 40%, #6366F1 100%);
+            --gradient-hero: linear-gradient(135deg, #0F1751 0%, #1C29A1 30%, #2D3FDB 70%, #3B82F6 100%);
+            --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --border-radius: 1.5rem;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-secondary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Hero Section moderne */
+        .news-hero {
+            background: var(--gradient-hero);
+            color: white;
+            padding: 8rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="gradient" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1)"/><stop offset="100%" style="stop-color:rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23gradient)"/><circle cx="800" cy="300" r="150" fill="url(%23gradient)"/><circle cx="600" cy="700" r="120" fill="url(%23gradient)"/></svg>') no-repeat center center / cover;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-family: var(--font-primary);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* Menu des catégories */
+        .categories-menu {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 70px;
+            z-index: 100;
+        }
+
+        .categories-nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .category-link {
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: left 0.5s ease;
+            z-index: -1;
+        }
+
+        .category-link:hover::before,
+        .category-link.active::before {
+            left: 0;
+        }
+
+        .category-link:hover,
+        .category-link.active {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Section principale */
+        .news-main {
+            padding: 4rem 0;
+            background: #f8fafc;
+        }
+
+        .news-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 4rem;
+        }
+
+        /* Articles à la une */
+        .featured-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-family: var(--font-primary);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--adn-primary);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Cartes d'articles */
+        .article-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-large);
+        }
+
+        .article-image {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transition: var(--transition);
+            border-radius: 0;
+        }
+
+        .article-card:hover .article-image img {
+            transform: scale(1.05);
+        }
+
+        /* Amélioration pour les images de mauvaise qualité */
+        .article-image img[src*="placeholder"],
+        .article-image img[src*="default"] {
+            object-fit: contain;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+        }
+
+        .article-category {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .article-content {
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-title {
+            font-family: var(--font-primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--adn-primary);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+            text-decoration: none;
+            flex: 1;
+        }
+
+        .article-title:hover {
+            color: var(--adn-secondary);
+        }
+
+        .article-excerpt {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .article-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .read-more {
+            color: var(--adn-primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .read-more:hover {
+            color: var(--adn-secondary);
+            transform: translateX(5px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            height: fit-content;
+            position: sticky;
+            top: 150px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 3rem;
+        }
+
+        .sidebar-title {
+            font-family: var(--font-primary);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--adn-primary);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .sidebar-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .popular-post {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .popular-post:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .popular-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .popular-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .popular-content h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--adn-primary);
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+
+        .popular-content a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .popular-content a:hover h4 {
+            color: var(--adn-secondary);
+        }
+
+        .popular-date {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .pagination {
+            display: inline-flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .pagination a {
+            background: white;
+            color: var(--adn-primary);
+            border: 2px solid #e5e7eb;
+        }
+
+        .pagination a:hover {
+            background: var(--adn-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .pagination .current {
+            background: var(--gradient-primary);
+            color: white;
+            border: 2px solid var(--adn-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .news-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .news-hero {
+                padding: 6rem 0 3rem;
+            }
+
+            /* Eviter que le menu des catégories masque le contenu sur mobile */
+            .categories-menu {
+                position: static;
+                top: auto;
+                z-index: auto;
+            }
+
+            .categories-nav {
+                gap: 1rem;
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 1rem;
+            }
+
+            .category-link {
+                white-space: nowrap;
+            }
+
+            .featured-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .article-content {
+                padding: 1.5rem;
+            }
+
+            .news-main {
+                padding: 2rem 0;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Hero Section -->
+    <section class="news-hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                {% if selectedCategory %}
+                    Actualités {{ selectedCategory.name }}
+                {% else %}
+                    Actualités & Insights
+                {% endif %}
+            </h1>
+            <p class="hero-subtitle">
+                {% if selectedCategory %}
+                    Découvrez nos dernières analyses et conseils sur {{ selectedCategory.name|lower }}
+                {% else %}
+                    Restez informé des dernières tendances financières et patrimoniales avec nos analyses d'experts
+                {% endif %}
+            </p>
+        </div>
+    </section>
+
+    <!-- Breadcrumb (placé après le hero pour que le bandeau bleu remonte jusqu'au header) -->
+    <div style="background: #f8fafc; padding: 1rem 0; border-bottom: 1px solid #e5e7eb; position: relative; z-index: 50;" class="news-breadcrumb">
+        <div class="hero-content" style="max-width:1200px;margin:0 auto;">
+            {% include 'partials/breadcrumb.html.twig' with {
+                'items': [
+                    {'label': 'Accueil', 'path': 'app_home', 'icon': 'home'},
+                    {'label': 'Actualités', 'path': 'news_index', 'icon': 'news'}
+                ]
+            } %}
+        </div>
+    </div>
+
+    <!-- Menu des catégories modernisé -->
+    <nav class="categories-menu">
+        <div class="categories-nav">
+            <a href="{{ path('news_index') }}" class="category-link {{ selectedCategory is null ? 'active' : '' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                </svg>
+                Toutes les actualités
+            </a>
+            {% for category in categories %}
+                <a href="{{ path('news_category', {slug: category.seoSlug}) }}" 
+                   class="category-link {{ selectedCategory and selectedCategory.id == category.id ? 'active' : '' }}">
+                    {% if category.seoSlug == 'investissement' %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                    {% elseif category.seoSlug == 'fiscalite' %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                        </svg>
+                    {% elseif category.seoSlug == 'immobilier' %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    {% elseif category.seoSlug == 'scpi' %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                        </svg>
+                    {% elseif category.seoSlug == 'assurance-vie' %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    {% elseif category.seoSlug == 'marches-financiers' %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                    {% elseif category.seoSlug == 'evolutions-reglementaires' %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    {% elseif category.seoSlug == 'analyses-de-marche' %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                        </svg>
+                    {% elseif category.seoSlug == 'tendances-sectorielles' %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    {% elseif category.seoSlug == 'conseils-d-experts' %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    {% else %}
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                        </svg>
+                    {% endif %}
+                    {{ category.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="news-main">
+        <div class="news-container">
+            <div class="content-area">
+                {% if featuredPosts is not empty and selectedCategory is null %}
+                    <!-- Articles à la une -->
+                    <section class="featured-section">
+                        <h2 class="section-title">
+                            <svg class="w-6 h-6 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                            </svg>
+                            À la Une
+                        </h2>
+                        <div class="featured-grid">
+                            {% for post in featuredPosts %}
+                                <article class="article-card">
+                                    {% if post.imageName %}
+                                        <div class="article-image">
+                                            <img src="{{ asset('uploads/images/' ~ post.imageName) }}" 
+                                                 alt="{{ post.imageAlt ?: post.title }}"
+                                                 loading="lazy"
+                                                 onload="this.style.opacity=1"
+                                                 style="opacity: 0; transition: opacity 0.3s ease;">
+                                        </div>
+                                    {% endif %}
+                                    <div class="article-content">
+                                        <a href="{{ path('news_show', {slug: post.seoSlug}) }}" class="article-title">
+                                            {{ post.title }}
+                                        </a>
+                                        <p class="article-excerpt">
+                                            {{ post.seoDescription|slice(0, 150) }}...
+                                        </p>
+                                        <div class="article-meta">
+                                            <div class="article-date">
+                                                📅 {{ post.publicationDateStart|date('d/m/Y') }}
+                                            </div>
+                                            <a href="{{ path('news_show', {slug: post.seoSlug}) }}" class="read-more">
+                                                Lire la suite →
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+
+                <!-- Tous les articles -->
+                <section>
+                    <h2 class="section-title">
+                        {% if selectedCategory %}
+                            📚 Articles {{ selectedCategory.name }}
+                        {% else %}
+                            📚 Tous nos articles
+                        {% endif %}
+                    </h2>
+                    
+                    {% if posts.items is not empty %}
+                        <div class="featured-grid">
+                            {% for post in posts.items %}
+                                <article class="article-card">
+                                    {% if post.imageName %}
+                                        <div class="article-image">
+                                            <img src="{{ asset('uploads/images/' ~ post.imageName) }}" 
+                                                 alt="{{ post.imageAlt ?: post.title }}"
+                                                 loading="lazy"
+                                                 onload="this.style.opacity=1"
+                                                 style="opacity: 0; transition: opacity 0.3s ease;">
+                                        </div>
+                                    {% endif %}
+                                    <div class="article-content">
+                                        <a href="{{ path('news_show', {slug: post.seoSlug}) }}" class="article-title">
+                                            {{ post.title }}
+                                        </a>
+                                        <p class="article-excerpt">
+                                            {{ post.seoDescription|slice(0, 150) }}...
+                                        </p>
+                                        <div class="article-meta">
+                                            <div class="article-date">
+                                                📅 {{ post.publicationDateStart|date('d/m/Y') }}
+                                            </div>
+                                            <a href="{{ path('news_show', {slug: post.seoSlug}) }}" class="read-more">
+                                                Lire la suite →
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="pagination-container">
+                            {{ knp_pagination_render(posts) }}
+                        </div>
+                    {% else %}
+                        <div style="text-align: center; padding: 4rem 0;">
+                            <h3 style="color: #64748b; margin-bottom: 1rem;">Aucun article trouvé</h3>
+                            <p style="color: #94a3b8;">Revenez bientôt pour découvrir nos dernières actualités !</p>
+                        </div>
+                    {% endif %}
+                </section>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                {% if popularPosts is not empty %}
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">🔥 Articles populaires</h3>
+                        {% for post in popularPosts %}
+                            <div class="popular-post">
+                                {% if post.imageName %}
+                                    <div class="popular-image">
+                                        <img src="{{ asset('uploads/images/' ~ post.imageName) }}" 
+                                             alt="{{ post.imageAlt ?: post.title }}"
+                                             loading="lazy">
+                                    </div>
+                                {% endif %}
+                                <div class="popular-content">
+                                    <a href="{{ path('news_show', {slug: post.seoSlug}) }}">
+                                        <h4>{{ post.title|slice(0, 80) }}{% if post.title|length > 80 %}...{% endif %}</h4>
+                                    </a>
+                                    <div class="popular-date">{{ post.publicationDateStart|date('d/m/Y') }}</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Liens vers autres pages -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">🔗 Nos services</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <a href="{{ path('product_scpi') }}" style="text-decoration: none; color: var(--adn-primary); font-weight: 600; padding: 0.75rem; background: #f8fafc; border-radius: 0.75rem; transition: var(--transition);">
+                            🏗️ Investissement SCPI
+                        </a>
+                        <a href="{{ path('product_assurance_vie') }}" style="text-decoration: none; color: var(--adn-primary); font-weight: 600; padding: 0.75rem; background: #f8fafc; border-radius: 0.75rem; transition: var(--transition);">
+                            🛡️ Assurance-vie
+                        </a>
+                        <a href="{{ path('product_pea_pme') }}" style="text-decoration: none; color: var(--adn-primary); font-weight: 600; padding: 0.75rem; background: #f8fafc; border-radius: 0.75rem; transition: var(--transition);">
+                            📈 PEA-PME
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+{% endblock %}
+
+{% block page_scripts %}
+    <script>
+        // Animation d'entrée des cartes
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.article-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                observer.observe(card);
+            });
+            
+            // Optimisation des images de cartes
+            document.querySelectorAll('.article-image img').forEach(img => {
+                img.onerror = function() {
+                    const container = this.closest('.article-image');
+                    if (container) {
+                        container.innerHTML = `
+                            <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%); color: #9ca3af;">
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                        `;
+                    }
+                };
+            });
+        });
+    </script>
+{% endblock %}

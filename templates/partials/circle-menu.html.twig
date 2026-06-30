@@ -1,0 +1,55 @@
+{# --------------------------------------------------------------------------
+   Menu radial ADN – traits partant du CENTRE du bouton
+   Ajustement : chaque branche reçoit un trait dont la longueur correspond
+   pratiquement au vecteur centre → nœud.
+   -------------------------------------------------------------------------- #}
+
+    <div id="circle-container" class="relative mx-auto my-12 select-none w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96">
+    <!-- Bouton central ---------------------------------------------------- -->
+    <button id="toggle-button"
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-bold
+                 bg-[#1C29A1] text-white px-6 py-3 rounded-full shadow-lg z-10">
+        ADN Family Office
+    </button>
+
+    <!-- Branches ---------------------------------------------------------- -->
+    {% set branches = [
+        'Gestion de patrimoine',
+        'Gestion immobilière',
+        'Transmission & succession',
+        'Gouvernance familiale',
+        'Private equity',
+        'Investissements financiers'
+    ] %}
+
+    {% for label in branches %}
+        <div class="branch absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                  opacity-0 transition-all duration-500 text-center"
+             data-index="{{ loop.index }}">
+          <span class="node flex items-center justify-center w-32 h-32 px-3 text-xs font-semibold leading-tight rounded-full border-2 border-blue-300 bg-white shadow-sm">
+              {{ label }}
+          </span>
+        </div>
+    {% endfor %}
+</div>
+
+<style>
+    /* --- Visibilité ------------------------------------------------------ */
+    #circle-container.open .branch{opacity:1!important}
+
+
+
+    /* --- Positions et longueurs (≈ 9rem) -------------------------------- */
+    /* 1. Haut */
+    #circle-container.open .branch[data-index="1"]{transform:translate(-50%,-50%) translate(0,-10.5rem)!important}
+    /* 2. Haut‑droite */
+    #circle-container.open .branch[data-index="2"]{transform:translate(-50%,-50%) translate(9rem,-5.2rem)!important}
+    /* 3. Bas‑droite */
+    #circle-container.open .branch[data-index="3"]{transform:translate(-50%,-50%) translate(9rem,5.2rem)!important}
+    /* 4. Bas */
+    #circle-container.open .branch[data-index="4"]{transform:translate(-50%,-50%) translate(0,10.5rem)!important}
+    /* 5. Bas‑gauche */
+    #circle-container.open .branch[data-index="5"]{transform:translate(-50%,-50%) translate(-9rem,5.2rem)!important}
+    /* 6. Haut‑gauche */
+    #circle-container.open .branch[data-index="6"]{transform:translate(-50%,-50%) translate(-9rem,-5.2rem)!important}
+</style>

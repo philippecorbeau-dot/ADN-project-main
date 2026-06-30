@@ -1,0 +1,173 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+    <div class="row user-space">
+        <div class="col-md-2 sidebar" style="background: white;">
+            <header>
+                {%
+                    if app.user.isPro()
+                    and app.user.pro.companyName is defined
+                %}
+                    <h4>{% trans with {
+                            '%company%': app.user.pro.companyName|escape,
+                            '%newline%': '<br>'
+                        } %}Bonjour,%newline% %company%{% endtrans %}</h4>
+                {% else %}
+                    <h4>{% trans with {
+                            '%firstname%': app.user.firstName|escape,
+                            '%newline%': '<br>'
+                        } %}Bonjour,%newline% %firstname%{% endtrans %}</h4>
+                {% endif %}
+                <span class="underline"></span>
+            </header>
+            <ul class="container">
+                <li{% block user_profile %}{% endblock %}>
+                    <a href="{{ path('user_profile') }}">
+                        <img src="{{ web_image('images/icons/profile.png') }}" width="15" height="15" alt="{% trans %}profil{% endtrans %}">
+                        <span>{% trans %}Mon profil{% endtrans %}</span>
+                    </a>
+                </li>
+                <li{% block user_account %}{% endblock %}>
+                    <a href="{{ path('fos_user_change_password') }}">
+                        <i class="fas fa-at"></i>
+                        <span>{% trans %}Compte{% endtrans %}</span>
+                    </a>
+                </li>
+                {% if app.user.sponsorship %}
+                    {% if app.user.isCgp or app.user.isInfluencer %}
+                        <li{% block user_sponsorship_cgp %}{% endblock %}>
+                            <a href="{{ path('user_cgp') }}">
+                                <i class="fas fa-street-view"></i>
+                                <span>{% trans %}Clients{% endtrans %}</span>
+                            </a>
+                        </li>
+                    {% elseif is_activated('sponsorship') %}
+                        <li{% block user_sponsorship %}{% endblock %}>
+                            <a href="{{ path('user_sponsorship') }}">
+                                <img src="{{ web_image('images/icons/sponsorship.png') }}" width="15" height="15" alt="{% trans %}parrainage{% endtrans %}">
+                                <span>{% if app.user.isInfluencer %}{% trans %}Clients{% endtrans %}{% else %}{% trans %}Parrainage{% endtrans %}{% endif %}</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+                {% if is_granted('ROLE_USER_IDENTIFIED') %}
+                    {% if app.user.investments is not empty or app.user.vefaInvestments is not empty or app.user.scpiInvestments is not empty %}
+                        <li{% block user_investments %}{% endblock %} class="investments">
+                            <a href="#" class="item">
+                                <img src="{{ web_image('images/icons/investments.png') }}" width="15" height="15" alt="{% trans %}investissement{% endtrans %}">
+                                <span>{% trans %}Mes investissements{% endtrans %}</span>
+                            </a>
+
+                            <ul class="investments submenu">
+                                <li{% block user_projects %}{% endblock %}>
+                                    <a href="{{ path('user_projects') }}">
+                                        <span>{% trans %}Crowdfunding{% endtrans %}</span>
+                                    </a>
+                                </li>
+                                <li{% block user_vefa_investments %}{% endblock %}>
+                                    <a href="{{ path('user_vefas') }}">
+                                        <span>{% trans %}Immobilier neuf{% endtrans %}</span>
+                                    </a>
+                                </li>
+                                <li{% block user_scpi_investments %}{% endblock %}>
+                                    <a href="{{ path('user_scpi_projects') }}">
+                                        <span>{% trans %}Scpi{% endtrans %}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    <li{% block user_refunds %}{% endblock %}>
+                        <a href="{{ path('user_refunds') }}">
+                            <img src="{{ web_image('images/icons/price.png') }}" width="15" height="15" alt="{% trans %}Suivi remboursements{% endtrans %}">
+                            <span>{% trans %}Mes remboursements{% endtrans %}</span>
+                        </a>
+                    </li>
+
+                    <li{% block user_documents %}{% endblock %}>
+                        <a href="{{ path('user_document_list') }}">
+                            <img src="{{ web_image('images/icons/files.png') }}" width="15" height="15" alt="{% trans %}Mes documents{% endtrans %}">
+                            <span>{% trans %}Mes documents{% endtrans %}</span>
+                        </a>
+                    </li>
+
+                    {% if not is_granted(('ROLE_KYC_OUTDATED')) and is_granted(('ROLE_USER_IDENTIFIED')) and app.user.mangopayInfo is not null %}
+                        <li{% block user_wallet %}{% endblock %}>
+                            <a href="{{ path('user_wallet') }}">
+                                <img src="{{ web_image('images/icons/wallet.png') }}" width="15" height="15" alt="{% trans %}portefeuille{% endtrans %}">
+                                <span>{% trans %}Portefeuille{% endtrans %}</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if not app.user.isCgp and not app.user.isInfluencer %}
+                        <li{% block user_counsel %}{% endblock %}>
+                            <a href="{{ path('user_counsel') }}">
+                                <img src="{{ asset('images/icons/counsel.png') }}" width="15" height="15" alt="{% trans %}conseil{% endtrans %}">
+                                <span>{% trans %}Conseil{% endtrans %}</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if app.user.isPrivate %}
+                        <li{% block user_taxation %}{% endblock %}>
+                            <a href="{{ path('user_taxation') }}"
+                                    {% if app.request.attributes.get('_route') != 'user_taxation' and app.user.currentTaxation == null %}
+                                        class="outline"
+                                    {% endif %}
+                            >
+                                <img src="{{ web_image('images/icons/taxation.png') }}" width="15" height="15" alt="{% trans %}fiscalité{% endtrans %}">
+                                <span>{% trans %}Fiscalité{% endtrans %}</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if app.user.isCgp and is_granted('ROLE_CGP_PAYABLE') %}
+                        {% if app.user.cgp %}
+                            <li{% block user_cgp_billing %}{% endblock %}>
+                                <a href="{{ path('user_cgp_billing') }}">
+                                    <i class="far fa-credit-card"></i>
+                                    <span>{% trans %}Facturation{% endtrans %}</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                    <li{% block user_notification %}{% endblock %}>
+                        <a href="{{ path('user_notification') }}"
+                                {% if app.request.attributes.get('_route') != 'user_notification' %}
+                                    class="outline"
+                                {% endif %}
+                        ><img src="{{ web_image('images/icons/notification.png') }}" alt="notification" width="18"><span>{% trans %}Notifications{% endtrans %}</span>
+                        </a>
+                    </li>
+                {% endif %}
+                <li{% block user_settings %}{% endblock %}>
+                    <a href="{{ path('user_settings') }}">
+                        <i class="fas fa-cog"></i>
+                        <span>{% trans %}Paramétrage{% endtrans %}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10">
+            <div class="container">
+                <div class="panels">
+                    {% if is_granted(('ROLE_KYC_OUTDATED')) %}
+                        <div class="alert alert-warning">
+                            <p>
+                                {% trans with {
+                                    '%urlStart%': '<a href="' ~ path('user_kyc') ~ '">',
+                                    '%urlEnd%': '</a>'
+                                } %}Votre pièce d'identité est expirée, nous vous invitons à mettre à jour vos pièces justificatives dans %urlStart%votre espace personnel.%urlEnd%{% endtrans %}
+                            </p>
+                        </div>
+                    {% endif %}
+                    {% block userspace %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {# <div class="container userspace">
+        {% block userspace %}{% endblock %}
+    </div> #}
+{% endblock %}

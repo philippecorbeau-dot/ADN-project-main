@@ -1,0 +1,42 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Confirmez votre inscription' %}
+
+{% block content %}
+    <h1>Bienvenue sur ADN Family Office !</h1>
+    
+    <p>Bonjour {{ user.firstname }},</p>
+    
+    <p>Merci de vous être inscrit sur ADN Family Office. Pour activer votre compte et commencer votre parcours vers l'excellence patrimoniale, veuillez confirmer votre adresse email.</p>
+    
+    <div class="button-container">
+        <a href="{{ confirmationUrl }}" class="button">Confirmer mon inscription</a>
+    </div>
+    
+    <div class="info-box">
+        <p><strong>✨ Une fois votre compte activé, vous pourrez :</strong></p>
+        <ul style="margin: 10px 0 0 20px; padding: 0;">
+            <li style="margin-bottom: 8px;">Accéder à votre tableau de bord personnalisé</li>
+            <li style="margin-bottom: 8px;">Découvrir nos solutions d'investissement</li>
+            <li style="margin-bottom: 8px;">Échanger avec votre conseiller dédié</li>
+            <li style="margin-bottom: 8px;">Suivre vos investissements en temps réel</li>
+        </ul>
+    </div>
+    
+    <div class="warning-box">
+        <p><strong>⏱️ Lien valide 24 heures</strong></p>
+        <p>Pour des raisons de sécurité, ce lien de confirmation expire dans 24 heures.</p>
+    </div>
+    
+    <p style="font-size: 13px; color: #64748b; margin-top: 30px;">
+        Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
+        <a href="{{ confirmationUrl }}" style="word-break: break-all; color: #3B82F6; font-size: 12px;">{{ confirmationUrl }}</a>
+    </p>
+    
+    <div class="divider"></div>
+    
+    <p style="text-align: center; font-size: 14px; color: #64748b;">
+        Vous n'avez pas créé de compte ? Ignorez simplement cet email.
+    </p>
+{% endblock %}
+

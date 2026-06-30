@@ -1,0 +1,732 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block header_icon %}
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Breadcrumb d'administration -->
+    {% include 'partials/breadcrumb.html.twig' with {
+        'items': [
+            {'label': 'Dashboard Admin', 'path': 'admin_modern_dashboard', 'icon': 'admin'},
+            {'label': 'Gestion des Actualités'}
+        ]
+    } %}
+
+    <!-- En-tête moderne des actualités -->
+    <div class="bg-gradient-to-r from-emerald-900 via-blue-900 to-indigo-900 rounded-2xl shadow-2xl overflow-hidden">
+        <div class="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm flex-shrink-0">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                        </svg>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-xl sm:text-2xl font-bold text-white truncate">Gestion des Actualités</h1>
+                        <p class="text-blue-200 text-xs sm:text-sm">Administration des articles et contenus éditoriaux</p>
+                    </div>
+                </div>
+                
+                <!-- Statistiques rapides -->
+                <div class="flex sm:hidden md:flex space-x-4 sm:space-x-6">
+                    <div class="text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-white" id="total-articles">{{ posts|length }}</div>
+                        <div class="text-xs text-blue-200">Articles</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-white" id="published-articles">-</div>
+                        <div class="text-xs text-blue-200">Publiés</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-white" id="draft-articles">-</div>
+                        <div class="text-xs text-blue-200">Brouillons</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Barre d'outils moderne -->
+        <div class="bg-white/5 backdrop-blur-sm border-t border-white/10 px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <a href="{{ path('admin_modern_news_new') }}" class="inline-flex items-center px-3 sm:px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 backdrop-blur-sm flex-1 sm:flex-none justify-center sm:justify-start">
+                        <svg class="w-4 h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        <span class="hidden sm:inline">Nouvel article</span>
+                        <span class="sm:hidden">Nouveau</span>
+                    </a>
+                    <button type="button" id="bulk-actions-btn" class="inline-flex items-center px-3 sm:px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 backdrop-blur-sm disabled:opacity-50 flex-1 sm:flex-none justify-center sm:justify-start" disabled>
+                        <svg class="w-4 h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <span class="hidden sm:inline">Actions groupées</span>
+                        <span class="sm:hidden">Actions</span>
+                    </button>
+                </div>
+                
+                <!-- Recherche et filtres -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                    <div class="relative flex-1 sm:flex-none">
+                        <input type="text" id="search-articles" placeholder="Rechercher..." 
+                               class="w-full sm:w-48 lg:w-64 px-3 sm:px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/30 backdrop-blur-sm text-sm">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg class="w-4 h-4 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <select id="filter-category" class="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-white/30 backdrop-blur-sm">
+                        <option value="">Toutes les catégories</option>
+                        {% set categories = [] %}
+                        {% for post in posts %}
+                            {% if post.category and post.category.name not in categories %}
+                                {% set categories = categories|merge([post.category.name]) %}
+                            {% endif %}
+                        {% endfor %}
+                        {% for category in categories %}
+                            <option value="{{ category }}">{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue Desktop : Tableau moderne des articles -->
+    <div class="hidden lg:block bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200" id="articles-table">
+                <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                    <tr>
+                        <th class="px-6 py-4 text-left">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="select-all" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <div>
+                                        <span class="text-sm font-bold text-gray-900">Article</span>
+                                        <div class="text-xs text-gray-500">Titre et aperçu</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                </svg>
+                                <div>
+                                    <span class="text-sm font-bold text-gray-900">Catégorie</span>
+                                    <div class="text-xs text-gray-500">Classification</div>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="text-sm font-bold text-gray-900">SEO</span>
+                                    <div class="text-xs text-gray-500">Référencement</div>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                </svg>
+                                <div>
+                                    <span class="text-sm font-bold text-gray-900">Publication</span>
+                                    <div class="text-xs text-gray-500">Date et statut</div>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center space-x-2">
+                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                                </svg>
+                                <span class="text-sm font-bold text-gray-900">Actions</span>
+                            </div>
+                        </th>
+            </tr>
+            </thead>
+                <tbody class="bg-white divide-y divide-gray-100" id="articles-tbody">
+            {% for post in posts %}
+                        <tr class="hover:bg-gray-50 transition-colors duration-200 group article-row" data-category="{{ post.category ? post.category.name : '' }}" data-title="{{ post.title|lower }}">
+                            <td class="px-6 py-4">
+                                <div class="flex items-start space-x-4">
+                                    <input type="checkbox" class="article-checkbox mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500" value="{{ post.id }}">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-start space-x-3">
+                                            {% if post.imageName %}
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
+                                                        <img src="{{ asset('uploads/images/' ~ post.imageName) }}" alt="{{ post.imageAlt ?: post.title }}" class="w-full h-full object-cover">
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center">
+                                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                </div>
+                                            {% endif %}
+                                            <div class="flex-1 min-w-0">
+                                                <h3 class="text-sm font-bold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                                                    {{ post.title }}
+                                                </h3>
+                                                {% if post.seoDescription %}
+                                                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">{{ post.seoDescription|slice(0, 120) }}...</p>
+                                                {% endif %}
+                                                <div class="flex items-center space-x-4 mt-2 text-xs text-gray-400">
+                                                    <span>ID: {{ post.id }}</span>
+                                                    {% if post.content %}
+                                                        <span>{{ post.content|length }} caractères</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if post.category %}
+                                    <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                        {{ post.category.name }}
+                                    </div>
+                                {% else %}
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                        Non classé
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="space-y-1">
+                                    {% if post.seoTitle %}
+                                        <div class="text-sm font-medium text-gray-900">{{ post.seoTitle|slice(0, 50) }}{% if post.seoTitle|length > 50 %}...{% endif %}</div>
+                                        <div class="flex items-center space-x-2 text-xs">
+                                            <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded">
+                                                {{ post.seoTitle|length }} car.
+                                            </span>
+                                            {% if post.seoDescription %}
+                                                <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                                                    Meta: {{ post.seoDescription|length }}
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <span class="text-sm text-gray-400 italic">SEO non configuré</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="space-y-2">
+                                    {% set isPublished = post.status == 1 %}
+                                    <div class="flex items-center space-x-2">
+                                        {% if isPublished %}
+                                            <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                            <span class="text-sm font-medium text-green-700">✅ Publié</span>
+                                        {% else %}
+                                            <div class="w-2 h-2 rounded-full bg-gray-400"></div>
+                                            <span class="text-sm font-medium text-gray-600">📝 Brouillon</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if post.publicationDateStart %}
+                                        <div class="text-xs text-gray-500">
+                                            📅 {{ post.publicationDateStart|date('d/m/Y à H:i') }}
+                                        </div>
+                                    {% endif %}
+                                    {% if post.isFeatured is defined and post.isFeatured %}
+                                        <div class="flex items-center gap-1 text-xs text-yellow-600 font-medium">
+                                            ⭐ À la Une
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center space-x-1">
+                                        <button type="button" class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200" title="Aperçu">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200" title="Dupliquer">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <a href="{{ path('admin_modern_news_edit', {id: post.id}) }}" 
+                                       class="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                        Éditer
+                                    </a>
+                                    <form method="post" action="{{ path('admin_modern_news_delete', {id: post.id}) }}" class="inline delete-form">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_post_'~post.id) }}">
+                                        <button type="button" class="delete-btn inline-flex items-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 text-sm font-medium" 
+                                                data-article-title="{{ post.title }}">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                            Supprimer
+                                        </button>
+                        </form>
+                                </div>
+                    </td>
+                </tr>
+            {% else %}
+                        <tr id="empty-state">
+                            <td colspan="5" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center space-y-4">
+                                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-900">Aucun article</h3>
+                                        <p class="text-gray-500 mt-1">Commencez par créer votre premier article</p>
+                                    </div>
+                                    <a href="{{ path('admin_modern_news_new') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                        </svg>
+                                        Créer un article
+                                    </a>
+                                </div>
+                            </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+    <!-- Vue Mobile/Tablet : Cartes des articles -->
+    <div class="lg:hidden space-y-4">
+        {% if posts is not empty %}
+            {% for post in posts %}
+                <div class="article-row bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-200" 
+                     data-category="{{ post.category ? post.category.name : '' }}" 
+                     data-title="{{ post.title|lower }}">
+                    <!-- Header de la carte -->
+                    <div class="p-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-start gap-3 flex-1 min-w-0">
+                                <input type="checkbox" class="article-checkbox mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0" value="{{ post.id }}">
+                                {% if post.imageName %}
+                                    <div class="flex-shrink-0">
+                                        <div class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                                            <img src="{{ asset('uploads/images/' ~ post.imageName) }}" alt="{{ post.imageAlt ?: post.title }}" class="w-full h-full object-cover">
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-base font-bold text-gray-900 truncate mb-1">{{ post.title }}</h3>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="text-xs text-gray-500">ID: {{ post.id }}</span>
+                                        {% if post.content %}
+                                            <span class="text-xs text-gray-500">{{ post.content|length }} caractères</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenu de la carte -->
+                    <div class="p-4 space-y-3">
+                        <!-- Catégorie -->
+                        <div>
+                            {% if post.category %}
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    {{ post.category.name }}
+                                </div>
+                            {% else %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                    Non classé
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- SEO -->
+                        {% if post.seoTitle %}
+                            <div class="bg-purple-50 rounded-lg p-3 border border-purple-100">
+                                <div class="text-xs font-semibold text-purple-900 mb-1">SEO</div>
+                                <div class="text-sm font-medium text-gray-900 truncate">{{ post.seoTitle }}</div>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 rounded">{{ post.seoTitle|length }} car.</span>
+                                    {% if post.seoDescription %}
+                                        <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded">Meta: {{ post.seoDescription|length }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Publication -->
+                        {% set isPublished = post.status == 1 %}
+                        <div class="rounded-lg p-3 border {{ isPublished ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200' }}">
+                            <div class="text-xs font-semibold {{ isPublished ? 'text-green-900' : 'text-gray-700' }} mb-1">Statut</div>
+                            <div class="flex items-center gap-2 mb-1">
+                                {% if isPublished %}
+                                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                                    <span class="text-sm font-medium text-green-700">✅ Publié</span>
+                                {% else %}
+                                    <div class="w-2 h-2 rounded-full bg-gray-400"></div>
+                                    <span class="text-sm font-medium text-gray-600">📝 Brouillon</span>
+                                {% endif %}
+                            </div>
+                            {% if post.publicationDateStart %}
+                                <div class="text-xs text-gray-600">📅 {{ post.publicationDateStart|date('d/m/Y à H:i') }}</div>
+                            {% endif %}
+                            {% if post.isFeatured is defined and post.isFeatured %}
+                                <div class="flex items-center gap-1 text-xs text-yellow-600 font-medium mt-1">
+                                    ⭐ À la Une
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Description -->
+                        {% if post.seoDescription %}
+                            <div class="text-xs text-gray-600 line-clamp-2">{{ post.seoDescription|slice(0, 120) }}...</div>
+                        {% endif %}
+
+                        <!-- Actions -->
+                        <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-200">
+                            <a href="{{ path('admin_modern_news_edit', {id: post.id}) }}" 
+                               class="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium flex-1 justify-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Éditer
+                            </a>
+                            <form method="post" action="{{ path('admin_modern_news_delete', {id: post.id}) }}" class="inline delete-form flex-1">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_post_'~post.id) }}">
+                                <button type="button" class="delete-btn w-full inline-flex items-center justify-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 text-sm font-medium" 
+                                        data-article-title="{{ post.title }}">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                    Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="bg-white rounded-2xl border border-gray-200 p-8 sm:p-12 text-center">
+                <div class="text-gray-500">
+                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                    </svg>
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-1">Aucun article</h3>
+                    <p class="text-sm text-gray-500 mb-4">Commencez par créer votre premier article</p>
+                    <a href="{{ path('admin_modern_news_new') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Créer un article
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Scripts JavaScript pour la gestion avancée des actualités -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-articles');
+    const categoryFilter = document.getElementById('filter-category');
+    const selectAllCheckbox = document.getElementById('select-all');
+    const articleCheckboxes = document.querySelectorAll('.article-checkbox');
+    const bulkActionsBtn = document.getElementById('bulk-actions-btn');
+    const articlesTable = document.getElementById('articles-table');
+    const articleRows = document.querySelectorAll('.article-row');
+    const deleteBtns = document.querySelectorAll('.delete-btn');
+    
+    // Statistiques en temps réel
+    function updateStats() {
+        const visibleRows = document.querySelectorAll('.article-row:not([style*="display: none"]):not(.hidden)');
+        const publishedCount = Array.from(visibleRows).filter(row => {
+            // Pour le tableau desktop
+            const statusTextDesktop = row.querySelector('td:nth-child(4) .text-green-700');
+            // Pour les cartes mobile
+            const statusTextMobile = row.querySelector('.bg-orange-50 .text-green-700');
+            return (statusTextDesktop && statusTextDesktop.textContent.includes('Publié')) || 
+                   (statusTextMobile && statusTextMobile.textContent.includes('Publié'));
+        }).length;
+        const draftCount = visibleRows.length - publishedCount;
+        
+        document.getElementById('published-articles').textContent = publishedCount;
+        document.getElementById('draft-articles').textContent = draftCount;
+    }
+    
+    // Fonction de recherche en temps réel
+    function filterArticles() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedCategory = categoryFilter.value.toLowerCase();
+        
+        articleRows.forEach(row => {
+            const title = row.dataset.title || '';
+            const category = row.dataset.category.toLowerCase() || '';
+            
+            const matchesSearch = title.includes(searchTerm);
+            const matchesCategory = !selectedCategory || category === selectedCategory.toLowerCase();
+            
+            if (matchesSearch && matchesCategory) {
+                row.style.display = '';
+                row.classList.remove('hidden');
+            } else {
+                row.style.display = 'none';
+                row.classList.add('hidden');
+            }
+        });
+        
+        updateStats();
+        updateEmptyState();
+    }
+    
+    // Gestion de l'état vide
+    function updateEmptyState() {
+        const visibleRows = document.querySelectorAll('.article-row:not([style*="display: none"]):not(.hidden)');
+        const emptyState = document.getElementById('empty-state');
+        
+        if (visibleRows.length === 0 && articleRows.length > 0) {
+            if (!document.getElementById('no-results-state')) {
+                const noResultsState = document.createElement('tr');
+                noResultsState.id = 'no-results-state';
+                noResultsState.innerHTML = `
+                    <td colspan="5" class="px-6 py-12 text-center">
+                        <div class="flex flex-col items-center space-y-4">
+                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-900">Aucun résultat</h3>
+                                <p class="text-gray-500 mt-1">Aucun article ne correspond à vos critères de recherche</p>
+                            </div>
+                            <button onclick="clearFilters()" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                Réinitialiser les filtres
+                            </button>
+                        </div>
+                    </td>
+                `;
+                document.getElementById('articles-tbody').appendChild(noResultsState);
+            }
+            document.getElementById('no-results-state').style.display = '';
+        } else {
+            const noResultsState = document.getElementById('no-results-state');
+            if (noResultsState) {
+                noResultsState.style.display = 'none';
+            }
+        }
+    }
+    
+    // Fonction pour réinitialiser les filtres
+    window.clearFilters = function() {
+        searchInput.value = '';
+        categoryFilter.value = '';
+        filterArticles();
+    };
+    
+    // Gestion de la sélection multiple
+    function updateBulkActions() {
+        const checkedBoxes = document.querySelectorAll('.article-checkbox:checked');
+        const count = checkedBoxes.length;
+        
+        if (count > 0) {
+            bulkActionsBtn.disabled = false;
+            bulkActionsBtn.textContent = `Actions groupées (${count})`;
+            bulkActionsBtn.classList.remove('opacity-50');
+        } else {
+            bulkActionsBtn.disabled = true;
+            bulkActionsBtn.textContent = 'Actions groupées';
+            bulkActionsBtn.classList.add('opacity-50');
+        }
+    }
+    
+    // Sélection/désélection globale
+    selectAllCheckbox.addEventListener('change', function() {
+        const visibleCheckboxes = Array.from(articleCheckboxes).filter(cb => {
+            const row = cb.closest('.article-row');
+            return row && row.style.display !== 'none';
+        });
+        
+        visibleCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        
+        updateBulkActions();
+    });
+    
+    // Gestion des checkboxes individuelles
+    articleCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateBulkActions();
+            
+            // Mettre à jour la checkbox "Tout sélectionner"
+            const visibleCheckboxes = Array.from(articleCheckboxes).filter(cb => {
+                const row = cb.closest('.article-row');
+                return row && row.style.display !== 'none';
+            });
+            const checkedCount = visibleCheckboxes.filter(cb => cb.checked).length;
+            
+            selectAllCheckbox.checked = checkedCount === visibleCheckboxes.length && visibleCheckboxes.length > 0;
+            selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < visibleCheckboxes.length;
+        });
+    });
+    
+    // Gestion de la suppression avec confirmation moderne (délégation d'événements)
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.delete-btn');
+        if (!btn) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const articleTitle = btn.dataset.articleTitle;
+        const form = btn.closest('form.delete-form');
+        
+        if (!form) {
+            alert('Erreur: formulaire de suppression non trouvé');
+            return;
+        }
+        
+        // Stocker le formulaire globalement pour y accéder dans la modal
+        window._deleteForm = form;
+        
+        // Modal de confirmation moderne
+        const modal = document.createElement('div');
+        modal.id = 'delete-modal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+            <div class="bg-white rounded-2xl p-6 max-w-md mx-4 transform transition-all duration-300">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Supprimer l'article</h3>
+                        <p class="text-sm text-gray-500">Cette action est irréversible</p>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <p class="text-gray-700">Êtes-vous sûr de vouloir supprimer l'article :</p>
+                    <p class="font-semibold text-gray-900 mt-2 p-3 bg-gray-50 rounded-lg">"${articleTitle}"</p>
+                </div>
+                <div class="flex items-center justify-end space-x-3">
+                    <button type="button" onclick="document.getElementById('delete-modal').remove();" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+                        Annuler
+                    </button>
+                    <button type="button" onclick="window._deleteForm.submit();" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200">
+                        Supprimer définitivement
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Fermeture en cliquant à l'extérieur
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    });
+    
+    // Event listeners pour la recherche et les filtres
+    searchInput.addEventListener('input', filterArticles);
+    categoryFilter.addEventListener('change', filterArticles);
+    
+    // Actions groupées
+    bulkActionsBtn.addEventListener('click', function() {
+        const checkedIds = Array.from(document.querySelectorAll('.article-checkbox:checked')).map(cb => cb.value);
+        
+        if (checkedIds.length === 0) return;
+        
+        // Menu contextuel pour les actions groupées
+        const menu = document.createElement('div');
+        menu.className = 'absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-50';
+        menu.innerHTML = `
+            <div class="py-2">
+                <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                    <span>Dupliquer (${checkedIds.length})</span>
+                </button>
+                <button class="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50 flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    <span>Supprimer (${checkedIds.length})</span>
+                </button>
+            </div>
+        `;
+        
+        // Positionnement relatif au bouton
+        this.style.position = 'relative';
+        this.appendChild(menu);
+        
+        // Fermeture automatique
+        setTimeout(() => {
+            document.addEventListener('click', function closeMenu(e) {
+                if (!menu.contains(e.target)) {
+                    menu.remove();
+                    document.removeEventListener('click', closeMenu);
+                }
+            });
+        }, 100);
+    });
+    
+    // Initialisation
+    updateStats();
+    updateBulkActions();
+    
+    // Animation d'apparition des lignes
+    articleRows.forEach((row, index) => {
+        row.style.opacity = '0';
+        row.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            row.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            row.style.opacity = '1';
+            row.style.transform = 'translateY(0)';
+        }, index * 50);
+    });
+});
+</script>
+
+{% endblock %}
+
+

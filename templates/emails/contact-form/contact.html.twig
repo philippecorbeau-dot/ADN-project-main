@@ -1,0 +1,32 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Merci pour votre prise de contact' %}
+
+{% block content %}
+    <h1>Nous avons bien reçu votre message</h1>
+    
+    <p>Bonjour,</p>
+    
+    <p>Merci de nous avoir contactés. Votre demande a été transmise à notre équipe et nous vous répondrons dans les plus brefs délais.</p>
+    
+    <div class="info-box">
+        <p><strong>⏱️ Délai de réponse :</strong></p>
+        <p>Nous nous efforçons de répondre à toutes les demandes sous 24 heures ouvrées.</p>
+    </div>
+    
+    <h2>En attendant notre réponse</h2>
+    
+    <p>Découvrez nos services et solutions sur notre site web :</p>
+    
+    <div class="button-container">
+        <a href="{{ url('app_home') }}" class="button">Explorer nos services</a>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p style="text-align: center; font-size: 14px; color: #64748b;">
+        <strong>Contact direct :</strong><br>
+        📧 <a href="mailto:contact@adnfamilyoffice.fr">contact@adnfamilyoffice.fr</a>
+    </p>
+{% endblock %}
+

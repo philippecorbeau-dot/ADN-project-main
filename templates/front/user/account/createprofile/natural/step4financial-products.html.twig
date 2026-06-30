@@ -1,0 +1,156 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+
+{% block title %}Connaissance des marchés financiers - Produits financiers{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header avec progression -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-bold text-gray-900">Votre compréhension des risques</h1>
+                <div class="text-sm text-gray-500">
+                    Étape {{ step }}/{{ totalSteps }}
+                </div>
+            </div>
+            
+            <!-- Barre de progression -->
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 h-2 rounded-full transition-all duration-300" 
+                     style="width: {{ (step / totalSteps) * 100 }}%"></div>
+            </div>
+        </div>
+
+        <!-- Introduction -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <div class="flex items-start space-x-3">
+                <i class="fa-solid fa-coins text-blue-600 mt-1"></i>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-blue-800 mb-2">Informations sur les produits financiers</h3>
+                    <p class="text-sm text-blue-700">
+                        Ces questions nous permettent d'évaluer votre connaissance des produits financiers de base et des concepts fondamentaux des marchés financiers.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire -->
+        <form method="post" class="space-y-6">
+            {{ form_start(form) }}
+            
+            <!-- Question 1 -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.question1) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.question1) }}
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.question2) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.question2) }}
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.question3) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.question3) }}
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.question4) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.question4) }}
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.question5) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.question5) }}
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.question6) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.question6) }}
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.question7) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.question7) }}
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.question8) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.question8) }}
+                </div>
+            </div>
+
+            <!-- Boutons de navigation -->
+            <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                <a href="{{ path('user_create_profile', {'step': 4, 'substep': 'investment-experience'}) }}" 
+                   class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                    <i class="fa-solid fa-arrow-left mr-2"></i>
+                    Précédent
+                </a>
+                
+                <button type="submit" 
+                        class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105">
+                    Suivant
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </form>
+    </div>
+</div>
+{% endblock %} 

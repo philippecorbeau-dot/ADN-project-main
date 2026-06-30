@@ -1,0 +1,269 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+
+{% block body %} 
+    <div class="container pb-10 mt-24 md:mt-0">
+        <div class="rounded-xl bg-white p-6 sm:p-10 shadow-md transition-opacity transition-transform">
+            <!-- Header moderne avec icône et sous-titre -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-full mb-4">
+                    <i class="fa-solid fa-brain text-white text-2xl"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                    {% trans %}Votre compréhension des risques{% endtrans %}
+                </h1>
+                <p class="text-lg text-gray-600">
+                    {% trans %}Évaluons ensemble votre rapport à l'investissement{% endtrans %}
+                </p>
+            </div>
+            
+            {{ alert.success('', "Conformément au règlement 2020/1503, nous devons obtenir des informations sur vos investissements antérieurs et sur votre compréhension des risques liés à l'investissement.", {'bgClass': 'bg-[#eaf1fb]', 'textClass': 'text-[#185abd]'}) }}
+            
+            {{ form_start(form, {'attr': {'id': 'form-step4'}}) }}
+                
+                <!-- Question 1: Action/Part sociale -->
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-4">
+                        <i class="fa-solid fa-chart-line text-blue-600 mr-2"></i>
+                        {{ form.adequacy1.vars.label }}
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {% for value in form.adequacy1 %}
+                                <div>
+                                {{ form_widget(value, {'attr' : {'class' : 'hidden peer'}}) }}
+                                <label for="{{ value.vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-blue-500 hover:bg-blue-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:ring-4 peer-checked:ring-blue-100">
+                                    <i class="fa-solid fa-check text-blue-600 mr-3 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    <span class="font-medium text-base">{{ value.vars.label }}</span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {{ form_errors(form.adequacy1) }}
+                        </div>
+
+                <!-- Question 2: Obligation -->
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-4">
+                        <i class="fa-solid fa-handshake text-green-600 mr-2"></i>
+                        {{ form.adequacy2.vars.label }}
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {% for value in form.adequacy2 %}
+                                <div>
+                                {{ form_widget(value, {'attr' : {'class' : 'hidden peer'}}) }}
+                                <label for="{{ value.vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-green-500 hover:bg-green-50 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:ring-4 peer-checked:ring-green-100">
+                                    <i class="fa-solid fa-check text-green-600 mr-3 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    <span class="font-medium text-base">{{ value.vars.label }}</span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                    </div>
+                    {{ form_errors(form.adequacy2) }}
+                </div>
+
+                <!-- Question 3: Plus-value systématique -->
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-4">
+                        <i class="fa-solid fa-arrow-trend-up text-purple-600 mr-2"></i>
+                        {{ form.adequacy3.vars.label }}
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            {{ form_widget(form.adequacy3[0], {'attr' : {'class' : 'hidden peer'}}) }}
+                            <label for="{{ form.adequacy3[0].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-purple-500 hover:bg-purple-50 peer-checked:border-purple-500 peer-checked:bg-purple-50 peer-checked:ring-4 peer-checked:ring-purple-100">
+                                <i class="fa-solid fa-check-circle text-purple-600 mr-3 text-lg"></i>
+                                <span class="font-semibold text-base">{{ form.adequacy3[0].vars.label }}</span>
+                            </label>
+                        </div>
+                        <div>
+                            {{ form_widget(form.adequacy3[1], {'attr' : {'class' : 'hidden peer'}}) }}
+                            <label for="{{ form.adequacy3[1].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-gray-500 hover:bg-gray-50 peer-checked:border-gray-500 peer-checked:bg-gray-50 peer-checked:ring-4 peer-checked:ring-gray-100">
+                                <i class="fa-solid fa-times-circle text-gray-600 mr-3 text-lg"></i>
+                                <span class="font-semibold text-base">{{ form.adequacy3[1].vars.label }}</span>
+                            </label>
+                        </div>
+                    </div>
+                    {{ form_errors(form.adequacy3) }}
+                </div>
+
+                <!-- Question 4: Risque taux -->
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-4">
+                        <i class="fa-solid fa-triangle-exclamation text-orange-600 mr-2"></i>
+                        {{ form.adequacy4.vars.label }}
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                            {{ form_widget(form.adequacy4[0], {'attr' : {'class' : 'hidden peer'}}) }}
+                            <label for="{{ form.adequacy4[0].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-orange-500 hover:bg-orange-50 peer-checked:border-orange-500 peer-checked:bg-orange-50 peer-checked:ring-4 peer-checked:ring-orange-100">
+                                <i class="fa-solid fa-check-circle text-orange-600 mr-3 text-lg"></i>
+                                <span class="font-semibold text-base">{{ form.adequacy4[0].vars.label }}</span>
+                                </label>
+                            </div>
+                            <div>
+                            {{ form_widget(form.adequacy4[1], {'attr' : {'class' : 'hidden peer'}}) }}
+                            <label for="{{ form.adequacy4[1].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-gray-500 hover:bg-gray-50 peer-checked:border-gray-500 peer-checked:bg-gray-50 peer-checked:ring-4 peer-checked:ring-gray-100">
+                                <i class="fa-solid fa-times-circle text-gray-600 mr-3 text-lg"></i>
+                                <span class="font-semibold text-base">{{ form.adequacy4[1].vars.label }}</span>
+                                </label>
+                        </div>
+                    </div>
+                    {{ form_errors(form.adequacy4) }}
+                </div>
+
+                <!-- Question 5: Niveau de risque -->
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-4">
+                        <i class="fa-solid fa-shield-halved text-red-600 mr-2"></i>
+                        {{ form.adequacy5.vars.label }}
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for value in form.adequacy5 %}
+                            <div>
+                                {{ form_widget(value, {'attr' : {'class' : 'hidden peer'}}) }}
+                                <label for="{{ value.vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-red-500 hover:bg-red-50 peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:ring-4 peer-checked:ring-red-100">
+                                    <i class="fa-solid fa-check text-red-600 mr-3 text-lg opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    <span class="font-medium text-base">{{ value.vars.label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.adequacy5) }}
+                </div>
+
+                <!-- Section Accompagnement -->
+                <div class="mb-10">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200 shadow-sm">
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 rounded-full p-3 mr-4">
+                                <i class="fa-solid fa-user-graduate text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2">{% trans %}Accompagnement personnalisé{% endtrans %}</h3>
+                                <p class="text-sm text-gray-600 mb-4">{% trans %}Nous vous proposons un accompagnement adapté à votre profil d'investisseur pour vous guider dans vos décisions.{% endtrans %}</p>
+                                <div class="flex items-center p-4 bg-white rounded-lg border border-blue-200">
+                                    {{ form_widget(form.accompaniment, {'attr' : {'class' : 'mr-3 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'}}) }}
+                                    <label for="{{ form.accompaniment.vars.id }}" class="text-sm text-gray-700 cursor-pointer font-medium">
+                                        Je consens à transmettre ce résultat à ADN Family Office afin d'être mieux accompagné
+                                </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Attestations -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">
+                        <i class="fa-solid fa-file-contract text-teal-600 mr-2"></i>
+                        {% trans %}Attestations requises{% endtrans %}
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start p-6 border-2 border-amber-200 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 shadow-sm">
+                            <div class="bg-amber-100 rounded-full p-3 mr-4 flex-shrink-0">
+                                <i class="fa-solid fa-exclamation-triangle text-amber-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start">
+                                    {{ form_widget(form.attestAware, {'attr' : {'class' : 'mr-3 mt-1 w-4 h-4 text-amber-600 bg-gray-100 border-gray-300 rounded focus:ring-amber-500 focus:ring-2'}}) }}
+                                    <label for="{{ form.attestAware.vars.id }}" class="text-sm text-gray-700 cursor-pointer font-medium leading-relaxed">
+                                        {{ form.attestAware.vars.label }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start p-6 border-2 border-blue-200 rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50 shadow-sm">
+                            <div class="bg-blue-100 rounded-full p-3 mr-4 flex-shrink-0">
+                                <i class="fa-solid fa-clock text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start">
+                                    {{ form_widget(form.attestTruth, {'attr' : {'class' : 'mr-3 mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2'}}) }}
+                                    <label for="{{ form.attestTruth.vars.id }}" class="text-sm text-gray-700 cursor-pointer font-medium leading-relaxed">
+                                        {{ form.attestTruth.vars.label }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <a class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44" href="{{ path('user_create_profile', {'step' : 4, 'substep' : 'beginner' }) }}">
+                        {% trans %}Précédent{% endtrans %}
+                    </a>
+                    <button id="btn-next" type="submit" class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44">
+                        {% trans %}Suivant{% endtrans %}
+                    </button>
+                </div>
+            {{ form_row(form._token) }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        // Variable globale pour stocker l'état de chaque question
+        var questionStates = [];
+        // Fonction pour vérifier si toutes les questions sont correctes
+        function checkAllAnswersCorrect() {
+            // Vérifier si toutes les valeurs de questionStates sont "true"
+            return Object.values(questionStates).every(function(state) {
+                return state === true;
+            });
+        }
+        /**
+         * Fonction de validation pour chaque question
+         * @param   questionId  Identifiant de la question.
+         * @param   inputNode   Noeud HTML de la réponse sélectionnée.
+         */
+        function validateQuestion(questionId, inputNode) {
+            // récupération du div de la question
+            var questionDiv = document.getElementById("quest-" + questionId);
+            // récupération de l'identifiant de la réponse
+            var answerId = inputNode.value;
+            // Obtenir les réponses correctes sous forme de tableau
+            var validAnswer = questionDiv.getAttribute('data-validAnswer').split(',');
+            // Sélectionner l'élément qui affiche le message d'erreur
+            var errorMessageElement = document.getElementById("error-message-" + questionId);
+            // vérification de la réponse
+            if (validAnswer.includes(answerId)) {
+                errorMessageElement.classList.add('hidden');
+                questionStates[questionId] = true;
+            } else {
+                errorMessageElement.classList.remove('hidden');
+                questionStates[questionId] = false;
+            }
+            // Activer ou désactiver le bouton "Suivant" en fonction de l'état des réponses
+            var nextButton = document.getElementById("btn-next");
+            nextButton.disabled = !checkAllAnswersCorrect();
+        }
+
+        // Gestion du required dynamique sur les cases à cocher du modal
+        document.addEventListener('DOMContentLoaded', function () {
+            const dialog = document.getElementById('dialog-aware');
+            const aware = document.getElementById('step4_beginner2_attestAware');
+            const truth = document.getElementById('step4_beginner2_attestTruth');
+            // Boutons d'ouverture/fermeture du modal (à adapter si besoin)
+            const openers = document.querySelectorAll('[data-modal="dialog-aware"]');
+            const closers = dialog ? dialog.querySelectorAll('[data-close]') : [];
+
+            function addRequired() {
+                if (aware) aware.setAttribute('required', 'required');
+                if (truth) truth.setAttribute('required', 'required');
+            }
+            function removeRequired() {
+                if (aware) aware.removeAttribute('required');
+                if (truth) truth.removeAttribute('required');
+            }
+            openers.forEach(btn => btn.addEventListener('click', addRequired));
+            closers.forEach(btn => btn.addEventListener('click', removeRequired));
+            // Optionnel : retirer le required si le modal est fermé autrement
+            if (dialog) {
+                dialog.addEventListener('close', removeRequired);
+            }
+        });
+    </script>
+{% endblock %}

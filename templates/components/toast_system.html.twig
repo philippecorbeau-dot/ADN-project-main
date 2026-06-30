@@ -1,0 +1,244 @@
+{# Système de Toast Unifié - Moderne, Compact et Rapide #}
+<div x-data="toastSystem()" 
+     x-init="init()"
+     @toast.window="addToast($event.detail)"
+     class="fixed z-[99999] inset-0 pointer-events-none"
+     aria-live="polite"
+     aria-atomic="true">
+    
+    {# Container responsive pour les toasts - positionné sous le header #}
+    <div class="fixed top-20 sm:top-6 right-2 sm:right-6 flex flex-col gap-2 w-auto max-w-[calc(100vw-1rem)] sm:max-w-sm pointer-events-none">
+        <template x-for="toast in toasts" :key="toast.id">
+            <div x-show="toast.visible"
+                 x-transition:enter="transform ease-out duration-200 transition"
+                 x-transition:enter-start="translate-x-full opacity-0 scale-95"
+                 x-transition:enter-end="translate-x-0 opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="translate-x-0 opacity-100 scale-100"
+                 x-transition:leave-end="translate-x-full opacity-0 scale-95"
+                 @mouseenter="toast.pauseTimer()"
+                 @mouseleave="toast.resumeTimer()"
+                 class="pointer-events-auto rounded-xl shadow-lg border overflow-hidden backdrop-blur-md min-w-[280px] max-w-full"
+                 :class="{
+                    'bg-emerald-500/95 border-emerald-400/30': toast.type === 'success',
+                    'bg-red-500/95 border-red-400/30': toast.type === 'error',
+                    'bg-amber-500/95 border-amber-400/30': toast.type === 'warning',
+                    'bg-blue-500/95 border-blue-400/30': toast.type === 'info'
+                 }"
+                 role="alert">
+                
+                {# Barre de progression fine #}
+                <div class="h-0.5 bg-white/30 relative overflow-hidden">
+                    <div class="h-full bg-white/70 absolute top-0 left-0 transition-all ease-linear"
+                         :style="'width: ' + toast.progress + '%; transition-duration: ' + toast.remainingTime + 'ms'"></div>
+                </div>
+                
+                {# Contenu du toast - ultra compact #}
+                <div class="px-3 py-2.5">
+                    <div class="flex items-center gap-2.5">
+                        {# Icône compacte #}
+                        <div class="flex-shrink-0">
+                            {# Success Icon #}
+                            <svg x-show="toast.type === 'success'" class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            
+                            {# Error Icon #}
+                            <svg x-show="toast.type === 'error'" class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            
+                            {# Warning Icon #}
+                            <svg x-show="toast.type === 'warning'" class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01"></path>
+                            </svg>
+                            
+                            {# Info Icon #}
+                            <svg x-show="toast.type === 'info'" class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01"></path>
+                            </svg>
+                        </div>
+                        
+                        {# Message compact #}
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-white leading-tight truncate" 
+                               x-text="toast.message"></p>
+                        </div>
+                        
+                        {# Bouton fermer compact #}
+                        <button @click="removeToast(toast.id)" 
+                                type="button"
+                                class="flex-shrink-0 rounded-md p-1 text-white/70 hover:text-white hover:bg-white/15 focus:outline-none transition-colors"
+                                :aria-label="'Fermer'">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script>
+function toastSystem() {
+    return {
+        toasts: [],
+        nextId: 1,
+        seenKeys: new Set(),
+        
+        init() {
+            // Écouter les flash messages Symfony
+            this.loadFlashMessages();
+            
+            // API globale pour afficher des toasts - plus rapide
+            window.showToast = (message, type = 'info', duration = 3000) => {
+                this.addToast({ message, type, duration });
+            };
+            
+            // Raccourcis pratiques
+            window.toast = {
+                success: (message, duration = 3000) => {
+                    this.addToast({ message, type: 'success', duration });
+                },
+                error: (message, duration = 4000) => {
+                    this.addToast({ message, type: 'error', duration });
+                },
+                warning: (message, duration = 3500) => {
+                    this.addToast({ message, type: 'warning', duration });
+                },
+                info: (message, duration = 3000) => {
+                    this.addToast({ message, type: 'info', duration });
+                }
+            };
+        },
+        
+        loadFlashMessages() {
+            // Charger les flash messages Symfony
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    this.addToast({
+                        message: {{ message|json_encode|raw }},
+                        type: {{ (type == 'error' or type == 'danger' ? '"error"' : (type == 'success' ? '"success"' : (type == 'warning' ? '"warning"' : '"info"')))|raw }},
+                        duration: {{ type == 'error' or type == 'danger' ? 4000 : 3000 }}
+                    });
+                {% endfor %}
+            {% endfor %}
+        },
+        
+        addToast({ message, type = 'info', duration = 3000 }) {
+            // Éviter les doublons
+            const key = `${type}:${message}`;
+            if (this.seenKeys.has(key)) {
+                return;
+            }
+            this.seenKeys.add(key);
+            
+            // Nettoyer après 30 secondes
+            setTimeout(() => this.seenKeys.delete(key), 30000);
+            
+            const id = this.nextId++;
+            let timer = null;
+            let startTime = Date.now();
+            let remainingTime = duration;
+            let isPaused = false;
+            
+            // Capturer la référence au composant pour l'utiliser dans les fonctions
+            const self = this;
+            
+            const toast = {
+                id,
+                message,
+                type,
+                duration,
+                visible: true,
+                progress: 100,
+                remainingTime,
+                
+                pauseTimer() {
+                    if (!isPaused && timer) {
+                        clearTimeout(timer);
+                        remainingTime -= (Date.now() - startTime);
+                        isPaused = true;
+                        toast.progress = (remainingTime / duration) * 100;
+                    }
+                },
+                
+                resumeTimer() {
+                    if (isPaused) {
+                        isPaused = false;
+                        startTime = Date.now();
+                        toast.scheduleRemoval();
+                    }
+                },
+                
+                scheduleRemoval() {
+                    toast.remainingTime = remainingTime;
+                    timer = setTimeout(() => {
+                        self.removeToast(id);
+                    }, remainingTime);
+                    
+                    // Animation de la barre de progression
+                    requestAnimationFrame(() => {
+                        toast.progress = 0;
+                    });
+                }
+            };
+            
+            this.toasts.push(toast);
+            
+            // Limiter à 3 toasts maximum pour éviter la surcharge
+            if (this.toasts.length > 3) {
+                this.removeToast(this.toasts[0].id);
+            }
+            
+            // Démarrer le timer
+            toast.scheduleRemoval();
+        },
+        
+        removeToast(id) {
+            const index = this.toasts.findIndex(t => t.id === id);
+            if (index > -1) {
+                this.toasts[index].visible = false;
+                // Supprimer de la liste après l'animation
+                setTimeout(() => {
+                    const idx = this.toasts.findIndex(t => t.id === id);
+                    if (idx > -1) {
+                        this.toasts.splice(idx, 1);
+                    }
+                }, 200);
+            }
+        }
+    };
+}
+</script>
+
+<style>
+/* Toasts modernes et rapides */
+[x-data="toastSystem()"] [role="alert"] {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
+}
+
+/* Animation d'apparition rapide et fluide */
+@keyframes toast-appear {
+    0% { 
+        transform: translateX(100%) scale(0.95);
+        opacity: 0;
+    }
+    100% { 
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Mobile: ajuster la position */
+@media (max-width: 640px) {
+    [x-data="toastSystem()"] > div {
+        right: 0.5rem;
+        left: 0.5rem;
+        max-width: calc(100vw - 1rem);
+    }
+}
+</style>
+

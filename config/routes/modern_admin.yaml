@@ -1,0 +1,17 @@
+# Routes pour le nouveau back-office moderne
+modern_admin:
+    resource: ../../src/Controller/Admin/ModernAdminController.php
+    type: annotation
+    prefix: /admin/modern
+
+# Route principale pour rediriger vers le nouveau back-office
+admin_modern_index:
+    path: /admin-modern
+    controller: App\Controller\Admin\ModernAdminController::dashboard
+    methods: [GET]
+
+# Route de secours pour l'ancien admin
+admin_legacy_redirect:
+    path: /admin-legacy
+    controller: App\Controller\Admin\DashboardController::index
+    methods: [GET]

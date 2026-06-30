@@ -1,0 +1,312 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+
+{% block body %} 
+    <div class="container pb-10 mt-24 md:mt-0">
+        <div class="rounded-xl bg-white p-6 sm:p-10 shadow-md transition-opacity transition-transform">
+            <!-- Header moderne avec icône et sous-titre -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-4">
+                    <i class="fa-solid fa-chart-pie text-white text-2xl"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                    {% trans %}Votre situation financière{% endtrans %}
+                </h1>
+                <p class="text-lg text-gray-600">
+                    {% trans %}Évaluons ensemble votre patrimoine{% endtrans %}
+                </p>
+            </div>
+            
+            {{ alert.success('',"La réglementation en vigueur demande une évaluation de votre patrimoine financier, afin de déterminer votre solidité financière.", {'bgClass': 'bg-[#eaf1fb]', 'textClass': 'text-[#185abd]'}) }}
+            {{ form_start(form, {'method': 'POST', 'attr': {'id': 'form-step3'}}) }}
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-2">
+                        <i class="fa-solid fa-briefcase text-blue-600 mr-2"></i>
+                        {% trans %}Quel est votre salaire mensuel net après impôts ?{% endtrans %}
+                    </label>
+                    <div class="w-full sm:w-1/2 relative">
+                        {{ form_widget(form.salary, {
+                            'attr': {
+                                'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 bg-white text-base transition-all duration-200',
+                                'placeholder': '0',
+                                'data-field': 'salary',
+                                'data-step': '3',
+                                'style': 'padding-right:2.5rem;'
+                            }
+                        }) }}
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                    </div>
+                    {{ form_errors(form.salary) }}
+                </div>
+
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-2">
+                        <i class="fa-solid fa-piggy-bank text-green-600 mr-2"></i>
+                        {% trans %}Quel est le montant estimé de votre patrimoine financier (épargne sur livret, assurance-vie, PEA, etc.) ?{% endtrans %}
+                    </label>
+                    <div class="w-full sm:w-1/2 relative">
+                        {{ form_widget(form.accountSecurities, {
+                            'attr': {
+                                'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100 bg-white text-base transition-all duration-200',
+                                'placeholder': '0',
+                                'data-field': 'accountSecurities',
+                                'data-step': '3',
+                                'style': 'padding-right:2.5rem;'
+                            }
+                        }) }}
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                    </div>
+                    {{ form_errors(form.accountSecurities) }}
+                </div>
+
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-4">
+                        Comment se compose votre patrimoine financier :
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="text-sm font-medium mb-2">Détail du dépôt et épargne</div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                        <span class="text-gray-500 font-medium">€</span>
+                                    </div>
+                                    {{ form_widget(form.depositSavingsChecking, {'attr': {'class': 'w-full pl-7 pr-3 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100','placeholder':'Compte courant'}}) }}
+                                </div>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                        <span class="text-gray-500 font-medium">€</span>
+                                    </div>
+                                    {{ form_widget(form.depositSavingsLivretA, {'attr': {'class': 'w-full pl-7 pr-3 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100','placeholder':'Livret A'}}) }}
+                                </div>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                        <span class="text-gray-500 font-medium">€</span>
+                                    </div>
+                                    {{ form_widget(form.depositSavingsLdd, {'attr': {'class': 'w-full pl-7 pr-3 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100','placeholder':'LDD'}}) }}
+                                </div>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                        <span class="text-gray-500 font-medium">€</span>
+                                    </div>
+                                    {{ form_widget(form.depositSavingsCsl, {'attr': {'class': 'w-full pl-7 pr-3 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100','placeholder':'CSL'}}) }}
+                                </div>
+                                <div class="relative sm:col-span-2">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                        <span class="text-gray-500 font-medium">€</span>
+                                    </div>
+                                    {{ form_widget(form.depositSavingsOther, {'attr': {'class': 'w-full pl-7 pr-3 py-3 rounded-xl border-2 border-gray-200 focus:border-green-500 focus:ring-4 focus:ring-green-100','placeholder':'Autre livret'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-2">
+                        <i class="fa-solid fa-vault text-teal-600 mr-2"></i>
+                        Capitalisation (assurance-vie)
+                    </label>
+                    <div class="w-full sm:w-1/2 relative">
+                        {{ form_widget(form.capitalisation, {
+                            'attr': {
+                                'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-100 bg-white text-base transition-all duration-200',
+                                'placeholder': '0',
+                                'data-field': 'capitalisation',
+                                'data-step': '3',
+                                'style': 'padding-right:2.5rem;'
+                            }
+                        }) }}
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                    </div>
+                    {{ form_errors(form.capitalisation) }}
+                </div>
+
+                {# SCPI déplacé sous la section immobilier #}
+
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-2">
+                        <i class="fa-solid fa-home text-purple-600 mr-2"></i>
+                        {% trans %}Si vous disposez de revenus locatifs, quel en est le montant annuel ?{% endtrans %}
+                    </label>
+                    <div class="w-full sm:w-1/2 relative">
+                        {{ form_widget(form.realestateIncome, {
+                            'attr': {
+                                'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 bg-white text-base transition-all duration-200',
+                                'placeholder': '0',
+                                'data-field': 'realestateIncome',
+                                'data-step': '3',
+                                'style': 'padding-right:2.5rem;'
+                            }
+                        }) }}
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                    </div>
+                    {{ form_errors(form.realestateIncome) }}
+                </div>
+
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-2">
+                        <i class="fa-solid fa-building text-orange-600 mr-2"></i>
+                        {% trans %}Quel est le montant estimé de votre patrimoine immobilier (résidence principale, immobilier d'investissement, parts de SCPI) ?{% endtrans %}
+                    </label>
+                    <div class="w-full sm:w-1/2 relative">
+                        {{ form_widget(form.realestate, {
+                            'attr': {
+                                'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 bg-white text-base transition-all duration-200',
+                                'placeholder': '0',
+                                'data-field': 'realestate',
+                                'data-step': '3',
+                                'style': 'padding-right:2.5rem;'
+                            }
+                        }) }}
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                    </div>
+                    {{ form_errors(form.realestate) }}
+                </div>
+
+                <div class="mb-10">
+                    <label class="block text-base font-semibold mb-2">
+                        Décomposition du patrimoine immobilier
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                <span class="text-gray-500 font-medium">€</span>
+                            </div>
+                            {{ form_widget(form.realestatePrimaryResidence, {'attr': {'class': 'w-full pl-7 pr-3 py-3 rounded-xl border-2 border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-100','placeholder':'Résidence principale'}}) }}
+                        </div>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                <span class="text-gray-500 font-medium">€</span>
+                            </div>
+                            {{ form_widget(form.realestateInvestment, {'attr': {'class': 'w-full pl-7 pr-3 py-3 rounded-xl border-2 border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-100','placeholder':'Immobilier d\'investissement'}}) }}
+                        </div>
+                        <div class="relative sm:col-span-2">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                <span class="text-gray-500 font-medium">€</span>
+                            </div>
+                            {{ form_widget(form.scpi, {'attr': {'class': 'w-full pl-7 pr-3 py-3 rounded-xl border-2 border-gray-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-100','placeholder':'Parts de SCPI'}}) }}
+                        </div>
+                    </div>
+                </div>
+
+            <div class="mb-10">
+                    <label class="block text-base font-semibold mb-2">
+                        <i class="fa-solid fa-credit-card text-red-600 mr-2"></i>
+                        {% trans %}Quel est le montant annuel de vos charges immobilières (prêts immobiliers et loyers) ?{% endtrans %}
+                    </label>
+                    <div class="w-full sm:w-1/2 relative">
+                        {{ form_widget(form.rent, {
+                            'attr': {
+                                'class': 'w-full pr-10 pl-4 py-3 rounded-xl border-2 border-gray-200 focus:border-red-500 focus:ring-4 focus:ring-red-100 bg-white text-base transition-all duration-200',
+                                'placeholder': '0',
+                                'data-field': 'rent',
+                                'data-step': '3',
+                                'style': 'padding-right:2.5rem;'
+                            }
+                        }) }}
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500 font-medium text-lg">€</span>
+                    </div>
+                    {{ form_errors(form.rent) }}
+                </div>
+
+                <div class="flex">
+                    <a class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44" href="{{ path('user_create_profile', {'step' : 2 }) }}">
+                        {% trans %}Précédent{% endtrans %}
+                    </a>
+                    <button id="btn-next" type="submit" class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44 ml-auto">
+                        {% trans %}Suivant{% endtrans %}
+                    </button>
+                </div>
+            {# Rendre uniquement le token CSRF, sans afficher le reste des champs non utilisés #}
+            {% if form is defined and form._token is defined %}{{ form_row(form._token) }}{% endif %}
+            {% if form is defined %}{{ form_end(form, {'render_rest': false}) }}{% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fonction pour nettoyer un nombre (supprimer les espaces, € et caractères non numériques)
+            function cleanNumber(value) {
+                if (!value) return '';
+                return value.toString().replace(/[^\d]/g, '');
+            }
+
+            // Fonction pour formater un nombre avec des espaces
+            function formatNumber(value) {
+                if (!value) return '';
+                const numericValue = cleanNumber(value);
+                if (numericValue === '') return '';
+                return numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            }
+
+            // Sélectionner tous les champs de saisie
+            const inputs = document.querySelectorAll('#form-step3 input[type="text"]');
+            
+            inputs.forEach(function(input) {
+                // Ne pas écraser les valeurs existantes par 0
+
+                // Empêcher la saisie du symbole € et autres caractères non numériques
+                input.addEventListener('input', function(e) {
+                    const cursorPosition = e.target.selectionStart;
+                    const oldValue = e.target.value;
+                    const cleanedValue = cleanNumber(oldValue);
+                    
+                    if (cleanedValue !== oldValue) {
+                        e.target.value = cleanedValue;
+                        // Restaurer la position du curseur
+                        const newPosition = Math.min(cursorPosition, cleanedValue.length);
+                        e.target.setSelectionRange(newPosition, newPosition);
+                    }
+                });
+
+                // Empêcher le collage de caractères non numériques
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                    const cleanedText = cleanNumber(pastedText);
+                    if (cleanedText) {
+                        document.execCommand('insertText', false, cleanedText);
+                    }
+                });
+            });
+
+            // Intercepter la soumission du formulaire pour nettoyer les valeurs
+            const form = document.getElementById('form-step3');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    inputs.forEach(function(input) {
+                        if (input.value) {
+                            const cleanedValue = cleanNumber(input.value);
+                            input.value = cleanedValue;
+                        }
+                    });
+                    e.preventDefault();
+                    if (form.dataset.submitting === '1') return;
+                    form.dataset.submitting = '1';
+                    const fd = new FormData(form);
+                    fd.append('_save_only', '1');
+                    const nextUrl = '{{ path('user_create_profile', {'step': 4}) }}';
+                    fetch(form.action || window.location.href, { method: 'POST', body: fd, credentials: 'same-origin' })
+                      .then(function(){ window.location.href = nextUrl; })
+                      .catch(function(){ window.location.href = nextUrl; });
+                });
+                const btn = document.getElementById('btn-next');
+                if (btn) {
+                    btn.addEventListener('click', function(e){
+                        e.preventDefault();
+                        if (form.dataset.submitting === '1') return;
+                        form.dataset.submitting = '1';
+                        const fd = new FormData(form);
+                        fd.append('_save_only', '1');
+                        const nextUrl = '{{ path('user_create_profile', {'step': 4}) }}';
+                        fetch(form.action || window.location.href, { method: 'POST', body: fd, credentials: 'same-origin' })
+                          .then(function(){ window.location.href = nextUrl; })
+                          .catch(function(){ try { form.submit(); } catch(e) { window.location.href = nextUrl; } });
+                    });
+                }
+                form.addEventListener('submit', function(){ form.dataset.submitted = '1'; });
+            }
+        });
+    </script>
+{% endblock %}

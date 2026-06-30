@@ -1,0 +1,115 @@
+{% extends 'front/user/dashboard/base.html.twig' %}
+
+{% block page_title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-xl font-semibold text-gray-900">Mes notifications</h2>
+    
+    {# Bouton Marquer tout comme lu - affiché uniquement s'il y a des notifications #}
+    <form method="POST" action="{{ path('user_dashboard_notifications_read_all') }}" id="mark-all-read-form">
+      <input type="hidden" name="_token" value="{{ csrf_token('read_all_notifications') }}">
+      <button type="submit" 
+              id="mark-all-read-btn"
+              class="hidden items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        Tout marquer comme lu
+      </button>
+    </form>
+  </div>
+
+  {% set items = [] %}
+  
+  {# Ajouter les activités récentes #}
+  {% if recentActivities is defined %}
+    {% for activity in recentActivities %}
+      {% set activityKey = 'activity:' ~ activity.id %}
+      {% set isRead = activityKey in app.session.get('user_read_notifications', []) %}
+      {% if not isRead %}
+        {% set levelClass = activity.level == 'success' ? 'text-green-600' : (activity.level == 'warning' ? 'text-orange-600' : 'text-blue-600') %}
+        {% set levelIcon = activity.level == 'success' ? '✓' : (activity.level == 'warning' ? '⚠' : 'ℹ') %}
+        {% set items = items|merge([{
+          type: 'activity', 
+          id: activity.id, 
+          label: activity.title, 
+          detail: activity.message,
+          level: activity.level,
+          levelClass: levelClass,
+          levelIcon: levelIcon,
+          createdAt: activity.createdAt|date('d/m/Y à H:i')
+        }]) %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  
+  {# Récupérer les notifications lues depuis la session #}
+  {% set readNotifications = app.session.get('user_read_notifications', []) %}
+  
+  {# Ajouter les notifications KYC classiques (seulement si non lues) #}
+  {% if kycStatus.hasRefusedDocuments %}
+    {% for doc in kycStatus.refusedDocuments %}
+      {% set refusedKey = 'refused:' ~ doc.id %}
+      {% if refusedKey not in readNotifications %}
+        {% set items = items|merge([{type: 'refused', id: doc.id, label: 'Document refusé', detail: doc.typeLabel ~ (doc.reasonLabel ? ' — ' ~ doc.reasonLabel : ''), level: 'warning', levelClass: 'text-orange-600', levelIcon: '⚠'}]) %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if kycStatus.hasPendingDocuments %}
+    {% for doc in kycStatus.pendingDocuments %}
+      {% set pendingKey = 'pending:' ~ doc.id %}
+      {% if pendingKey not in readNotifications %}
+        {% set items = items|merge([{type: 'pending', id: doc.id, label: 'Document en attente', detail: doc.type, level: 'info', levelClass: 'text-blue-600', levelIcon: 'ℹ'}]) %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if kycStatus.allDocumentsValidated %}
+    {% set validatedKey = 'validated:0' %}
+    {% if validatedKey not in readNotifications %}
+      {% set items = items|merge([{type: 'validated', id: 0, label: 'KYC validé', detail: 'Tous vos documents ont été validés', level: 'success', levelClass: 'text-green-600', levelIcon: '✓'}]) %}
+    {% endif %}
+  {% endif %}
+
+  {% if items|length == 0 %}
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+      </svg>
+      <p class="mt-4 text-sm text-gray-600">Aucune notification pour le moment.</p>
+    </div>
+  {% else %}
+    <ul class="divide-y divide-gray-200 space-y-3">
+      {% for it in items %}
+      <li class="py-4 px-4 rounded-lg hover:bg-gray-50 transition-colors {% if it.level == 'success' %}bg-green-50/50{% elseif it.level == 'warning' %}bg-orange-50/50{% else %}bg-blue-50/50{% endif %}">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-lg font-bold {{ it.levelClass }}">{{ it.levelIcon }}</span>
+              <div class="text-sm font-semibold text-gray-900">{{ it.label }}</div>
+            </div>
+            <div class="text-sm text-gray-600 ml-7">{{ it.detail }}</div>
+            {% if it.createdAt is defined %}
+            <div class="text-xs text-gray-400 ml-7 mt-1">{{ it.createdAt }}</div>
+            {% endif %}
+          </div>
+          <a href="{{ path('user_dashboard_notifications_read', {type: it.type, id: it.id}) }}" 
+             class="ml-4 text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors">
+            Ouvrir
+          </a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    
+    {# Script pour afficher le bouton si des notifications existent #}
+    <script>
+      document.getElementById('mark-all-read-btn').classList.remove('hidden');
+      document.getElementById('mark-all-read-btn').classList.add('inline-flex');
+    </script>
+  {% endif %}
+</div>
+{% endblock %}
+
+

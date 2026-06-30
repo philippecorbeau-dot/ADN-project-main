@@ -1,0 +1,112 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Fiche Professionnel{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+  <div class="mb-6">
+    <a href="{{ path('admin_modern_pros') }}" class="text-sm text-blue-600 hover:underline">← Retour à la liste</a>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Carte Société -->
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Société</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div>
+          <div class="text-gray-500">Dénomination</div>
+          <div class="font-medium">{{ pro.companyName ?? '—' }}</div>
+        </div>
+        <div>
+          <div class="text-gray-500">SIREN</div>
+          <div class="font-medium">{{ pro.siren ?? '—' }}</div>
+        </div>
+        <div>
+          <div class="text-gray-500">Forme</div>
+          <div class="font-medium">{{ pro.socialForm ?? '—' }}</div>
+        </div>
+        <div>
+          <div class="text-gray-500">Capital</div>
+          <div class="font-medium">{{ pro.capital ?? '—' }}</div>
+        </div>
+        <div class="md:col-span-2">
+          <div class="text-gray-500">Adresse</div>
+          <div class="font-medium">{{ pro.addressLine1 }} {{ pro.addressLine2 }}<br>{{ pro.postalCode }} {{ pro.city }} {{ pro.country }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carte Compte -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Compte</h2>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-gray-500">Contact</span><span class="font-medium">{{ user.firstName }} {{ user.lastName }}</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Email</span><span class="font-medium">{{ user.email }}</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Créé le</span><span class="font-medium">{{ user.createdAt|date('d/m/Y') }}</span></div>
+        <div class="flex justify-between"><span class="text-gray-500">Vérification email</span>
+          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ user.isVerified ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700' }}">{{ user.isVerified ? 'Vérifié' : 'Non vérifié' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actionnaires -->
+  <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Actionnaires</h2>
+    {% if shareholders is iterable and shareholders|length > 0 %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {% for s in shareholders %}
+      <div class="border border-gray-100 rounded-lg p-4">
+        <div class="font-medium">{{ s.firstName }} {{ s.lastName }}</div>
+        <div class="text-xs text-gray-500">{{ s.addressLine1 }} {{ s.postalCode }} {{ s.city }}</div>
+        <div class="text-xs text-gray-500">{{ s.country }}</div>
+        {% if s.birthday %}
+          <div class="text-xs text-gray-500">Né(e) le {{ s.birthday|date('d/m/Y') }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <p class="text-sm text-gray-500">Aucun actionnaire renseigné.</p>
+    {% endif %}
+  </div>
+
+  <!-- Documents KYC -->
+  <div class="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Documents KYC</h2>
+    {% if kycDocuments|length > 0 %}
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left font-medium text-gray-700">Type</th>
+              <th class="px-4 py-2 text-left font-medium text-gray-700">Statut</th>
+              <th class="px-4 py-2 text-left font-medium text-gray-700">Ajouté le</th>
+              <th class="px-4 py-2"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {% for d in kycDocuments %}
+            <tr>
+              <td class="px-4 py-2">{{ d.type }}</td>
+              <td class="px-4 py-2">
+                {% set statusColors = {'PENDING':'bg-yellow-100 text-yellow-800','VALIDATED':'bg-green-100 text-green-800','REFUSED':'bg-red-100 text-red-800'} %}
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ statusColors[d.status] ?? 'bg-gray-100 text-gray-800' }}">{{ d.status }}</span>
+              </td>
+              <td class="px-4 py-2">{{ d.createdAt ? d.createdAt|date('d/m/Y H:i') : '—' }}</td>
+              <td class="px-4 py-2 text-right">
+                <a href="{{ path('admin_modern_kyc_document_view', {id: d.id}) }}" class="text-blue-600 hover:underline">Ouvrir</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-sm text-gray-500">Aucun document déposé pour le moment.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+

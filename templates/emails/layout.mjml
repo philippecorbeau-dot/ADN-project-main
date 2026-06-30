@@ -1,0 +1,80 @@
+<mjml>
+    <mj-head>
+        <mj-title>{% block title %}{{ subject|default('ADN') }}{% endblock %}</mj-title>
+        <mj-font name="Montserrat-Regular" href="https://fonts.googleapis.com/css?family=Montserrat" />
+        <mj-style>
+            .email-paragraph {
+                text-align: start;
+                font-size: 14px;
+                line-height: 22px;
+                color: #061556;
+            }
+            .email-title {
+                font-size: large;
+                color: #061556;
+            }
+
+            {% include 'emails/partials/mails.css.twig' %}
+        </mj-style>
+    </mj-head>
+    <mj-body background-color="#ffffff">
+        {% if token is defined %}
+        <mj-section padding="0 0 20px 0">
+            <mj-column>
+                <mj-text align="center" font-size="12px">
+                    Vous n'arrivez pas à afficher le mail ? <a href="{{ url('app_home', {'token': token}) }}">Cliquez ici</a>
+                </mj-text>
+            </mj-column>
+        </mj-section>
+        {% endif %}
+
+        <!-- Header -->
+        <mj-section background-color="#EFF2FF" padding="38px 0 20px 0">
+            <mj-column>
+              <!--  <mj-image src="{{ absolute_url(asset('buil')) }}" width="157px" padding="0 0 15px 0"></mj-image>-->
+                <mj-text align="center" mj-class="email-title"><b>{{ title }}</b></mj-text>
+            </mj-column>
+        </mj-section>
+
+        <!-- Content -->
+        {% block content %}{% endblock %}
+
+        <!-- Pre-footer -->
+        <mj-section background-color="#061556" padding="20px 0">
+            <mj-column>
+                <mj-social font-size="12px" icon-size="12px" mode="horizontal" inner-padding="4px">
+                    <!--<mj-social-element name="facebook" href="https://www.facebook.com/homunity"></mj-social-element>
+                    <mj-social-element name="linkedin" href="https://www.linkedin.com/company/homunity"></mj-social-element>
+                    <mj-social-element name="instagram" href="https://www.instagram.com/homunity_com"></mj-social-element>
+                    <mj-social-element name="youtube" href="https://www.youtube.com/channel/UCnG5mZkA3sIzxcdAnsZwKQQ"></mj-social-element>-->
+                </mj-social>
+
+                <mj-divider border-width="1px" border-color="#ffffff" padding="10px 0"></mj-divider>
+
+                <mj-text mj-class="email-paragraph" color="#ffffff" padding="0 20px">
+                    {% trans %}Le site www.ADNFamlyoffice.fr présente les activités de la société ADN, qui propose les services de prestataire de conseil en investissements.{% endtrans %}
+                </mj-text>
+
+                <mj-text mj-class="email-paragraph" color="#ffffff" padding="0 20px">
+                    {% trans %}SAS ADN est une SAS au capital de 10 542 € dont le siège social est 131 boulevard brune - 75014 Paris et immatriculée au RCS de Paris sous le n°00000. Responsabilité civile professionnelle AIG n°0000000.{% endtrans %}
+                </mj-text>
+
+            </mj-column>
+        </mj-section>
+
+        <!-- Footer -->
+        <mj-section background-color="#061556" padding="10px 0">
+            <mj-column>
+                <mj-text align="center" color="#ffffff" font-size="12px">
+                    Copyright &copy; {{ "now"|date("Y") }} ADN. Tous droits réservés.
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <!-- Gmail fix -->
+        <mj-raw>
+            <!-- prevent Gmail on iOS font size manipulation -->
+            <div style="display:none; white-space:nowrap; font:15px courier; line-height:0;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </div>
+        </mj-raw>
+    </mj-body>
+</mjml>

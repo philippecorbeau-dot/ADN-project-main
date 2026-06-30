@@ -1,0 +1,375 @@
+{% extends 'admin_modern/base.html.twig' %}
+
+{% block title %}Modifier utilisateur - {{ user.firstName }} {{ user.lastName }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header avec navigation -->
+    <div class="mb-8">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol role="list" class="flex items-center space-x-4">
+                <li>
+                    <div>
+                        <a href="{{ path('admin_modern_users') }}" class="text-gray-400 hover:text-gray-500">
+                            <svg class="flex-shrink-0 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="sr-only">Utilisateurs</span>
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <a href="{{ path('admin_modern_users') }}" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">Utilisateurs</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <a href="{{ path('admin_modern_user_view', {id: user.id}) }}" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">{{ user.firstName }} {{ user.lastName }}</a>
+                    </div>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="flex-shrink-0 h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="ml-4 text-sm font-medium text-gray-900">Modifier</span>
+                    </div>
+                </li>
+            </ol>
+        </nav>
+        
+        <div class="mt-4">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                ✏️ Modifier l'utilisateur
+            </h2>
+            <p class="mt-1 text-sm text-gray-500">Modifiez les informations de l'utilisateur</p>
+        </div>
+    </div>
+
+    <!-- Formulaire d'édition -->
+    <form method="POST" class="space-y-8">
+        <!-- Informations de base -->
+        <div class="bg-white shadow rounded-xl border border-gray-100">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">👤 Informations personnelles</h3>
+                <p class="mt-1 text-sm text-gray-500">Informations de base de l'utilisateur</p>
+            </div>
+            <div class="px-6 py-4">
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                    <!-- Prénom -->
+                    <div>
+                        <label for="firstName" class="block text-sm font-medium text-gray-700">
+                            Prénom <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="firstName" id="firstName" value="{{ user.firstName }}" required
+                               class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    </div>
+
+                    <!-- Nom -->
+                    <div>
+                        <label for="lastName" class="block text-sm font-medium text-gray-700">
+                            Nom <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="lastName" id="lastName" value="{{ user.lastName }}" required
+                               class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    </div>
+
+                    <!-- Email -->
+                    <div class="sm:col-span-2">
+                        <label for="email" class="block text-sm font-medium text-gray-700">
+                            Adresse email <span class="text-red-500">*</span>
+                        </label>
+                        <input type="email" name="email" id="email" value="{{ user.email }}" required
+                               class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <p class="mt-2 text-sm text-gray-500">L'utilisateur recevra une notification si l'email est modifié</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statut du compte -->
+        <div class="bg-white shadow rounded-xl border border-gray-100">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">🔧 Statut du compte</h3>
+                <p class="mt-1 text-sm text-gray-500">Paramètres de l'état du compte utilisateur</p>
+            </div>
+            <div class="px-6 py-4">
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                    <!-- Vérification email -->
+                    <div>
+                        <label for="isVerified" class="block text-sm font-medium text-gray-700">Statut de vérification</label>
+                        <select name="isVerified" id="isVerified" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="1" {% if user.isVerified %}selected{% endif %}>✅ Email vérifié</option>
+                            <option value="0" {% if not user.isVerified %}selected{% endif %}>❌ Email non vérifié</option>
+                        </select>
+                    </div>
+
+                    <!-- Étape KYC -->
+                    <div>
+                        <label for="kycStep" class="block text-sm font-medium text-gray-700">Étape KYC</label>
+                        <select name="kycStep" id="kycStep" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="">Sélectionner une étape</option>
+                            {% for key, label in kycSteps %}
+                                <option value="{{ key }}" {% if user.stepKyc == key %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Profil investisseur -->
+                    <div class="sm:col-span-2">
+                        <label for="investorProfile" class="block text-sm font-medium text-gray-700">Profil investisseur</label>
+                        <select name="investorProfile" id="investorProfile" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="">Aucun profil défini</option>
+                            <option value="PRUDENT" {% if user.investorProfile == 'PRUDENT' %}selected{% endif %}>🛡️ Prudent - Préservation du capital, faible risque</option>
+                            <option value="EQUILIBRE" {% if user.investorProfile == 'EQUILIBRE' %}selected{% endif %}>⚖️ Équilibré - Croissance modérée, risque moyen</option>
+                            <option value="DYNAMIQUE" {% if user.investorProfile == 'DYNAMIQUE' %}selected{% endif %}>🚀 Dynamique - Croissance forte, risque élevé</option>
+                            <option value="SPE" {% if user.investorProfile == 'SPE' %}selected{% endif %}>⚡ Spéculateur - Très haute performance, très haut risque</option>
+                        </select>
+                        <p class="mt-2 text-sm text-gray-500">Le profil détermine les recommandations d'investissement</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+    {# FIN du formulaire principal - Les rôles sont dans un formulaire séparé #}
+
+    <!-- Gestion des rôles (Super Admin uniquement) - FORMULAIRE SÉPARÉ -->
+    {% if isSuperAdmin is defined and isSuperAdmin %}
+    <form method="POST" action="{{ path('admin_modern_user_roles', {id: user.id}) }}" class="mt-8">
+        <input type="hidden" name="_token" value="{{ csrf_token('update_roles_' ~ user.id) }}">
+        
+        <div class="bg-white shadow rounded-xl border border-gray-100">
+            <div class="px-6 py-4 border-b border-gray-200 bg-purple-50 rounded-t-xl">
+                <h3 class="text-lg font-medium text-purple-900">👑 Rôles administratifs</h3>
+                <p class="mt-1 text-sm text-purple-700">Attribuez des rôles pour donner accès au back-office</p>
+            </div>
+            <div class="px-6 py-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for roleKey, roleLabel in adminRoles %}
+                        {% set hasRole = user.hasRole(roleKey) %}
+                        <label class="relative flex items-start p-4 border rounded-lg cursor-pointer transition-all
+                                      {% if hasRole %}border-purple-500 bg-purple-50{% else %}border-gray-200 hover:border-purple-300 hover:bg-purple-25{% endif %}">
+                            <div class="flex items-center h-5">
+                                <input type="checkbox" 
+                                       name="roles[]" 
+                                       value="{{ roleKey }}"
+                                       {% if hasRole %}checked{% endif %}
+                                       class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <span class="font-medium {% if hasRole %}text-purple-900{% else %}text-gray-700{% endif %}">
+                                    {% if roleKey == 'ROLE_SUPER_ADMIN' %}👑{% elseif roleKey == 'ROLE_ADMIN' %}🔑{% elseif roleKey == 'ROLE_ADMIN_OPERATOR' %}🔧{% elseif roleKey == 'ROLE_ADMIN_KYC' %}📋{% elseif roleKey == 'ROLE_ADMIN_SUPPORT' %}💬{% elseif roleKey == 'ROLE_ADMIN_MARKETING' %}📢{% endif %}
+                                    {{ roleLabel }}
+                                </span>
+                                <p class="text-gray-500 text-xs mt-1">
+                                    {% if roleKey == 'ROLE_SUPER_ADMIN' %}
+                                        Accès total + gestion des rôles
+                                    {% elseif roleKey == 'ROLE_ADMIN' %}
+                                        Accès complet au back-office
+                                    {% elseif roleKey == 'ROLE_ADMIN_OPERATOR' %}
+                                        Gestion utilisateurs et KYC
+                                    {% elseif roleKey == 'ROLE_ADMIN_KYC' %}
+                                        Validation des documents KYC
+                                    {% elseif roleKey == 'ROLE_ADMIN_SUPPORT' %}
+                                        Chat et messagerie client
+                                    {% elseif roleKey == 'ROLE_ADMIN_MARKETING' %}
+                                        Actualités et contenu
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-6 flex justify-end">
+                    <button type="submit" 
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        👑 Mettre à jour les rôles
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% else %}
+        <!-- Affichage des rôles en lecture seule pour les non-super-admins -->
+        {% if user.adminRoles|length > 0 %}
+        <div class="bg-gray-50 rounded-xl border border-gray-200 p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">🔐 Rôles administratifs</h3>
+            <div class="flex flex-wrap gap-2">
+                {% for role in user.adminRoles %}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+                                 {% if role == 'ROLE_SUPER_ADMIN' %}bg-purple-100 text-purple-800
+                                 {% elseif role == 'ROLE_ADMIN' %}bg-indigo-100 text-indigo-800
+                                 {% elseif role == 'ROLE_ADMIN_OPERATOR' %}bg-blue-100 text-blue-800
+                                 {% elseif role == 'ROLE_ADMIN_KYC' %}bg-green-100 text-green-800
+                                 {% elseif role == 'ROLE_ADMIN_SUPPORT' %}bg-cyan-100 text-cyan-800
+                                 {% elseif role == 'ROLE_ADMIN_MARKETING' %}bg-orange-100 text-orange-800
+                                 {% else %}bg-gray-100 text-gray-800{% endif %}">
+                        {{ constant('App\\Entity\\User\\User::ROLES_ADMIN_LABELS')[role]|default(role) }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Informations système -->
+    <div class="mt-8 bg-gray-50 rounded-xl border border-gray-200 p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">ℹ️ Informations système</h3>
+        <div class="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-2 text-sm">
+            <div>
+                <span class="font-medium text-gray-700">ID utilisateur :</span>
+                <span class="text-gray-900">{{ user.id }}</span>
+            </div>
+            <div>
+                <span class="font-medium text-gray-700">Date d'inscription :</span>
+                <span class="text-gray-900">{{ user.createdAt|date('d/m/Y à H:i') }}</span>
+            </div>
+            {% if user.lastLogin is defined and user.lastLogin %}
+            <div>
+                <span class="font-medium text-gray-700">Dernière connexion :</span>
+                <span class="text-gray-900">{{ user.lastLogin|date('d/m/Y à H:i') }}</span>
+            </div>
+            {% endif %}
+            
+            <div>
+                <span class="font-medium text-gray-700">Dernière modification :</span>
+                <span class="text-gray-900">{{ user.updatedAt ? user.updatedAt|date('d/m/Y à H:i') : 'Jamais' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statut de suspension actuel -->
+    {% if user.isSuspended() %}
+    <div class="mt-8 bg-orange-50 border border-orange-200 rounded-xl p-6">
+        <h3 class="text-lg font-medium text-orange-900 mb-4">🚫 Compte actuellement suspendu</h3>
+        <div class="text-sm text-orange-700 mb-4">
+            <p><strong>Date de suspension :</strong> {{ user.suspendedAt|date('d/m/Y à H:i') }}</p>
+            {% if user.suspendedReason %}
+                <p class="mt-1"><strong>Raison :</strong> {{ user.suspendedReason }}</p>
+            {% endif %}
+        </div>
+        <form method="post" action="{{ path('admin_modern_user_unsuspend', {id: user.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('unsuspend_user_' ~ user.id) }}">
+            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                ✅ Réactiver le compte
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Zone de danger -->
+    <div class="mt-8 bg-red-50 border border-red-200 rounded-xl p-6">
+        <h3 class="text-lg font-medium text-red-900 mb-4">⚠️ Zone de danger</h3>
+        <p class="text-sm text-red-700 mb-4">Ces actions sont irréversibles. Procédez avec prudence.</p>
+        <div class="flex flex-wrap gap-3">
+            {% if not user.isSuspended() %}
+                <button type="button" 
+                        onclick="document.getElementById('suspend-modal-edit').classList.remove('hidden')"
+                        class="inline-flex items-center px-4 py-2 border border-orange-300 shadow-sm text-sm font-medium rounded-md text-orange-700 bg-orange-100 hover:bg-orange-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                    🚫 Suspendre le compte
+                </button>
+            {% endif %}
+            
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                <button type="button" 
+                        onclick="document.getElementById('delete-modal').classList.remove('hidden')"
+                        class="inline-flex items-center px-4 py-2 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    🗑️ Supprimer définitivement
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal de suspension -->
+<div id="suspend-modal-edit" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-xl bg-white">
+        <div class="mt-3">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-orange-100">
+                <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 text-center mt-4">Suspendre le compte</h3>
+            <p class="text-sm text-gray-500 text-center mt-2">
+                L'utilisateur <strong>{{ user.firstName }} {{ user.lastName }}</strong> ne pourra plus se connecter.
+            </p>
+            <form method="post" action="{{ path('admin_modern_user_suspend', {id: user.id}) }}" class="mt-4">
+                <input type="hidden" name="_token" value="{{ csrf_token('suspend_user_' ~ user.id) }}">
+                <div class="mb-4">
+                    <label for="reason-edit" class="block text-sm font-medium text-gray-700 mb-1">Raison de la suspension (optionnel)</label>
+                    <textarea name="reason" id="reason-edit" rows="3" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 text-sm"
+                              placeholder="Ex: Violation des conditions d'utilisation..."></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" 
+                            onclick="document.getElementById('suspend-modal-edit').classList.add('hidden')"
+                            class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200">
+                        Annuler
+                    </button>
+                    <button type="submit" 
+                            class="flex-1 px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700">
+                        Suspendre
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de suppression définitive -->
+<div id="delete-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-xl bg-white">
+        <div class="mt-3">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900 text-center mt-4">Supprimer définitivement</h3>
+            <p class="text-sm text-gray-500 text-center mt-2">
+                Êtes-vous sûr de vouloir supprimer le compte de <strong>{{ user.firstName }} {{ user.lastName }}</strong> ?
+            </p>
+            <p class="text-sm text-red-600 text-center mt-2 font-medium">
+                ⚠️ Cette action est irréversible !
+            </p>
+            <form method="post" action="{{ path('admin_modern_user_delete', {id: user.id}) }}" class="mt-4">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
+                <div class="flex gap-3">
+                    <button type="button" 
+                            onclick="document.getElementById('delete-modal').classList.add('hidden')"
+                            class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200">
+                        Annuler
+                    </button>
+                    <button type="submit" 
+                            class="flex-1 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700">
+                        Supprimer définitivement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Fermer les modals en cliquant en dehors
+['suspend-modal-edit', 'delete-modal'].forEach(function(modalId) {
+    document.getElementById(modalId).addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+        }
+    });
+});
+</script>
+{% endblock %}
+

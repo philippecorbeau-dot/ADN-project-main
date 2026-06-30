@@ -1,0 +1,115 @@
+{# Les notifications KYC doivent être persistantes tant que l'état n'est pas validé #}
+{% if kycStatus is defined %}
+    {% if kycStatus.hasDocuments %}
+        {% if kycStatus.allDocumentsValidated %}
+            <!-- Notification KYC validé -->
+            <div class="mb-8">
+                <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 text-white shadow-xl">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fa-solid fa-check-circle text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-bold text-white mb-1">
+                                {{ kycStatus.message }}
+                            </h3>
+                            <p class="text-green-100 text-sm">
+                                Vous pouvez maintenant accéder à tous nos services d'investissement.
+                            </p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fa-solid fa-arrow-right text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% elseif kycStatus.hasRefusedDocuments %}
+            <!-- Notification KYC refusé avec détails et action -->
+            <div class="mb-8">
+                <div class="bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl p-6 text-white shadow-xl">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fa-solid fa-exclamation-triangle text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-bold text-white mb-2">{{ kycStatus.message }}</h3>
+                            {% if kycStatus.refusedDocuments is not empty %}
+                                <ul class="text-sm text-white/90 list-disc pl-5 space-y-1">
+                                    {% for doc in kycStatus.refusedDocuments %}
+                                        <li>
+                                            <span class="font-semibold">{{ doc.typeLabel ?? doc.type }}</span>
+                                            {% if doc.reasonLabel %} — {{ doc.reasonLabel }}{% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                        <div class="flex-shrink-0">
+                            <a href="{{ path(kycStatus.action.url, kycStatus.action.params ?? {}) }}"
+                               class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium">
+                                {{ kycStatus.action.text }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% elseif kycStatus.hasPendingDocuments %}
+            <!-- Notification KYC en cours de validation -->
+            <div class="mb-8">
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-xl">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fa-solid fa-clock text-white text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-bold text-white mb-1">
+                                {{ kycStatus.message }}
+                            </h3>
+                            <p class="text-blue-100 text-sm">
+                                Notre équipe ADN Family Office examine vos documents avec attention. 
+                                Vous recevrez une notification dès que la validation sera terminée.
+                            </p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {# le bloc refusé est géré plus haut avec les détails #}
+        {% endif %}
+    {% else %}
+        <!-- Notification pour soumettre les documents KYC -->
+        <div class="mb-8">
+            <div class="bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl p-6 text-white shadow-xl">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-upload text-white text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <h3 class="text-lg font-bold text-white mb-1">
+                            Finalisez votre inscription
+                        </h3>
+                        <p class="text-purple-100 text-sm">
+                            Pour accéder à nos services d'investissement, veuillez soumettre vos documents d'identité et de domicile.
+                        </p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <a href="{{ path('user_create_profile', {'step': 5}) }}" 
+                           class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium">
+                            Soumettre mes documents
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endif %} 

@@ -1,0 +1,218 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+{% import 'macro/alert.html.twig' as alert %}
+{% block header %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %} 
+    <div class="container pb-10">
+        <div class="rounded-xl bg-white p-10 shadow-md transition-opacity transition-transform">
+            <hgroup class="mb-8">
+                <h1 class="text-2xl">{% trans %}Votre expérience{% endtrans %}</h1>
+                <p>{% trans %}1. Votre profil d'investisseur{% endtrans %}</p>
+            </hgroup>
+            {{ alert.success("Pourquoi posons-nous des questions sur vos objectifs ?", "Pour les investisseurs non avertis, le règlement européen n°2020/1503 impose à Homunity d'obtenir des informations sur l'expérience de l'investisseur, ses objectifs d'investissement, sa situation financière et sa compréhension des risques liés à l'investissement.") }}
+            {{ form_start(form, {'attr': {'id': 'form-step4'}}) }}
+            <div class="mb-10">
+                <label class="required block leading-none">{{ form.alreadyInvest.vars.label }}</label>
+                <div class="flex flex-col gap-y-4 mt-2">
+                    <div>
+                        {{ form_widget(form.alreadyInvest[0], {'attr' : {'class' : 'hidden peer'}}) }}
+                        <label for="{{ form.alreadyInvest[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                            <span class="font-bold">{{ form.alreadyInvest[0].vars.label }}</span>
+                        </label>
+                    </div>
+                    <div>
+                        {{ form_widget(form.alreadyInvest[1], {'attr' : {'class' : 'hidden peer'}}) }}
+                        <label for="{{ form.alreadyInvest[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span class="font-bold">{{ form.alreadyInvest[1].vars.label }}</span>
+                        </label>
+                    </div>
+                </div>
+                {{ form_errors(form.alreadyInvest) }}
+            </div>
+            <div data-show-if="input.name={{ form.name.vars.full_name }}={{ form.alreadyInvest[0].vars.value }}" class="mb-10">
+                <label class="required block leading-none">{{ form.investType.vars.label }}</label>
+                <div class="flex flex-col gap-y-2 mt-4">
+                    {% for value in form.investType %}
+                        <div>
+                            {{ form_widget(value, {'attr' : {'class' : 'hidden peer', 'disabled': 'disabled', 'data-enable-if' : 'input.name=' ~ form.name.vars.full_name ~ '=' ~ form.alreadyInvest[0].vars.value}}) }}
+                            <label for="{{ value.vars.id }}" class="w-96 block items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light px-2.5 py-2">
+                                {{ value.vars.label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ form_errors(form.investType) }}
+            </div>
+            <div class="mb-10">
+                <label class="required block leading-none">{{ form.securities.vars.label }}</label>
+                <div class="flex flex-col gap-y-4 mt-2">
+                    <div>
+                        {{ form_widget(form.securities[0], {'attr' : {'class' : 'hidden peer'}}) }}
+                        <label for="{{ form.securities[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                            <span class="font-bold">{{ form.securities[0].vars.label }}</span>
+                        </label>
+                    </div>
+                    <div>
+                        {{ form_widget(form.securities[1], {'attr' : {'class' : 'hidden peer'}}) }}
+                        <label for="{{ form.securities[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light ">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span class="font-bold">{{ form.securities[1].vars.label }}</span>
+                        </label>
+                    </div>
+                </div>
+                {{ form_errors(form.securities) }}
+            </div>
+            <div data-show-if="input.name={{ form.securities.vars.full_name }}={{ form.securities[0].vars.value }}" class="mb-10">
+                <label class="required block leading-none">{{ form.securitiesOptions.vars.label }}</label>
+                <div class="flex flex-col gap-y-2 mt-4">
+                    {% for value in form.securitiesOptions %}
+                        <div>
+                            {{ form_widget(value, {'attr' : {'class' : 'hidden peer', 'disabled': 'disabled', 'data-enable-if' : 'input.name=' ~ form.securities.vars.full_name ~ '=' ~ form.securities[0].vars.value }}) }}
+                            <label for="{{ value.vars.id }}" class="w-2/6 block items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light px-2.5 py-2">
+                                {{ value.vars.label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ form_errors(form.securitiesOptions) }}
+            </div>
+            <div data-show-if="input.name={{ form.securities.vars.full_name }}={{ form.securities[0].vars.value }}" class="mb-10">
+                <label class="required block leading-none">{{ form.securitiesOptionsCount.vars.label }}</label>
+                <div class="flex flex-col gap-y-2 mt-4">
+                    {% for value in form.securitiesOptionsCount %}
+                        <div>
+                            {{ form_widget(value, {'attr' : {'class' : 'hidden peer', 'disabled': 'disabled', 'data-enable-if' : 'input.name=' ~ form.securities.vars.full_name ~ '=' ~ form.securities[0].vars.value }}) }}
+                            <label for="{{ value.vars.id }}" class="w-2/6 block items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light px-2.5 py-2">
+                                {{ value.vars.label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ form_errors(form.securitiesOptionsCount) }}
+            </div>
+            {# Section financeWorker retirée pour les non-professionnels #}
+                {# Bloc critères MIF2 retiré pour les non-professionnels
+                <fieldset class="hidden" name="awareness" data-sum="{{ (form.awarenessMinimumAmount.vars.value + form.awarenessMinimumTime.vars.value + form.awarenessTransactions.vars.value)|default(0) }}" data-show-if="input.name={{ form.mif.vars.full_name }}={{ form.mif[1].vars.value }}">
+                    <div class="mb-10">
+                        <label class="required block">{{ form.awarenessMinimumAmount.vars.label }}</label>
+                        <div class="flex flex-col gap-y-4 mt-2">
+                            <div>
+                                {{ form_widget(form.awarenessMinimumAmount[0], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value}}) }}
+                                <label for="{{ form.awarenessMinimumAmount[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light p-4 md:p-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessMinimumAmount[0].vars.label }}</span>
+                                </label>
+                            </div>
+                            <div>
+                                {{ form_widget(form.awarenessMinimumAmount[1], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value}}) }}
+                                <label for="{{ form.awarenessMinimumAmount[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light p-4 md:p-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessMinimumAmount[1].vars.label }}</span>
+                                </label>
+                            </div>
+                            {{ form_errors(form.awarenessMinimumAmount) }}
+                        </div>
+                    </div>
+                    <div class="mb-10">
+                        <label class="required block">{{ form.awarenessMinimumTime.vars.label }}</label>
+                        <div class="flex flex-col gap-y-4 mt-2">
+                            <div>
+                                {{ form_widget(form.awarenessMinimumTime[0], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value}}) }}
+                                <label for="{{ form.awarenessMinimumTime[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light p-4 md:p-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessMinimumTime[0].vars.label }}</span>
+                                </label>
+                            </div>
+                            <div>
+                                {{ form_widget(form.awarenessMinimumTime[1], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value}}) }}
+                                <label for="{{ form.awarenessMinimumTime[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light p-4 md:p-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessMinimumTime[1].vars.label }}</span>
+                                </label>
+                            </div>
+                            {{ form_errors(form.awarenessMinimumTime) }}
+                        </div>
+                    </div>
+                    <div class="mb-10">
+                        <label class="required block">{{ form.awarenessTransactions.vars.label }}</label>
+                        <div class="flex flex-col gap-y-4 mt-2">
+                            <div>
+                                {{ form_widget(form.awarenessTransactions[0], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value }}) }}
+                                <label for="{{ form.awarenessTransactions[0].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light p-4 md:p-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessTransactions[0].vars.label }}</span>
+                                </label>
+                            </div>
+                            <div>
+                                {{ form_widget(form.awarenessTransactions[1], {'attr' : {'class' : 'hidden peer', 'data-required-if' : 'input.name=' ~ form.mif.vars.full_name ~ '=' ~ form.mif[1].vars.value}}) }}
+                                <label for="{{ form.awarenessTransactions[1].vars.id }}" class="flex w-56 items-center border border-homblue-normal rounded-lg transition-all opacity-50 cursor-pointer hover:opacity-100 hover:border-homblue-alternate hover:text-homblue-alternate ease-in-out peer-checked:opacity-100 peer-checked:bg-homblue-light p-4 md:p-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 m-2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    <span class="font-bold">{{ form.awarenessTransactions[1].vars.label }}</span>
+                                </label>
+                            </div>
+                            {{ form_errors(form.awarenessTransactions) }}
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="hidden" data-show-if="fieldset.name=awareness>=2">
+                    {% embed "embed/alert.html.twig" with {'type' : 'info'} %}
+                        {% block title %}{% trans %}Vous êtes considéré comme investisseur averti.{% endtrans %}{% endblock %}
+                        {% block content %}
+                            <p class="mb-5">{% trans %}En signant la déclaration du règlement européen, vous pourrez poursuivre en tant qu'investisseur averti et ainsi accéder directement à nos offres d'investissement. Nous vous informons qu'en tant qu'investisseur averti, vous disposez de moins de protection qu'un investisseur non averti (pas de délai de réflexion et moins d'avertissement sur les risques). Si vous ne souhaitez pas être qualifié d'investisseur averti, vous pouvez poursuivre.{% endtrans %}</p>
+                        {% endblock %}
+                        {% block cta %}
+                            <button data-modal="aware" type="button" class="btn btn-secondary btn-w-ico">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75" />
+                                </svg>
+                                {% trans %}Valider mon statut{% endtrans %}
+                            </button>
+                        {% endblock %}
+                    {% endembed %}
+                    {% include 'front/partials/modals/aware-profile.html.twig' %}
+                </div>
+                #}
+                <div class="flex">
+                    <a class="btn btn-link btn-w-ico" href="{{ path('user_create_profile', {'step' : 3 }) }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                        </svg>
+                        {% trans %}Précédent{% endtrans %}
+                    </a>
+                    <button id="btn-next" type="submit" class="btn btn-secondary btn-w-ico ml-auto">
+                        {% trans %}Suivant{% endtrans %}
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                        </svg>
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+

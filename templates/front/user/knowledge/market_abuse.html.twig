@@ -1,0 +1,212 @@
+{% extends 'front/user/knowledge/layout.html.twig' %}
+
+{% block step_title %}Abus de marché{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Introduction -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start space-x-3">
+            <i class="fa-solid fa-info-circle text-blue-600 mt-1"></i>
+            <div class="flex-1">
+                <h3 class="font-semibold text-blue-800 mb-2">Informations sur l'abus de marché</h3>
+                <p class="text-sm text-blue-700">
+                    Ces questions nous permettent d'évaluer votre exposition potentielle aux risques d'abus de marché et de déterminer les mesures de protection appropriées.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulaire -->
+    <form method="post" class="space-y-6">
+        {{ form_start(form) }}
+        
+        <!-- Question 1 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <label class="block text-base font-semibold mb-4">
+                    <i class="fa-solid fa-shield-alt text-blue-600 mr-2"></i>
+                    {{ form_label(form.hasOtherSecuritiesAccounts) }}
+                </label>
+                <p class="text-sm text-gray-600 mb-4">
+                    Avez-vous d'autres comptes-titres dans d'autres établissements financiers ?
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    {{ form_widget(form.hasOtherSecuritiesAccounts[0], {'attr' : {'class' : 'hidden peer'}}) }}
+                    <label for="{{ form.hasOtherSecuritiesAccounts[0].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-blue-500 hover:bg-blue-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:ring-4 peer-checked:ring-blue-100">
+                        <i class="fa-solid fa-check-circle text-blue-600 mr-3 text-lg"></i>
+                        <span class="font-semibold text-base">{{ form.hasOtherSecuritiesAccounts[0].vars.label }}</span>
+                    </label>
+                </div>
+                <div>
+                    {{ form_widget(form.hasOtherSecuritiesAccounts[1], {'attr' : {'class' : 'hidden peer'}}) }}
+                    <label for="{{ form.hasOtherSecuritiesAccounts[1].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-gray-500 hover:bg-gray-50 peer-checked:border-gray-500 peer-checked:bg-gray-50 peer-checked:ring-4 peer-checked:ring-gray-100">
+                        <i class="fa-solid fa-times-circle text-gray-600 mr-3 text-lg"></i>
+                        <span class="font-semibold text-base">{{ form.hasOtherSecuritiesAccounts[1].vars.label }}</span>
+                    </label>
+                </div>
+            </div>
+            {{ form_errors(form.hasOtherSecuritiesAccounts) }}
+        </div>
+
+        <!-- Question 2 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <label class="block text-base font-semibold mb-4">
+                    <i class="fa-solid fa-briefcase text-green-600 mr-2"></i>
+                    {{ form_label(form.hasFinancialProfession) }}
+                </label>
+                <p class="text-sm text-gray-600 mb-4">
+                    Exercez-vous ou avez-vous exercé une profession dans le domaine financier ou boursier ?
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    {{ form_widget(form.hasFinancialProfession[0], {'attr' : {'class' : 'hidden peer', 'data-toggle-section': 'profession-details'}}) }}
+                    <label for="{{ form.hasFinancialProfession[0].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-green-500 hover:bg-green-50 peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:ring-4 peer-checked:ring-green-100">
+                        <i class="fa-solid fa-check-circle text-green-600 mr-3 text-lg"></i>
+                        <span class="font-semibold text-base">{{ form.hasFinancialProfession[0].vars.label }}</span>
+                    </label>
+                </div>
+                <div>
+                    {{ form_widget(form.hasFinancialProfession[1], {'attr' : {'class' : 'hidden peer', 'data-toggle-section': 'profession-details'}}) }}
+                    <label for="{{ form.hasFinancialProfession[1].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-gray-500 hover:bg-gray-50 peer-checked:border-gray-500 peer-checked:bg-gray-50 peer-checked:ring-4 peer-checked:ring-gray-100">
+                        <i class="fa-solid fa-times-circle text-gray-600 mr-3 text-lg"></i>
+                        <span class="font-semibold text-base">{{ form.hasFinancialProfession[1].vars.label }}</span>
+                    </label>
+                </div>
+            </div>
+            {{ form_errors(form.hasFinancialProfession) }}
+            
+            <!-- Sous-question conditionnelle -->
+            <div id="profession-details" class="mt-4 hidden opacity-0 transform translate-y-4 transition-all duration-300">
+                <div class="mb-4">
+                    <label class="block text-base font-semibold mb-2">
+                        <i class="fa-solid fa-edit text-green-600 mr-2"></i>
+                        {{ form_label(form.professionDetails) }}
+                    </label>
+                    <p class="text-sm text-gray-600 mb-2">
+                        Précisez votre profession dans le domaine financier
+                    </p>
+                </div>
+                {{ form_widget(form.professionDetails, {'attr': {'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500'}}) }}
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <div class="mb-4">
+                <label class="block text-base font-semibold mb-4">
+                    <i class="fa-solid fa-building text-purple-600 mr-2"></i>
+                    {{ form_label(form.isListedCompanyDirector) }}
+                </label>
+                <p class="text-sm text-gray-600 mb-4">
+                    Êtes-vous dirigeant d'une société cotée ou de la maison mère d'une société cotée ?
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    {{ form_widget(form.isListedCompanyDirector[0], {'attr' : {'class' : 'hidden peer', 'data-toggle-section': 'company-details'}}) }}
+                    <label for="{{ form.isListedCompanyDirector[0].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-purple-500 hover:bg-purple-50 peer-checked:border-purple-500 peer-checked:bg-purple-50 peer-checked:ring-4 peer-checked:ring-purple-100">
+                        <i class="fa-solid fa-check-circle text-purple-600 mr-3 text-lg"></i>
+                        <span class="font-semibold text-base">{{ form.isListedCompanyDirector[0].vars.label }}</span>
+                    </label>
+                </div>
+                <div>
+                    {{ form_widget(form.isListedCompanyDirector[1], {'attr' : {'class' : 'hidden peer', 'data-toggle-section': 'company-details'}}) }}
+                    <label for="{{ form.isListedCompanyDirector[1].vars.id }}" class="flex items-center p-4 border-2 border-gray-200 rounded-xl transition-all duration-200 cursor-pointer hover:border-gray-500 hover:bg-gray-50 peer-checked:border-gray-500 peer-checked:bg-gray-50 peer-checked:ring-4 peer-checked:ring-gray-100">
+                        <i class="fa-solid fa-times-circle text-gray-600 mr-3 text-lg"></i>
+                        <span class="font-semibold text-base">{{ form.isListedCompanyDirector[1].vars.label }}</span>
+                    </label>
+                </div>
+            </div>
+            {{ form_errors(form.isListedCompanyDirector) }}
+            
+            <!-- Sous-question conditionnelle -->
+            <div id="company-details" class="mt-4 hidden opacity-0 transform translate-y-4 transition-all duration-300">
+                <div class="mb-4">
+                    <label class="block text-base font-semibold mb-2">
+                        <i class="fa-solid fa-edit text-purple-600 mr-2"></i>
+                        {{ form_label(form.listedCompanyDetails) }}
+                    </label>
+                    <p class="text-sm text-gray-600 mb-2">
+                        Précisez la société cotée concernée
+                    </p>
+                </div>
+                {{ form_widget(form.listedCompanyDetails, {'attr': {'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500'}}) }}
+            </div>
+        </div>
+
+        <!-- Boutons de navigation -->
+        <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+            <a href="{{ path('user_create_profile', {step: 4}) }}" 
+               class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44">
+                <i class="fa-solid fa-arrow-left mr-2"></i>
+                Précédent
+            </a>
+            
+            <button type="submit" 
+                    class="btn r-04 btn--theme hover--tra-black last-link px-6 py-2 rounded-[6px] text-base transition-all duration-200 shadow-md w-44">
+                Suivant
+                <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </form>
+</div>
+
+<!-- JavaScript pour l'affichage conditionnel -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fonction pour gérer l'affichage conditionnel des sections
+    function toggleSection(radioButton, sectionId) {
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+
+        if (radioButton.checked && radioButton.value === '1') { // "Oui"
+            section.classList.remove('hidden');
+            setTimeout(() => {
+                section.classList.remove('opacity-0', 'translate-y-4');
+            }, 10);
+        } else {
+            section.classList.add('opacity-0', 'translate-y-4');
+            setTimeout(() => {
+                section.classList.add('hidden');
+            }, 300);
+        }
+    }
+
+    // Gestion de l'affichage conditionnel pour la profession
+    const professionRadios = document.querySelectorAll('input[name="knowledge_market_abuse[hasFinancialProfession]"]');
+    professionRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            toggleSection(this, 'profession-details');
+        });
+    });
+    
+    // Gestion de l'affichage conditionnel pour la société cotée
+    const companyRadios = document.querySelectorAll('input[name="knowledge_market_abuse[isListedCompanyDirector]"]');
+    companyRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            toggleSection(this, 'company-details');
+        });
+    });
+    
+    // Initialisation : afficher les sections si déjà sélectionnées
+    professionRadios.forEach(radio => {
+        if (radio.checked && radio.value === '1') {
+            toggleSection(radio, 'profession-details');
+        }
+    });
+
+    companyRadios.forEach(radio => {
+        if (radio.checked && radio.value === '1') {
+            toggleSection(radio, 'company-details');
+        }
+    });
+});
+</script>
+{% endblock %} 

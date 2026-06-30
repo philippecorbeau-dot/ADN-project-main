@@ -1,0 +1,2603 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - ADN Family Office{% endblock %}
+
+{% block page_styles %}
+    <!-- Styles UX révolutionnaires pour l'inscription multi-étapes -->
+    <style>
+        :root {
+            --adn-primary: #1C29A1;
+            --adn-primary-light: #2D3FDB;
+            --adn-primary-dark: #0F1751;
+            --adn-secondary: #3B82F6;
+            --adn-accent: #6366F1;
+            --adn-success: #10B981;
+            --adn-warning: #F59E0B;
+            --adn-error: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #1C29A1 0%, #3B82F6 40%, #6366F1 100%);
+            --gradient-hero: linear-gradient(135deg, #0F1751 0%, #1C29A1 30%, #2D3FDB 70%, #3B82F6 100%);
+            --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 30px rgba(28, 41, 161, 0.3);
+            --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-secondary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --border-radius: 1.5rem;
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-secondary);
+            background: var(--gradient-hero);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Particules animées en arrière-plan */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: translateY(-20px) translateX(10px);
+                opacity: 1;
+            }
+        }
+
+        /* Header moderne simple pour auth */
+        .auth-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            height: 70px;
+        }
+
+        .auth-header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .auth-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .auth-logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .auth-back-btn {
+            background: transparent;
+            color: var(--adn-primary);
+            border: 2px solid var(--adn-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .auth-back-btn:hover {
+            background: var(--adn-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Page d'inscription moderne */
+        .auth-page {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 1.5rem 3rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="gradient" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1)"/><stop offset="100%" style="stop-color:rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23gradient)"/><circle cx="800" cy="300" r="150" fill="url(%23gradient)"/><circle cx="600" cy="700" r="120" fill="url(%23gradient)"/></svg>') no-repeat center center / cover;
+            animation: floatingBg 20s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes floatingBg {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        .auth-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* Section gauche - Informations */
+        .auth-info {
+            color: white;
+            padding: 2rem 0;
+            flex: 0 0 350px;
+            max-width: 350px;
+        }
+
+        .auth-info h1 {
+            font-family: var(--font-primary);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .auth-info p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .auth-benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .auth-benefit {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .auth-benefit:hover {
+            transform: translateX(10px);
+        }
+
+        .auth-benefit-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .auth-benefit-text {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        /* Section droite - Formulaire multi-étapes révolutionnaire */
+        .auth-form-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(30px);
+            border-radius: 2rem;
+            padding: 3rem;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            width: 650px;
+            max-width: 650px;
+            min-height: 700px;
+            position: relative;
+            overflow: visible;
+            transition: var(--transition-smooth);
+        }
+
+        /* Indicateur de progression révolutionnaire */
+        .progress-container {
+            position: relative;
+            margin-bottom: 3rem;
+            padding: 0 2rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(28, 41, 161, 0.1);
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid rgba(28, 41, 161, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #94a3b8;
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-circle.active {
+            background: var(--gradient-primary);
+            border-color: var(--adn-primary);
+            color: white;
+            transform: scale(1.2);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .step-circle.completed {
+            background: var(--gradient-success);
+            border-color: var(--adn-success);
+            color: white;
+        }
+
+        .step-circle.completed::after {
+            content: '✓';
+            position: absolute;
+            font-size: 1.2rem;
+            font-weight: 900;
+        }
+
+        .step-label {
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            text-align: center;
+            transition: var(--transition-smooth);
+        }
+
+        .step-label.active {
+            color: var(--adn-primary);
+            transform: scale(1.05);
+        }
+
+        .auth-form-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+            border-radius: 2rem;
+            z-index: -1;
+        }
+
+        .auth-form-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .auth-form-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .auth-form-title {
+            font-family: var(--font-primary);
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.75rem;
+        }
+
+        .auth-form-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Système d'étapes - Refonte pour robustesse responsive */
+        .form-steps {
+            position: relative;
+            /* Suppression de la hauteur fixe pour s'adapter au contenu */
+            width: 100%;
+        }
+
+        .form-step {
+            /* Suppression du position absolute qui cassait le flux sur mobile */
+            display: none; 
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .form-step.active {
+            display: block;
+            opacity: 1;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ajustement des inputs pour mobile */
+        @media (max-width: 480px) {
+            .form-input {
+                font-size: 16px; /* Taille lisible */
+                padding: 0.75rem 0.75rem 0.75rem 2.5rem; /* Padding optimisé */
+                height: 48px; /* Hauteur tactile standard */
+                min-height: 48px;
+            }
+            
+            .form-icon {
+                font-size: 1.1rem;
+                left: 0.8rem;
+            }
+            
+            .form-label {
+                margin-bottom: 0.25rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            /* Navigation en bas, bien espacée */
+            .form-navigation {
+                margin-top: 2rem;
+                padding-top: 1rem;
+                border-top: 1px solid rgba(0,0,0,0.05);
+            }
+        }
+
+        .step-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .step-title {
+            font-family: var(--font-primary);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 700;
+            color: var(--adn-primary);
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--adn-primary);
+            border-radius: 50%;
+        }
+
+        /* Champs de saisie avec validation visuelle avancée */
+        .form-input {
+            padding: 1.25rem 3.5rem 1.25rem 1.25rem; /* Padding normal à gauche, espace pour validation à droite */
+            border: 2px solid rgba(28, 41, 161, 0.15);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-family: var(--font-secondary);
+            transition: var(--transition-smooth);
+            background: rgba(255, 255, 255, 0.9);
+            min-height: 64px;
+            width: 100%;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--adn-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label .form-icon {
+            position: static;
+            transform: none;
+            font-size: 1rem;
+            color: var(--adn-primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+
+        .form-input {
+            position: relative;
+        }
+
+        /* Icône dans l'input (pour les cas sans label) */
+        .form-group > .form-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: calc(50% + 0.75rem); /* Ajustement pour tenir compte du label */
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: #94a3b8;
+            transition: var(--transition-smooth);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .form-group.focused .form-icon,
+        .form-group.valid .form-icon {
+            color: var(--adn-primary);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .form-group.error .form-icon {
+            color: var(--adn-error);
+        }
+
+        /* Indicateur de validation en temps réel */
+        .validation-indicator {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            opacity: 0;
+            transition: var(--transition-bounce);
+        }
+
+        .form-group.valid .validation-indicator {
+            opacity: 1;
+            background: var(--gradient-success);
+            color: white;
+            transform: translateY(-50%) scale(1);
+        }
+
+        .form-group.error .validation-indicator {
+            opacity: 1;
+            background: var(--adn-error);
+            color: white;
+            transform: translateY(-50%) scale(1);
+        }
+
+        .form-group.loading .validation-indicator {
+            opacity: 1;
+            background: var(--adn-warning);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.1); }
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--adn-primary);
+            background: white;
+            box-shadow: 
+                0 0 0 4px rgba(28, 41, 161, 0.15),
+                0 8px 25px -8px rgba(28, 41, 161, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .form-input:hover:not(:focus) {
+            border-color: rgba(28, 41, 161, 0.25);
+            background: white;
+            box-shadow: 
+                0 6px 12px -4px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .form-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .form-error {
+            color: var(--adn-error);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid var(--adn-error);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-error::before {
+            content: "⚠️";
+            font-size: 0.9rem;
+        }
+
+        .form-error ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .form-error li {
+            margin: 0;
+        }
+
+        /* Amélioration des états de validation */
+        .form-group.error .form-input {
+            border-color: var(--adn-error);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .form-group.valid .form-input {
+            border-color: var(--adn-success);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .form-error-container {
+            min-height: 0; /* Pas de hauteur minimale par défaut */
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Pour les champs avec validation (email, password) */
+        .form-group[data-validates="true"] .form-error-container {
+            min-height: 2rem; /* Hauteur réservée pour éviter le décalage */
+        }
+
+        .form-error-container:empty {
+            display: block; /* Maintenir l'espace même si vide */
+        }
+
+        /* Amélioration de l'indicateur de validation */
+        .validation-indicator {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        /* Responsive design pour les formulaires */
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .form-input {
+                min-height: 56px;
+                padding: 1rem 3rem 1rem 1rem;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+            }
+            
+            .validation-indicator {
+                width: 20px;
+                height: 20px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Sélection du type d'utilisateur améliorée */
+        .user-type-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .user-type-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .user-type-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--adn-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-type-description {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .user-type-option {
+            position: relative;
+        }
+
+        .user-type-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .user-type-card {
+            padding: 1.75rem 1.5rem;
+            border: 2px solid rgba(28, 41, 161, 0.15);
+            border-radius: 1.25rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.8));
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .user-type-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+        }
+
+        .user-type-card:hover::before {
+            left: 100%;
+        }
+
+        .user-type-option input[type="radio"]:checked + .user-type-card {
+            border-color: var(--adn-primary);
+            background: linear-gradient(145deg, rgba(28, 41, 161, 0.08), rgba(59, 130, 246, 0.05));
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                0 12px 25px -8px rgba(28, 41, 161, 0.25),
+                0 0 0 1px rgba(28, 41, 161, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .user-type-card:hover:not(:has(input:checked)) {
+            transform: translateY(-2px);
+            border-color: rgba(28, 41, 161, 0.25);
+            box-shadow: 
+                0 8px 20px -6px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .user-type-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .user-type-title {
+            font-weight: 700;
+            color: var(--adn-primary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .user-type-desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Checkbox personnalisée - mise en valeur */
+        .custom-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin: 2rem 0;
+            cursor: pointer;
+            padding: 1.5rem;
+            background: linear-gradient(145deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.8));
+            border-radius: 1rem;
+            border: 2px solid rgba(28, 41, 161, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 8px -2px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .custom-checkbox::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(28, 41, 161, 0.05), transparent);
+            transition: left 0.6s;
+        }
+
+        .custom-checkbox:hover::before {
+            left: 100%;
+        }
+
+        .custom-checkbox:hover {
+            background: linear-gradient(145deg, rgba(28, 41, 161, 0.05), rgba(59, 130, 246, 0.03));
+            border-color: rgba(28, 41, 161, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 
+                0 4px 8px -2px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .custom-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--adn-primary);
+            margin-top: 2px;
+            cursor: pointer;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .checkbox-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #374151;
+        }
+
+        .checkbox-text a {
+            color: var(--adn-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .checkbox-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Boutons de navigation révolutionnaires */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 3rem;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-width: 140px;
+        }
+
+        .btn-previous {
+            background: rgba(100, 116, 139, 0.1);
+            color: #64748b;
+            border: 2px solid rgba(100, 116, 139, 0.2);
+        }
+
+        .btn-previous:hover:not(:disabled) {
+            background: rgba(100, 116, 139, 0.15);
+            color: #475569;
+            transform: translateY(-2px);
+        }
+
+        .btn-next {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            box-shadow: 
+                0 8px 25px -8px rgba(28, 41, 161, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 15px 35px -10px rgba(28, 41, 161, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-submit {
+            background: var(--gradient-success);
+            color: white;
+            border: none;
+            box-shadow: 
+                0 8px 25px -8px rgba(16, 185, 129, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            flex: 1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 15px 35px -10px rgba(16, 185, 129, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Indicateur de force du mot de passe */
+        .password-strength {
+            margin-top: 0.75rem;
+            margin-bottom: 1.5rem; /* Espacement encore plus réduit */
+            padding: 1.25rem;
+            background: rgba(248, 250, 252, 0.8);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .strength-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+        }
+
+        .strength-bar {
+            height: 8px;
+            background: rgba(226, 232, 240, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            background: #e5e7eb;
+        }
+
+        .strength-fill.empty {
+            background: #e5e7eb;
+            width: 0%;
+        }
+
+        .strength-fill.weak {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+            /* La largeur sera gérée par JavaScript */
+        }
+
+        .strength-fill.fair {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            /* La largeur sera gérée par JavaScript */
+        }
+
+        .strength-fill.good {
+            background: linear-gradient(90deg, #10b981, #34d399);
+            /* La largeur sera gérée par JavaScript */
+        }
+
+        .strength-fill.strong {
+            background: linear-gradient(90deg, #059669, #10b981);
+            /* La largeur sera gérée par JavaScript */
+        }
+
+        .strength-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #64748b;
+            margin-top: 0.5rem;
+        }
+
+        .strength-text.empty { color: #64748b; }
+        .strength-text.weak { color: #ef4444; }
+        .strength-text.fair { color: #f59e0b; }
+        .strength-text.good { color: #10b981; }
+        .strength-text.strong { color: #059669; }
+
+        /* Récapitulatif final amélioré */
+        .final-summary {
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.8));
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 2px solid rgba(28, 41, 161, 0.12);
+            margin: 2rem 0;
+            box-shadow: 
+                0 4px 12px -2px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .final-summary h3 {
+            font-family: var(--font-primary);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--adn-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .final-summary h3::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--adn-primary), var(--adn-secondary));
+            border-radius: 2px;
+        }
+
+        .summary-content {
+            margin-top: 1.5rem;
+        }
+
+        .summary-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(28, 41, 161, 0.08);
+            transition: all 0.2s ease;
+        }
+
+        .summary-item:hover {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(28, 41, 161, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .summary-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-value {
+            font-weight: 700;
+            color: var(--adn-primary);
+            font-size: 1rem;
+            text-align: right;
+            padding: 0.25rem 0.75rem;
+            background: rgba(28, 41, 161, 0.08);
+            border-radius: 0.5rem;
+        }
+
+        /* Zone d'action séparée */
+        .final-action {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .action-separator {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(28, 41, 161, 0.2), transparent);
+            margin-bottom: 2rem;
+        }
+
+        .action-message {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--adn-primary);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Désactivation des styles personnalisés pour l'étape 4 utilisant Tailwind */
+        .form-step[data-step="4"] .custom-checkbox {
+            all: unset;
+        }
+        
+        .form-step[data-step="4"] .final-summary {
+            all: unset;
+        }
+        
+        .form-step[data-step="4"] .final-action {
+            all: unset;
+        }
+
+        /* Ajustements spécifiques pour l'étape 4 */
+        .form-step[data-step="4"] .step-content {
+            padding: 0 !important;
+        }
+
+        /* Styles Tailwind équivalents pour assurer la compatibilité */
+        .space-y-3 > * + * { margin-top: 0.75rem; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .space-y-5 > * + * { margin-top: 1.25rem; }
+        .space-y-6 > * + * { margin-top: 1.5rem; }
+        .mt-0 { margin-top: 0; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-5 { margin-top: 1.25rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-5 { margin-bottom: 1.25rem; }
+        .pb-6 { padding-bottom: 1.5rem; }
+        .pb-8 { padding-bottom: 2rem; }
+        .md\:pb-10 { padding-bottom: 2.5rem; }
+        .md\:pb-12 { padding-bottom: 3rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .rounded-2xl { border-radius: 1rem; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .border-gray-200 { border-color: #e5e7eb; }
+        .border-gray-100 { border-color: #f3f4f6; }
+        .bg-white\/60 { background-color: rgba(255, 255, 255, 0.6); }
+        .bg-white\/70 { background-color: rgba(255, 255, 255, 0.7); }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        .text-gray-600 { color: #4b5563; }
+        .text-gray-700 { color: #374151; }
+        .text-gray-800 { color: #1f2937; }
+        .text-gray-900 { color: #111827; }
+        .hover\:text-gray-800:hover { color: #1f2937; }
+        .transition-colors { transition-property: color; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .min-w-\[220px\] { min-width: 220px; }
+        .truncate { 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+        }
+        
+        @media (min-width: 768px) {
+            .md\:mt-3 { margin-top: 0.75rem; }
+            .md\:pb-10 { padding-bottom: 2.5rem; }
+            .md\:pb-12 { padding-bottom: 3rem; }
+            .md\:text-base { font-size: 1rem; }
+            .md\:text-xl { font-size: 1.25rem; }
+            .md\:p-6 { padding: 1.5rem; }
+            .md\:p-3\.5 { padding: 0.875rem; }
+            .md\:justify-end { justify-content: flex-end; }
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 15px 35px -10px rgba(28, 41, 161, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px) scale(1.01);
+            transition: all 0.1s ease;
+        }
+
+        /* Lien de connexion */
+        .auth-footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .auth-footer a {
+            color: var(--adn-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Messages d'erreur et de succès */
+        .alert {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #059669;
+        }
+
+        @media (max-width: 768px) {
+            .auth-page {
+                padding: 20px 1rem 2rem; /* Réduction du padding top sur mobile */
+                align-items: flex-start; /* Alignement en haut pour éviter le centrage vertical forcé */
+                min-height: 100vh;
+                height: auto;
+                overflow-y: auto; /* Permettre le scroll */
+            }
+
+            .auth-container {
+                flex-direction: column;
+                gap: 1.5rem;
+                max-width: 100%;
+                margin-top: 60px; /* Espace pour le header fixe */
+            }
+
+            .auth-header {
+                position: absolute; /* Changement de fixed à absolute si nécessaire ou ajustement */
+            }
+
+            .auth-info {
+                flex: none;
+                max-width: 100%;
+                text-align: center;
+                padding: 0;
+                margin-bottom: 1rem;
+            }
+
+            .auth-info h1 {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .auth-info p {
+                font-size: 0.95rem;
+                margin-bottom: 1rem;
+            }
+
+            .auth-benefits {
+                display: none;
+            }
+
+            .auth-form-container {
+                width: 100%;
+                max-width: 100%;
+                padding: 1.5rem;
+                min-height: auto; /* Hauteur auto sur mobile */
+                border-radius: 1rem;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            }
+
+            .form-steps {
+                min-height: auto; /* Adapter la hauteur au contenu */
+            }
+
+            .progress-container {
+                padding: 0;
+                margin-bottom: 1.5rem;
+            }
+
+            .progress-steps {
+                gap: 0;
+            }
+
+            .step-circle {
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+                border-width: 2px;
+            }
+
+            .step-label {
+                font-size: 0.7rem;
+                margin-top: 0.25rem;
+                max-width: 60px;
+                line-height: 1.1;
+            }
+
+            .step-title {
+                font-size: 1.3rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .step-subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .step-header {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-input {
+                padding: 0.875rem 0.875rem 0.875rem 2.5rem;
+                min-height: 48px;
+                font-size: 16px; /* Empêche le zoom sur iOS */
+            }
+
+            .form-icon {
+                left: 0.875rem;
+                font-size: 1rem;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+            }
+
+            .user-type-container {
+                grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+                gap: 1rem;
+                margin: 1.5rem 0;
+            }
+
+            .user-type-card {
+                padding: 1rem;
+                min-height: auto;
+                flex-direction: row; /* Icône à gauche, texte à droite */
+                justify-content: flex-start;
+                text-align: left;
+                gap: 1rem;
+            }
+
+            .user-type-icon {
+                font-size: 1.5rem;
+                margin-bottom: 0;
+            }
+
+            .form-navigation {
+                flex-direction: column-reverse; /* Bouton principal en haut */
+                gap: 0.75rem;
+                margin-top: 1.5rem;
+            }
+
+            .nav-btn {
+                width: 100%;
+                min-width: auto;
+                min-height: 48px;
+                padding: 0.75rem;
+            }
+
+            .final-summary {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .summary-item {
+                grid-template-columns: 1fr;
+                gap: 0.25rem;
+                text-align: left;
+            }
+
+            .summary-value {
+                text-align: left;
+                margin-left: 1.5rem; /* Alignement sous le label */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-page {
+                padding: 70px 0.75rem 1.5rem;
+            }
+
+            .auth-container {
+                max-width: 100%;
+            }
+
+            .auth-form-container {
+                padding: 1.5rem;
+                border-radius: 1.5rem;
+                min-height: 550px;
+            }
+
+            .progress-container {
+                padding: 0 0.5rem;
+            }
+
+            .progress-steps {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.75rem;
+            }
+
+            .step-circle {
+                width: 35px;
+                height: 35px;
+                font-size: 0.8rem;
+            }
+
+            .step-label {
+                font-size: 0.7rem;
+                margin-top: 0.25rem;
+            }
+
+            .step-title {
+                font-size: 1.2rem;
+            }
+
+            .step-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .form-input {
+                padding: 1rem 1rem 1rem 2.5rem;
+                font-size: 1rem;
+                min-height: 52px;
+            }
+
+            .form-icon {
+                left: 1rem;
+                font-size: 1rem;
+            }
+
+            .validation-indicator {
+                right: 1rem;
+                width: 20px;
+                height: 20px;
+                font-size: 0.8rem;
+            }
+
+            .nav-btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.95rem;
+                min-height: 50px;
+            }
+
+            .user-type-card {
+                padding: 1.25rem;
+                min-height: 100px;
+            }
+
+            .user-type-icon {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .user-type-title {
+                font-size: 0.95rem;
+            }
+
+            .user-type-desc {
+                font-size: 0.8rem;
+            }
+
+            .final-summary {
+                padding: 1.25rem;
+                margin: 1rem 0;
+            }
+
+            .final-summary h3 {
+                font-size: 1.1rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .summary-item {
+                padding: 0.75rem;
+                grid-template-columns: 1fr;
+                text-align: left;
+                gap: 0.5rem;
+            }
+
+            .summary-value {
+                text-align: left;
+                margin-top: 0.25rem;
+            }
+
+            .final-action {
+                margin-top: 1.5rem;
+            }
+
+
+
+            .password-strength {
+                margin-top: 0.5rem;
+                margin-bottom: 1rem; /* Espacement minimal sur très petits écrans */
+                padding: 0.75rem;
+            }
+
+            .strength-label {
+                font-size: 0.85rem;
+            }
+
+            .strength-text {
+                font-size: 0.8rem;
+            }
+
+            .custom-checkbox {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+
+            .checkbox-text {
+                font-size: 0.85rem;
+            }
+
+            /* Optimisation pour les très petits écrans */
+            .particles {
+                display: none;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .auth-form-container {
+                padding: 1.25rem;
+                margin: 0 0.5rem;
+            }
+
+            .progress-steps {
+                gap: 0.5rem;
+            }
+
+            .step-circle {
+                width: 30px;
+                height: 30px;
+                font-size: 0.75rem;
+            }
+
+            .step-label {
+                font-size: 0.65rem;
+            }
+
+            .step-title {
+                font-size: 1.1rem;
+            }
+
+            .form-input {
+                padding: 0.875rem 0.875rem 0.875rem 2.25rem;
+            }
+
+            .form-icon {
+                left: 0.875rem;
+                font-size: 0.95rem;
+            }
+
+            .nav-btn {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.9rem;
+                min-height: 48px;
+            }
+
+            .user-type-card {
+                padding: 1rem;
+                min-height: 90px;
+            }
+
+            .user-type-icon {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block header %}
+    <!-- Header simple pour les pages d'authentification -->
+    <header class="auth-header">
+        <div class="auth-header-container">
+            <a href="{{ path('app_home') }}" class="auth-logo">
+                <img src="{{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }}" alt="ADN Family Office">
+            </a>
+            <a href="{{ path('app_home') }}" class="auth-back-btn">
+                Retour à l'accueil
+            </a>
+        </div>
+    </header>
+{% endblock %}
+
+{% block body %}
+    {% for flash_error in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    <div class="auth-page">
+        <div class="auth-container">
+            <!-- Section informations -->
+            <div class="auth-info">
+                <h1>Rejoignez ADN Family Office</h1>
+                <p>Créez votre compte pour accéder à nos services de gestion patrimoniale et d'investissement de premier plan.</p>
+                
+                <div class="auth-benefits">
+                    <div class="auth-benefit">
+                        <div class="auth-benefit-icon">🚀</div>
+                        <div class="auth-benefit-text">Opportunités d'investissement exclusives</div>
+                    </div>
+                    <div class="auth-benefit">
+                        <div class="auth-benefit-icon">👥</div>
+                        <div class="auth-benefit-text">Conseil patrimonial personnalisé</div>
+                    </div>
+                    <div class="auth-benefit">
+                        <div class="auth-benefit-icon">📊</div>
+                        <div class="auth-benefit-text">Suivi en temps réel de vos investissements</div>
+                    </div>
+                    <div class="auth-benefit">
+                        <div class="auth-benefit-icon">🔐</div>
+                        <div class="auth-benefit-text">Sécurité et confidentialité maximales</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulaire d'inscription multi-étapes révolutionnaire -->
+            <div class="auth-form-container">
+                <!-- Indicateur de progression -->
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-steps">
+                        <div class="progress-step">
+                            <div class="step-circle active" data-step="1">1</div>
+                            <div class="step-label active">Identité</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle" data-step="2">2</div>
+                            <div class="step-label">Type de compte</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle" data-step="3">3</div>
+                            <div class="step-label">Sécurité</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle" data-step="4">4</div>
+                            <div class="step-label">Finalisation</div>
+                        </div>
+                    </div>
+                </div>
+
+                {{ form_start(registrationForm, {'attr': {'class': 'auth-form', 'id': 'registrationForm'}}) }}
+
+                <!-- Système d'étapes révolutionnaire -->
+                <div class="form-steps">
+                    
+                    <!-- ÉTAPE 1: Informations personnelles -->
+                    <div class="form-step active" data-step="1">
+                        <div class="step-header">
+                            <h2 class="step-title">👋 Faisons connaissance</h2>
+                            <p class="step-subtitle">Commençons par vos informations de base</p>
+                        </div>
+                        
+                        <div class="step-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ registrationForm.firstName.vars.id }}">
+                                        <span class="form-icon">👤</span>
+                                        Prénom
+                                    </label>
+                                    {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-input', 'placeholder': 'Votre prénom', 'aria-describedby': 'firstName-error'}}) }}
+                                    <div class="validation-indicator">✓</div>
+                                    <div id="firstName-error" class="form-error-container">
+                                        {{ form_errors(registrationForm.firstName, {'attr': {'class': 'form-error'}}) }}
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="{{ registrationForm.lastName.vars.id }}">
+                                        <span class="form-icon">👤</span>
+                                        Nom de famille
+                                    </label>
+                                    {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-input', 'placeholder': 'Votre nom de famille', 'aria-describedby': 'lastName-error'}}) }}
+                                    <div class="validation-indicator">✓</div>
+                                    <div id="lastName-error" class="form-error-container">
+                                        {{ form_errors(registrationForm.lastName, {'attr': {'class': 'form-error'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group" data-validates="true">
+                                <label class="form-label" for="{{ registrationForm.email.vars.id }}">
+                                    <span class="form-icon">📧</span>
+                                    Adresse email
+                                </label>
+                                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-input', 'placeholder': 'pierre@adnfamilyoffice.fr', 'aria-describedby': 'email-error'}}) }}
+                                <div class="validation-indicator">✓</div>
+                                <div id="email-error" class="form-error-container">
+                                    {{ form_errors(registrationForm.email, {'attr': {'class': 'form-error'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ÉTAPE 2: Type de compte -->
+                    <div class="form-step" data-step="2">
+                        <div class="step-header">
+                            <h2 class="step-title">🏛️ Quel type d'investisseur êtes-vous ?</h2>
+                            <p class="step-subtitle">Sélectionnez le profil qui vous correspond</p>
+                        </div>
+                        
+                        <div class="step-content">
+                            <div class="user-type-container">
+                                <div class="user-type-option">
+                                    {{ form_widget(registrationForm.type.0) }}
+                                    <div class="user-type-card">
+                                        <span class="user-type-icon">👤</span>
+                                        <div class="user-type-title">Particulier</div>
+                                        <div class="user-type-desc">Investisseur individuel</div>
+                                    </div>
+                                </div>
+                                <div class="user-type-option">
+                                    {{ form_widget(registrationForm.type.1) }}
+                                    <div class="user-type-card">
+                                        <span class="user-type-icon">🏢</span>
+                                        <div class="user-type-title">Personne morale</div>
+                                        <div class="user-type-desc">Entreprise ou organisation</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{ form_errors(registrationForm.type, {'attr': {'class': 'form-error'}}) }}
+                        </div>
+                    </div>
+
+                    <!-- ÉTAPE 3: Mot de passe -->
+                    <div class="form-step" data-step="3">
+                        <div class="step-header">
+                            <h2 class="step-title">🔐 Sécurisez votre compte</h2>
+                            <p class="step-subtitle">Choisissez un mot de passe robuste</p>
+                        </div>
+                        
+                        <div class="step-content">
+                            <div class="form-group">
+                                <label class="form-label" for="{{ registrationForm.plainPassword.vars.id }}">
+                                    <span class="form-icon">🔒</span>
+                                    Mot de passe
+                                </label>
+                                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-input', 'placeholder': 'Minimum 12 caractères', 'aria-describedby': 'password-strength'}}) }}
+                                <!-- Pas d'indicateur de validation binaire pour le mot de passe -->
+                                <div id="password-error" class="form-error-container">
+                                    {{ form_errors(registrationForm.plainPassword, {'attr': {'class': 'form-error'}}) }}
+                                </div>
+                            </div>
+
+                            <div class="password-strength">
+                                <div class="strength-label">Force du mot de passe :</div>
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="strengthFill"></div>
+                                </div>
+                                <div class="strength-text" id="strengthText">Saisissez votre mot de passe</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ÉTAPE 4: Finalisation -->
+                    <div class="form-step" data-step="4">
+                        <div class="step-content mt-0 pb-6 md:pb-10 space-y-3">
+                            <!-- Acceptation des opportunités d'investissement -->
+                            <div class="rounded-xl border border-gray-200 bg-white/60 p-4 shadow-sm mb-3">
+                                <label for="{{ registrationForm.newsletter.vars.id }}" class="flex items-start gap-3 cursor-pointer">
+                                    {{ form_widget(registrationForm.newsletter, {'attr': {'class': 'mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500/50 focus:outline-none', 'id': registrationForm.newsletter.vars.id}}) }}
+                                    <span class="text-sm md:text-base leading-snug text-gray-700 font-medium">
+                                        J'accepte de recevoir les opportunités d'investissement d'ADN Family Office
+                                    </span>
+                                </label>
+                            </div>
+
+                            <!-- Carte récapitulatif avec CTA intégré -->
+                            <div class="rounded-2xl border border-gray-200 bg-white/70 p-5 md:p-6 shadow-sm">
+                                <!-- Navigation discrète en haut de la carte -->
+                                <div class="mb-4">
+                                    <button type="button" class="text-sm text-gray-600 hover:text-gray-800 transition-colors focus:ring-2 focus:ring-blue-500/50 focus:outline-none" id="prevBtnStep4">
+                                        ← Précédent
+                                    </button>
+                                </div>
+
+                                <h3 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 text-center">
+                                    Récapitulatif de votre inscription
+                                </h3>
+                                
+                                <!-- Lignes du récapitulatif -->
+                                <div class="mb-5">
+                                    <div class="flex items-center justify-between gap-3 rounded-lg bg-white/70 border border-gray-100 p-3 md:p-3.5 mb-3">
+                                        <span class="text-sm text-gray-600 flex items-center gap-2">
+                                            <span class="text-base">👤</span>
+                                            Nom complet
+                                        </span>
+                                        <span class="text-sm md:text-base font-medium text-gray-900 truncate" id="summaryName">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-3 rounded-lg bg-white/70 border border-gray-100 p-3 md:p-3.5 mb-3">
+                                        <span class="text-sm text-gray-600 flex items-center gap-2">
+                                            <span class="text-base">📧</span>
+                                            Email
+                                        </span>
+                                        <span class="text-sm md:text-base font-medium text-gray-900 truncate" id="summaryEmail">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-3 rounded-lg bg-white/70 border border-gray-100 p-3 md:p-3.5">
+                                        <span class="text-sm text-gray-600 flex items-center gap-2">
+                                            <span class="text-base">🏛️</span>
+                                            Type de compte
+                                        </span>
+                                        <span class="text-sm md:text-base font-medium text-gray-900 truncate" id="summaryType">-</span>
+                                    </div>
+                                </div>
+
+                                <!-- CTA intégré dans la carte -->
+                                <div class="flex justify-center md:justify-end mt-5">
+                                    <button type="submit" class="nav-btn btn-submit min-w-[220px] focus:ring-2 focus:ring-blue-500/50 focus:outline-none" id="submitBtnStep4">
+                                        🚀 Créer mon compte
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Navigation entre les étapes -->
+                <div class="form-navigation">
+                    <button type="button" class="nav-btn btn-previous" id="prevBtn" disabled>
+                        ← Précédent
+                    </button>
+                    <button type="button" class="nav-btn btn-next" id="nextBtn">
+                        Suivant →
+                    </button>
+                    <button type="submit" class="nav-btn btn-submit" id="submitBtn" style="display: none;">
+                        🚀 Créer mon compte
+                    </button>
+                </div>
+
+                <!-- Champs cachés -->
+                <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
+                    {{ form_widget(registrationForm.useremail) }}
+                </div>
+                {{ form_widget(registrationForm.landing) }}
+
+                {{ form_end(registrationForm) }}
+
+                <div class="auth-footer">
+                    Vous avez déjà un compte ? 
+                    <a href="{{ path('app_login') }}">Connectez-vous</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_scripts %}
+    <script>
+        // 🚀 Système d'inscription multi-étapes révolutionnaire
+        class RevolutionaryRegistration {
+            constructor() {
+                this.currentStep = 1;
+                this.totalSteps = 4;
+                this.formData = {};
+                this.trackingDebounceTimer = null;
+                this.trackingUrl = '{{ path('api_registration_tracking') }}';
+                this.validationRules = {
+                    email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+                    // Clé correspondant exactement au name du champ email généré par Symfony
+                    'registration_form[email]': (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+                    // Validation du mot de passe : min 12 caractères
+                    'registration_form[plainPassword]': (value) => value.length >= 12,
+                    type: (value) => value !== null && value !== undefined
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.createParticles();
+                this.setupEventListeners();
+                this.setupValidation();
+                this.animateEntrance();
+                this.focusFirstInput();
+            }
+
+            // Création des particules animées
+            createParticles() {
+                const particlesContainer = document.createElement('div');
+                particlesContainer.className = 'particles';
+                document.body.appendChild(particlesContainer);
+
+                for (let i = 0; i < 15; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 6 + 's';
+                    particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+                    particlesContainer.appendChild(particle);
+                }
+            }
+
+            // Configuration des événements
+            setupEventListeners() {
+                const nextBtn = document.getElementById('nextBtn');
+                const prevBtn = document.getElementById('prevBtn');
+                const form = document.getElementById('registrationForm');
+
+                nextBtn.addEventListener('click', () => this.nextStep());
+                prevBtn.addEventListener('click', () => this.prevStep());
+                
+                // Gestion des types d'utilisateur
+                document.querySelectorAll('.user-type-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        const radio = option.querySelector('input[type="radio"]');
+                        radio.checked = true;
+                        this.updateUserTypeSelection();
+                        this.validateCurrentStep();
+                        // Tracking en temps réel
+                        this.trackRegistrationData();
+                    });
+                });
+
+                // Soumission du formulaire: on ne laisse soumettre qu'à l'étape 4 et si valide
+                form.addEventListener('submit', (e) => {
+                    if (this.currentStep !== this.totalSteps || !this.validateCurrentStep()) {
+                        e.preventDefault();
+                        this.showValidationErrors();
+                        return;
+                    }
+                    this.handleSubmit(e);
+                });
+            }
+
+            // Système de validation avancé
+            setupValidation() {
+                const inputs = document.querySelectorAll('.form-input');
+                
+                inputs.forEach(input => {
+                    const formGroup = input.closest('.form-group');
+                    const icon = formGroup.querySelector('.form-icon');
+                    const indicator = formGroup.querySelector('.validation-indicator');
+
+                    // Validation en temps réel
+                    input.addEventListener('input', () => {
+                        this.validateField(input);
+                        this.updateSummary();
+                        // Tracking en temps réel
+                        this.trackRegistrationData();
+                    });
+
+                    // Effets de focus
+                    input.addEventListener('focus', () => {
+                        formGroup.classList.add('focused');
+                        formGroup.style.transform = 'scale(1.02)';
+                    });
+
+                    input.addEventListener('blur', () => {
+                        formGroup.classList.remove('focused');
+                        formGroup.style.transform = 'scale(1)';
+                    });
+
+                    // Validation du mot de passe avec indicateur de force
+                    if (input.type === 'password') {
+                        input.addEventListener('input', () => this.updatePasswordStrength(input.value));
+                    }
+                });
+            }
+
+            // Validation d'un champ spécifique
+            validateField(input) {
+                const fieldName = input.name;
+                const value = input.value.trim();
+                const formGroup = input.closest('.form-group');
+                const indicator = formGroup.querySelector('.validation-indicator');
+                const errorContainer = formGroup.querySelector('.form-error-container');
+                
+                // Pas de validation pour nom et prénom
+                if (fieldName.includes('firstName') || fieldName.includes('lastName')) {
+                    // Masquer l'indicateur et garder un style neutre
+                    formGroup.classList.remove('valid', 'error', 'loading');
+                    indicator.style.opacity = '0';
+                    input.style.borderColor = 'rgba(28, 41, 161, 0.15)';
+                    this.clearCustomErrors(errorContainer);
+                    return;
+                }
+
+                // Gestion spéciale pour le mot de passe
+                if (fieldName.includes('plainPassword')) {
+                    // On utilise validationRules pour vérifier la longueur
+                    if (this.validationRules[fieldName] && !this.validationRules[fieldName](value)) {
+                        // Si invalide (trop court)
+                        formGroup.classList.remove('valid', 'loading');
+                        formGroup.classList.add('error');
+                        // indicator.style.opacity = '0'; // On garde masqué ou on affiche une croix ? L'utilisateur a demandé d'être explicite.
+                        // On peut afficher l'erreur dans le conteneur
+                        this.clearCustomErrors(errorContainer);
+                        if (value.length > 0) {
+                             this.showCustomError(fieldName, errorContainer, value);
+                        }
+                        // La couleur de bordure sera gérée par updatePasswordStrength mais on peut forcer l'erreur ici si on veut bloquer visuellement
+                        input.style.borderColor = 'var(--adn-error)';
+                    } else {
+                        // Si valide (>= 12 chars)
+                        formGroup.classList.remove('error');
+                        // On laisse updatePasswordStrength gérer le style "valid" ou neutre
+                        this.clearCustomErrors(errorContainer);
+                    }
+                    return;
+                }
+                
+                // Nettoyage des messages d'erreur précédents
+                this.clearCustomErrors(errorContainer);
+                
+                // Simulation d'un délai de validation (effet loading)
+                formGroup.classList.add('loading');
+                indicator.textContent = '⏳';
+                indicator.style.opacity = '1';
+                
+                setTimeout(() => {
+                    formGroup.classList.remove('loading');
+
+                    if (this.validationRules[fieldName]) {
+                        if (this.validationRules[fieldName](value)) {
+                            formGroup.classList.remove('error');
+                            formGroup.classList.add('valid');
+                            indicator.textContent = '✓';
+                            indicator.style.background = 'var(--adn-success)';
+                            indicator.style.color = 'white';
+                            indicator.style.opacity = '1';
+                            input.style.borderColor = 'var(--adn-success)';
+                        } else if (value.length > 0) {
+                            formGroup.classList.remove('valid');
+                            formGroup.classList.add('error');
+                            indicator.textContent = '✗';
+                            indicator.style.background = 'var(--adn-error)';
+                            indicator.style.color = 'white';
+                            indicator.style.opacity = '1';
+                            input.style.borderColor = 'var(--adn-error)';
+
+                            // Ajout de messages d'erreur personnalisés
+                            this.showCustomError(fieldName, errorContainer, value);
+                        } else {
+                            // Champ vide: neutre
+                            formGroup.classList.remove('valid', 'error');
+                            indicator.textContent = '';
+                            indicator.style.opacity = '0';
+                            input.style.borderColor = 'rgba(28, 41, 161, 0.15)';
+                        }
+                    } else {
+                        // Aucun règle de validation: état neutre
+                        formGroup.classList.remove('valid', 'error');
+                        indicator.textContent = '';
+                        indicator.style.opacity = '0';
+                        input.style.borderColor = 'rgba(28, 41, 161, 0.15)';
+                    }
+                }, 300);
+            }
+
+            // Affichage d'erreurs personnalisées
+            showCustomError(fieldName, errorContainer, value) {
+                let errorMessage = '';
+                
+                switch(fieldName) {
+                    case 'registration_form[email]':
+                        if (!value.includes('@')) {
+                            errorMessage = 'Veuillez inclure un symbole @ dans votre adresse email.';
+                        } else if (!value.includes('.')) {
+                            errorMessage = 'Veuillez saisir une adresse email valide avec un domaine.';
+                        } else {
+                            errorMessage = 'Cette adresse email ne semble pas valide.';
+                        }
+                        break;
+                    case 'registration_form[plainPassword]':
+                        if (value.length < 12) {
+                            errorMessage = `Le mot de passe doit contenir au moins 12 caractères (actuellement ${value.length}).`;
+                        }
+                        break;
+                    default:
+                        // Pas de message d'erreur pour les autres champs
+                        return;
+                }
+                
+                if (errorMessage && !errorContainer.querySelector('.custom-error')) {
+                    const customError = document.createElement('div');
+                    customError.className = 'form-error custom-error';
+                    customError.innerHTML = errorMessage;
+                    errorContainer.appendChild(customError);
+                }
+            }
+
+            // Nettoyage des erreurs personnalisées
+            clearCustomErrors(errorContainer) {
+                const customErrors = errorContainer.querySelectorAll('.custom-error');
+                customErrors.forEach(error => error.remove());
+            }
+
+            // 🎯 Système de tracking en temps réel
+            trackRegistrationData() {
+                // Debounce pour éviter trop de requêtes
+                clearTimeout(this.trackingDebounceTimer);
+                this.trackingDebounceTimer = setTimeout(() => {
+                    this.sendTrackingData();
+                }, 1000); // Attendre 1 seconde après la dernière modification
+            }
+
+            sendTrackingData() {
+                try {
+                    // Récupérer les données du formulaire
+                    const form = document.getElementById('registrationForm');
+                    if (!form) return;
+
+                    const formData = new FormData(form);
+                    const trackingData = {
+                        firstName: formData.get('registration_form[firstName]') || null,
+                        lastName: formData.get('registration_form[lastName]') || null,
+                        email: formData.get('registration_form[email]') || null,
+                        profileType: null
+                    };
+
+                    // Récupérer le type de profil sélectionné
+                    const typeInputs = form.querySelectorAll('input[name="registration_form[type]"]:checked');
+                    if (typeInputs.length > 0) {
+                        const selectedType = typeInputs[0].value;
+                        // Mapper les valeurs pour correspondre aux constantes User
+                        const privateType = '{{ constant('App\\Entity\\User\\User::USER_TYPE_PRIVATE') }}';
+                        const proType = '{{ constant('App\\Entity\\User\\User::USER_TYPE_PRO') }}';
+                        
+                        if (selectedType === privateType) {
+                            trackingData.profileType = 'Particulier';
+                        } else if (selectedType === proType) {
+                            trackingData.profileType = 'Personne morale';
+                        }
+                    }
+
+                    // Envoyer uniquement si on a au moins un champ rempli
+                    if (trackingData.firstName || trackingData.lastName || trackingData.email || trackingData.profileType) {
+                        fetch(this.trackingUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify(trackingData)
+                        }).catch(error => {
+                            // Ignorer silencieusement les erreurs de tracking pour ne pas perturber l'utilisateur
+                            console.debug('Tracking error:', error);
+                        });
+                    }
+                } catch (error) {
+                    // Ignorer silencieusement les erreurs
+                    console.debug('Tracking error:', error);
+                }
+            }
+
+            // Indicateur de force du mot de passe
+            updatePasswordStrength(password) {
+                const strengthFill = document.getElementById('strengthFill');
+                const strengthText = document.getElementById('strengthText');
+                const passwordInput = document.querySelector('input[name*="plainPassword"]');
+                
+                if (!strengthFill || !strengthText || !passwordInput) return;
+
+                let strength = 0;
+                let strengthClass = '';
+                let strengthLabel = '';
+                let borderColor = 'rgba(28, 41, 161, 0.15)'; // Couleur par défaut
+
+                // Critères de validation améliorés
+                if (password.length >= 8) strength++;
+                if (password.length >= 12) strength++; // Bonus pour longueur recommandée
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+                switch (strength) {
+                    case 0:
+                        strengthClass = 'empty';
+                        strengthLabel = 'Saisissez votre mot de passe';
+                        borderColor = 'rgba(28, 41, 161, 0.15)';
+                        break;
+                    case 1:
+                    case 2:
+                        strengthClass = 'weak';
+                        strengthLabel = '🔴 Faible - Ajoutez des majuscules, chiffres et caractères spéciaux';
+                        borderColor = '#ef4444'; // Rouge
+                        break;
+                    case 3:
+                        strengthClass = 'fair';
+                        strengthLabel = '🟡 Moyen - Ajoutez encore quelques éléments pour plus de sécurité';
+                        borderColor = '#f59e0b'; // Orange
+                        break;
+                    case 4:
+                        strengthClass = 'good';
+                        strengthLabel = '🟢 Bon - Mot de passe sécurisé';
+                        borderColor = '#10b981'; // Vert
+                        break;
+                    case 5:
+                        strengthClass = 'strong';
+                        strengthLabel = '✅ Excellent - Mot de passe très sécurisé';
+                        borderColor = '#059669'; // Vert foncé
+                        break;
+                }
+
+                // Application des styles
+                strengthFill.className = `strength-fill ${strengthClass}`;
+                strengthText.className = `strength-text ${strengthClass}`;
+                strengthText.textContent = strengthLabel;
+                
+                // Couleur de bordure cohérente avec la jauge
+                passwordInput.style.borderColor = borderColor;
+
+                // Animation de la barre de progression
+                const percentage = password.length === 0 ? 0 : Math.max(20, (strength / 5) * 100);
+                strengthFill.style.width = `${percentage}%`;
+            }
+
+            // Navigation entre les étapes
+            nextStep() {
+                if (!this.validateCurrentStep()) {
+                    this.showValidationErrors();
+                    return;
+                }
+
+                if (this.currentStep < this.totalSteps) {
+                    this.animateStepTransition(this.currentStep, this.currentStep + 1);
+                    this.currentStep++;
+                    this.updateProgress();
+                    this.updateNavigation();
+                    
+                    if (this.currentStep === this.totalSteps) {
+                        this.updateSummary();
+                    }
+                }
+            }
+
+            prevStep() {
+                if (this.currentStep > 1) {
+                    this.animateStepTransition(this.currentStep, this.currentStep - 1, true);
+                    this.currentStep--;
+                    this.updateProgress();
+                    this.updateNavigation();
+                }
+            }
+
+            // Animation entre les étapes - Version robuste (Display)
+            animateStepTransition(fromStep, toStep, reverse = false) {
+                const fromElement = document.querySelector(`[data-step="${fromStep}"].form-step`);
+                const toElement = document.querySelector(`[data-step="${toStep}"].form-step`);
+
+                if (!fromElement || !toElement) return;
+
+                // 1. Masquer l'étape actuelle
+                fromElement.style.opacity = '0';
+                fromElement.classList.remove('active');
+                
+                // Petit délai pour laisser la transition se faire si on veut, 
+                // mais pour le display none immédiat c'est mieux pour le repaint
+                fromElement.style.display = 'none';
+
+                // 2. Afficher la nouvelle étape
+                toElement.style.display = 'block';
+                toElement.style.opacity = '0';
+                
+                // Force reflow
+                void toElement.offsetWidth;
+
+                toElement.classList.add('active');
+                toElement.style.opacity = '1';
+                
+                // Scroll to top of form container if needed (sur mobile)
+                if (window.innerWidth < 768) {
+                    const container = document.querySelector('.auth-form-container');
+                    if (container) {
+                        const headerOffset = 80;
+                        const elementPosition = container.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+                    }
+                }
+
+                // Focus sur le premier champ
+                const firstInput = toElement.querySelector('.form-input');
+                if (firstInput) {
+                    setTimeout(() => firstInput.focus(), 300);
+                }
+            }
+
+            // Mise à jour de la barre de progression
+            updateProgress() {
+                const progressFill = document.getElementById('progressFill');
+                const percentage = (this.currentStep / this.totalSteps) * 100;
+                progressFill.style.width = percentage + '%';
+
+                // Mise à jour des cercles d'étapes
+                document.querySelectorAll('.step-circle').forEach((circle, index) => {
+                    const step = index + 1;
+                    const label = circle.parentElement.querySelector('.step-label');
+                    
+                    circle.classList.remove('active', 'completed');
+                    label.classList.remove('active');
+                    
+                    if (step < this.currentStep) {
+                        circle.classList.add('completed');
+                    } else if (step === this.currentStep) {
+                        circle.classList.add('active');
+                        label.classList.add('active');
+                    }
+                });
+            }
+
+            // Mise à jour de la navigation
+            updateNavigation() {
+                const prevBtn = document.getElementById('prevBtn');
+                const nextBtn = document.getElementById('nextBtn');
+                const submitBtn = document.getElementById('submitBtn');
+                const prevBtnStep4 = document.getElementById('prevBtnStep4');
+                const submitBtnStep4 = document.getElementById('submitBtnStep4');
+
+                prevBtn.disabled = this.currentStep === 1;
+                
+                if (this.currentStep === this.totalSteps) {
+                    // Étape 4 : masquer la navigation générale, utiliser la navigation intégrée
+                    nextBtn.style.display = 'none';
+                    submitBtn.style.display = 'none';
+                    prevBtn.style.display = 'none';
+                    
+                    // Gérer les boutons spécifiques de l'étape 4
+                    if (prevBtnStep4 && !prevBtnStep4.hasAttribute('data-listener-added')) {
+                        prevBtnStep4.addEventListener('click', () => this.prevStep());
+                        prevBtnStep4.setAttribute('data-listener-added', 'true');
+                    }
+                    if (submitBtnStep4) {
+                        // Le bouton est déjà un submit, pas besoin d'event listener
+                    }
+                } else {
+                    nextBtn.style.display = 'flex';
+                    submitBtn.style.display = 'none';
+                    prevBtn.style.display = 'flex';
+                }
+            }
+
+            // Validation de l'étape courante
+            validateCurrentStep() {
+                const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"].form-step.active`);
+                const inputs = currentStepElement.querySelectorAll('.form-input');
+                const radios = currentStepElement.querySelectorAll('input[type="radio"]');
+                
+                let isValid = true;
+
+                // Validation des champs texte
+                inputs.forEach(input => {
+                    const fieldName = input.name;
+                    if (this.validationRules[fieldName] && !this.validationRules[fieldName](input.value)) {
+                        isValid = false;
+                        this.validateField(input);
+                    }
+                });
+
+                // Validation des radios (type d'utilisateur)
+                if (radios.length > 0) {
+                    const isRadioSelected = Array.from(radios).some(radio => radio.checked);
+                    if (!isRadioSelected) {
+                        isValid = false;
+                    }
+                }
+
+                return isValid;
+            }
+
+            // Mise à jour du récapitulatif
+            updateSummary() {
+                const firstName = document.querySelector('[name="registration_form[firstName]"]')?.value || '';
+                const lastName = document.querySelector('[name="registration_form[lastName]"]')?.value || '';
+                const email = document.querySelector('[name="registration_form[email]"]')?.value || '';
+                const typeRadios = document.querySelectorAll('[name="registration_form[type]"]');
+                
+                let selectedType = '';
+                typeRadios.forEach(radio => {
+                    if (radio.checked) {
+                        selectedType = radio.parentElement.querySelector('.user-type-title')?.textContent || '';
+                    }
+                });
+
+                const nameNode = document.getElementById('summaryName');
+                const emailNode = document.getElementById('summaryEmail');
+                const typeNode = document.getElementById('summaryType');
+                if (nameNode) nameNode.textContent = `${firstName} ${lastName}`.trim() || '-';
+                if (emailNode) emailNode.textContent = email || '-';
+                if (typeNode) typeNode.textContent = selectedType || '-';
+            }
+
+            // Mise à jour de la sélection du type d'utilisateur
+            updateUserTypeSelection() {
+                document.querySelectorAll('.user-type-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                
+                document.querySelectorAll('[name="registration_form[type]"]').forEach(radio => {
+                    if (radio.checked) {
+                        radio.parentElement.querySelector('.user-type-card').classList.add('selected');
+                    }
+                });
+            }
+
+            // Animation d'entrée
+            animateEntrance() {
+                const authContainer = document.querySelector('.auth-container');
+                const benefits = document.querySelectorAll('.auth-benefit');
+
+                if (authContainer) {
+                    authContainer.style.opacity = '0';
+                    authContainer.style.transform = 'translateY(50px)';
+                    
+                    setTimeout(() => {
+                        authContainer.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                        authContainer.style.opacity = '1';
+                        authContainer.style.transform = 'translateY(0)';
+                    }, 200);
+                }
+
+                benefits.forEach((benefit, index) => {
+                    benefit.style.opacity = '0';
+                    benefit.style.transform = 'translateX(-50px)';
+                    
+                    setTimeout(() => {
+                        benefit.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                        benefit.style.opacity = '1';
+                        benefit.style.transform = 'translateX(0)';
+                    }, 400 + (index * 150));
+                });
+            }
+
+            // Focus sur le premier champ
+            focusFirstInput() {
+                setTimeout(() => {
+                    const firstInput = document.querySelector('.form-step.active .form-input');
+                    if (firstInput) {
+                        firstInput.focus();
+                    }
+                }, 1000);
+            }
+
+            // Affichage des erreurs de validation
+            showValidationErrors() {
+                // Animation de secousse pour indiquer l'erreur
+                const currentStepElement = document.querySelector(`[data-step="${this.currentStep}"].form-step.active`);
+                currentStepElement.style.animation = 'shake 0.5s ease-in-out';
+                
+                setTimeout(() => {
+                    currentStepElement.style.animation = '';
+                }, 500);
+            }
+
+            // Gestion de la soumission
+            handleSubmit(e) {
+                const submitBtn = document.getElementById('submitBtn');
+                const submitBtnStep4 = document.getElementById('submitBtnStep4');
+                
+                // Déterminer quel bouton utiliser
+                const activeSubmitBtn = this.currentStep === this.totalSteps ? submitBtnStep4 : submitBtn;
+                
+                if (activeSubmitBtn) {
+                    // Animation de chargement
+                    activeSubmitBtn.innerHTML = '⏳ Création en cours...';
+                    activeSubmitBtn.disabled = true;
+                }
+                
+                // Ici, le formulaire sera soumis normalement par Symfony
+                // Pas besoin de preventDefault() car on veut que la soumission continue
+            }
+        }
+
+        // Styles CSS pour l'animation de secousse
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            new RevolutionaryRegistration();
+        });
+    </script>
+{% endblock %}

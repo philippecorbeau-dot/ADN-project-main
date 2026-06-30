@@ -1,0 +1,24 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = notification_title|default('Notification ADN') %}
+
+{% block content %}
+    <h1>{{ notification_title|default('Nouvelle notification') }}</h1>
+    
+    <p>Bonjour {% if user is defined %}{{ user.firstname }}{% endif %},</p>
+    
+    {{ notification_message|raw }}
+    
+    {% if action_url is defined and action_text is defined %}
+    <div class="button-container">
+        <a href="{{ action_url }}" class="button">{{ action_text }}</a>
+    </div>
+    {% endif %}
+    
+    {% if additional_info is defined %}
+    <div class="info-box">
+        {{ additional_info|raw }}
+    </div>
+    {% endif %}
+{% endblock %}
+

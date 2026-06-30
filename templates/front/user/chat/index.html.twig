@@ -1,0 +1,1079 @@
+{% extends 'front/user/dashboard/base.html.twig' %}
+
+{% block title %}Chat en ligne - ADN Family Office{% endblock %}
+{% block page_title %}💬 Chat en ligne{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+/* ===== CHAT STYLES ===== */
+
+/* Variables */
+:root {
+    --chat-primary: #1C29A1;
+    --chat-primary-light: #3B82F6;
+    --chat-accent: #6366F1;
+    --chat-gradient: linear-gradient(135deg, #1C29A1 0%, #3B82F6 40%, #6366F1 100%);
+    --chat-shadow-sm: 0 4px 6px -1px rgba(28, 41, 161, 0.08);
+    --chat-shadow-md: 0 10px 15px -3px rgba(28, 41, 161, 0.1);
+    --chat-shadow-lg: 0 20px 25px -5px rgba(28, 41, 161, 0.12);
+}
+
+/* Container principal */
+.chat-page-container {
+    background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #f8fafc 100%);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    min-height: calc(100vh - 200px);
+}
+
+/* Conteneur chat principal */
+.chat-box {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1.5rem;
+    box-shadow: var(--chat-shadow-lg);
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 260px);
+    min-height: 500px;
+    overflow: hidden;
+}
+
+/* Header du chat */
+.chat-box-header {
+    background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%);
+    border-bottom: 1px solid rgba(28, 41, 161, 0.1);
+    padding: 1rem 1.5rem;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.chat-box-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--chat-gradient);
+}
+
+/* Avatar équipe */
+.chat-team-avatar {
+    width: 3rem;
+    height: 3rem;
+    background: var(--chat-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 0.85rem;
+    box-shadow: var(--chat-shadow-md);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.chat-team-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    background: #10b981;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+/* Zone de contenu */
+.chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+    .chat-content {
+        flex-direction: row;
+    }
+}
+
+/* Sidebar conversations */
+.chat-sidebar {
+    background: #fafbfc;
+    border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+    .chat-sidebar {
+        width: 320px;
+        border-bottom: none;
+        border-right: 1px solid #e5e7eb;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Toggle mobile sidebar */
+.chat-sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    background: white;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.chat-sidebar-toggle:hover {
+    background: #f8fafc;
+}
+
+@media (min-width: 1024px) {
+    .chat-sidebar-toggle {
+        display: none;
+    }
+}
+
+.chat-sidebar-body {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.chat-sidebar-body.open {
+    display: flex;
+}
+
+@media (min-width: 1024px) {
+    .chat-sidebar-body {
+        display: flex !important;
+    }
+}
+
+/* Filtres */
+.chat-filters {
+    padding: 1rem;
+    background: white;
+    border-bottom: 1px solid #f1f5f9;
+    flex-shrink: 0;
+}
+
+.chat-filter-btn {
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: #f1f5f9;
+    color: #64748b;
+    border: none;
+    cursor: pointer;
+}
+
+.chat-filter-btn:hover {
+    background: #e2e8f0;
+}
+
+.chat-filter-btn.active {
+    background: var(--chat-gradient);
+    color: white;
+    box-shadow: var(--chat-shadow-sm);
+}
+
+/* Liste conversations */
+.chat-conv-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.chat-conv-item {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.chat-conv-item:hover {
+    background: #f8fafc;
+}
+
+.chat-conv-item.active {
+    background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+    border-left: 3px solid #3b82f6;
+}
+
+.chat-conv-item.hidden {
+    display: none;
+}
+
+.chat-conv-avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background: var(--chat-gradient);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: var(--chat-shadow-sm);
+}
+
+.chat-conv-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.chat-conv-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-conv-preview {
+    font-size: 0.75rem;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.5rem;
+}
+
+.chat-conv-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chat-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border-radius: 9999px;
+}
+
+.chat-status-open {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.chat-status-closed {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.chat-unread-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.375rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 9999px;
+    background: #ef4444;
+    color: white;
+}
+
+/* Zone messages */
+.chat-messages-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fafbfc 0%, #f8fafc 100%);
+}
+
+.chat-messages-header {
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+    border-bottom: 1px solid #e2e8f0;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chat-messages-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+}
+
+/* Message de bienvenue */
+.chat-welcome {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: var(--chat-shadow-md);
+    max-width: 420px;
+    margin: 2rem auto;
+    border: 1px solid #e2e8f0;
+}
+
+.chat-welcome-icon {
+    width: 4rem;
+    height: 4rem;
+    background: var(--chat-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    box-shadow: var(--chat-shadow-md);
+}
+
+.chat-welcome-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.chat-welcome-text {
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+.chat-welcome-meta {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+/* Bulles de chat */
+.chat-bubble-user {
+    background: var(--chat-gradient);
+    color: #ffffff;
+    border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+    padding: 0.875rem 1.125rem;
+    max-width: 75%;
+    box-shadow: var(--chat-shadow-sm);
+}
+
+.chat-bubble-admin {
+    background: #ffffff;
+    color: #1f2937;
+    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+    padding: 0.875rem 1.125rem;
+    border: 1px solid #e5e7eb;
+    max-width: 75%;
+    box-shadow: var(--chat-shadow-sm);
+}
+
+.chat-avatar-admin {
+    background: var(--chat-gradient);
+    box-shadow: var(--chat-shadow-sm);
+}
+
+/* Zone de saisie */
+.chat-input-area {
+    padding: 1rem 1.25rem;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    flex-shrink: 0;
+}
+
+.chat-input-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+
+.chat-input-field-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.chat-input-field {
+    width: 100%;
+    resize: none;
+    border: 2px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 0.875rem 3rem 0.875rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    background: #f9fafb;
+    min-height: 48px;
+}
+
+.chat-input-field:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.chat-send-btn {
+    background: var(--chat-gradient);
+    color: white;
+    border: none;
+    border-radius: 1rem;
+    padding: 0.875rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: var(--chat-shadow-sm);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.chat-send-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: var(--chat-shadow-md);
+}
+
+.chat-send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Emoji */
+.chat-emoji-btn {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0.5rem;
+    color: #9ca3af;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.chat-emoji-btn:hover {
+    color: #3b82f6;
+}
+
+.chat-emoji-picker {
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    margin-bottom: 0.5rem;
+    display: none;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.25rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+    box-shadow: var(--chat-shadow-md);
+    z-index: 50;
+}
+
+.chat-emoji-picker.open {
+    display: grid;
+}
+
+.chat-emoji-picker button {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    transition: all 0.1s;
+    font-size: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.chat-emoji-picker button:hover {
+    background: #f3f4f6;
+    transform: scale(1.15);
+}
+
+/* Input meta */
+.chat-input-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding: 0 0.25rem;
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+@media (max-width: 767px) {
+    .chat-input-meta {
+        display: none;
+    }
+}
+
+/* Boutons d'action header */
+.chat-action-btn {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.chat-action-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.chat-action-primary:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: var(--chat-shadow-sm);
+}
+
+/* Badge temps réel */
+.chat-realtime-badge {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border: 1px solid #6ee7b7;
+    color: #065f46;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 9999px;
+}
+
+@media (min-width: 768px) {
+    .chat-realtime-badge {
+        display: inline-flex;
+    }
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .chat-hide-mobile {
+        display: none !important;
+    }
+    
+    .chat-page-container {
+        padding: 0.75rem;
+    }
+    
+    .chat-box {
+        height: calc(100vh - 200px);
+        border-radius: 1rem;
+    }
+    
+    .chat-box-header {
+        padding: 0.875rem 1rem;
+    }
+    
+    .chat-team-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* Typing indicator */
+.chat-typing {
+    padding: 0.5rem 1.25rem;
+}
+
+.chat-typing-bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: white;
+    padding: 0.625rem 1rem;
+    border-radius: 1rem;
+    box-shadow: var(--chat-shadow-sm);
+    border: 1px solid #e5e7eb;
+}
+
+.chat-typing-dots {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.chat-typing-dots span {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: #9ca3af;
+    border-radius: 50%;
+    animation: chatTypingBounce 1.4s infinite;
+}
+
+.chat-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes chatTypingBounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-0.4rem); }
+}
+
+/* Animation pulse pour indicateur en ligne */
+@keyframes chatPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.chat-online-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background: #10b981;
+    border-radius: 50%;
+    animation: chatPulse 1.5s infinite;
+}
+
+/* Empty state pour les filtres */
+.chat-empty-state {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: #9ca3af;
+}
+
+.chat-empty-state svg {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1rem;
+    opacity: 0.5;
+}
+
+/* Active filter count */
+.chat-filter-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.3);
+    margin-left: 0.375rem;
+}
+
+.chat-filter-btn:not(.active) .chat-filter-count {
+    background: #e2e8f0;
+    color: #64748b;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+{% include 'partials/breadcrumb.html.twig' with {
+    'items': [
+        {'label': 'Dashboard', 'path': 'user_dashboard', 'icon': 'dashboard'},
+        {'label': 'Chat en ligne'}
+    ]
+} %}
+
+<div class="chat-page-container" x-data="chatFilters()">
+    <div class="chat-box" 
+         id="chat-main"
+         data-chat-fetch-url="{{ path('user_chat_messages') }}" 
+         data-chat-send-url="{{ path('user_chat_send') }}" 
+         data-chat-read-url="{{ path('user_chat_mark_read') }}" 
+         data-chat-new-url="{{ path('user_chat_new') }}" 
+         data-chat-delete-url="{{ path('user_chat_delete') }}" 
+         data-conversation-id="{{ conversationId }}">
+        
+        <!-- Header -->
+        <div class="chat-box-header">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <!-- Info équipe -->
+                <div class="flex items-center gap-3">
+                    <div class="chat-team-avatar">
+                        <span>ADN</span>
+                    </div>
+                    <div>
+                        <h2 class="text-base md:text-lg font-bold text-gray-900">Équipe ADN Family Office</h2>
+                        <p class="text-xs text-green-600 font-medium flex items-center gap-1">
+                            <span class="chat-online-dot"></span>
+                            En ligne - Nous sommes là pour vous aider
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="chat-realtime-badge">
+                        <span class="chat-online-dot"></span>
+                        Chat en temps réel
+                    </div>
+                    <a href="{{ path('user_chat_new') }}" class="chat-action-btn chat-action-primary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <span class="chat-hide-mobile">Nouveau chat</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="chat-content">
+            <!-- Sidebar conversations -->
+            <div class="chat-sidebar">
+                <!-- Toggle mobile -->
+                <div class="chat-sidebar-toggle" @click="sidebarOpen = !sidebarOpen">
+                    <span class="flex items-center gap-2 text-sm font-medium text-gray-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        Conversations
+                        <span class="text-xs text-gray-400" x-text="'(' + filteredCount + ')'"></span>
+                    </span>
+                    <svg class="w-4 h-4 text-gray-500 transition-transform" :class="sidebarOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+                
+                <div id="chat-sidebar-body" class="chat-sidebar-body" :class="{ 'open': sidebarOpen }">
+                    <!-- Filtres -->
+                    <div class="chat-filters">
+                        <div class="flex items-center gap-2 mb-3">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                            </svg>
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Filtres</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button 
+                                class="chat-filter-btn" 
+                                :class="{ 'active': activeFilter === 'all' }"
+                                @click="setFilter('all')">
+                                Tous
+                                <span class="chat-filter-count" x-text="counts.all"></span>
+                            </button>
+                            <button 
+                                class="chat-filter-btn" 
+                                :class="{ 'active': activeFilter === 'open' }"
+                                @click="setFilter('open')">
+                                Ouvert
+                                <span class="chat-filter-count" x-text="counts.open"></span>
+                            </button>
+                            <button 
+                                class="chat-filter-btn" 
+                                :class="{ 'active': activeFilter === 'closed' }"
+                                @click="setFilter('closed')">
+                                Fermé
+                                <span class="chat-filter-count" x-text="counts.closed"></span>
+                            </button>
+                            <button 
+                                class="chat-filter-btn" 
+                                :class="{ 'active': activeFilter === 'unread' }"
+                                @click="setFilter('unread')">
+                                Non lu
+                                <span class="chat-filter-count" x-text="counts.unread"></span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Liste des conversations -->
+                    <div class="chat-conv-list" id="conversations-list">
+                        <div class="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+                            <h4 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                                Conversations
+                            </h4>
+                        </div>
+                        
+                        <!-- Conversation actuelle -->
+                        <div class="chat-conv-item active" 
+                             data-status="{{ conversationCard.status ?? 'ouvert' }}" 
+                             data-unread="{{ (conversationCard.unread ?? 0) > 0 ? '1' : '0' }}"
+                             :class="{ 'hidden': !isVisible('{{ conversationCard.status ?? 'ouvert' }}', {{ (conversationCard.unread ?? 0) > 0 ? 'true' : 'false' }}) }">
+                            <div class="chat-conv-avatar">ADN</div>
+                            <div class="chat-conv-info">
+                                <div class="chat-conv-title">{{ conversationCard.title ?? 'Équipe ADN Family Office' }}</div>
+                                <div class="chat-conv-preview">{{ conversationCard.preview ?? 'Bienvenue ! Dites-nous comment on peut vous aider.' }}</div>
+                                <div class="chat-conv-meta">
+                                    <span class="chat-status-badge {{ (conversationCard.status ?? 'ouvert') == 'ouvert' ? 'chat-status-open' : 'chat-status-closed' }}">
+                                        {{ (conversationCard.status ?? 'ouvert') == 'ouvert' ? '🟢 Ouvert' : '⚪ Fermé' }}
+                                    </span>
+                                    {% if (conversationCard.unread ?? 0) > 0 %}
+                                        <span class="chat-unread-badge">{{ conversationCard.unread }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- État vide si aucun résultat -->
+                        <div class="chat-empty-state" x-show="filteredCount === 0">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            <p class="text-sm">Aucune conversation</p>
+                            <p class="text-xs mt-1">pour ce filtre</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone des messages -->
+            <div class="chat-messages-area" id="messages-container">
+                <div class="chat-messages-header">
+                    <h3 class="text-sm font-bold text-gray-900 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                        </svg>
+                        Messages
+                    </h3>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <span class="chat-online-dot"></span>
+                        En ligne
+                    </div>
+                </div>
+                
+                <div class="chat-messages-scroll" id="messages-content">
+                    <div id="messages-list" class="space-y-4">
+                        {% if messages is empty %}
+                            <!-- Message de bienvenue -->
+                            <div class="chat-welcome">
+                                <div class="chat-welcome-icon">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="chat-welcome-title">👋 Bienvenue !</h3>
+                                <p class="chat-welcome-text">Notre équipe d'experts est là pour répondre à toutes vos questions sur vos investissements.</p>
+                                <div class="chat-welcome-meta">
+                                    <span class="chat-online-dot"></span>
+                                    Temps de réponse : ~2 min
+                                </div>
+                            </div>
+                        {% else %}
+                            {% for message in messages %}
+                                {% include 'front/user/chat/_message.html.twig' with {'message': message} %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Indicateur de frappe -->
+                <div id="typing-indicator" class="chat-typing hidden">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                            <span class="text-white text-xs font-bold">ADN</span>
+                        </div>
+                        <div class="chat-typing-bubble">
+                            <div class="chat-typing-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span class="text-xs text-gray-500 ml-1">écrit...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone de saisie -->
+        <div class="chat-input-area" id="chat-input-area">
+            <form id="chat-form" class="chat-input-wrapper">
+                <div class="chat-input-field-wrapper">
+                    <textarea 
+                        id="message-input" 
+                        placeholder="{{ conversationStatus == 'ferme' ? 'Chat fermé' : '💬 Votre message...' }}" 
+                        class="chat-input-field"
+                        rows="1"
+                        maxlength="1000"
+                        {{ conversationStatus == 'ferme' ? 'disabled' : '' }}></textarea>
+                    <button type="button" class="chat-emoji-btn" onclick="document.getElementById('emoji-picker').classList.toggle('open')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </button>
+                    <div id="emoji-picker" class="chat-emoji-picker">
+                        <button type="button" onclick="insertEmoji('😀')">😀</button>
+                        <button type="button" onclick="insertEmoji('😊')">😊</button>
+                        <button type="button" onclick="insertEmoji('😄')">😄</button>
+                        <button type="button" onclick="insertEmoji('😍')">😍</button>
+                        <button type="button" onclick="insertEmoji('🤔')">🤔</button>
+                        <button type="button" onclick="insertEmoji('👍')">👍</button>
+                        <button type="button" onclick="insertEmoji('🔥')">🔥</button>
+                        <button type="button" onclick="insertEmoji('⭐')">⭐</button>
+                        <button type="button" onclick="insertEmoji('❤️')">❤️</button>
+                        <button type="button" onclick="insertEmoji('👋')">👋</button>
+                        <button type="button" onclick="insertEmoji('💼')">💼</button>
+                        <button type="button" onclick="insertEmoji('📈')">📈</button>
+                        <button type="button" onclick="insertEmoji('✅')">✅</button>
+                        <button type="button" onclick="insertEmoji('💬')">💬</button>
+                        <button type="button" onclick="insertEmoji('📝')">📝</button>
+                        <button type="button" onclick="insertEmoji('✨')">✨</button>
+                    </div>
+                </div>
+                <button 
+                    type="submit" 
+                    id="send-button"
+                    class="chat-send-btn"
+                    {{ conversationStatus == 'ferme' ? 'disabled' : '' }}>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                </button>
+            </form>
+            <div class="chat-input-meta">
+                <div class="flex items-center gap-4">
+                    <span><span id="char-count">0</span>/1000 caractères</span>
+                    <span class="flex items-center gap-1">
+                        <kbd class="px-1.5 py-0.5 bg-gray-100 rounded text-xs">⏎</kbd>
+                        pour envoyer
+                    </span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="chat-online-dot"></span>
+                    Connecté
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts pour le chat en temps réel -->
+<script src="{{ asset('js/chat.js') }}"></script>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+// Chat Filters avec Alpine.js
+function chatFilters() {
+    return {
+        activeFilter: 'all',
+        sidebarOpen: false,
+        
+        // Données des conversations (à remplacer par données réelles)
+        conversations: [
+            {
+                status: '{{ conversationCard.status ?? "ouvert" }}',
+                unread: {{ (conversationCard.unread ?? 0) }}
+            }
+        ],
+        
+        // Compteurs calculés
+        get counts() {
+            const all = this.conversations.length;
+            const open = this.conversations.filter(c => c.status === 'ouvert').length;
+            const closed = this.conversations.filter(c => c.status === 'ferme' || c.status === 'fermé').length;
+            const unread = this.conversations.filter(c => c.unread > 0).length;
+            return { all, open, closed, unread };
+        },
+        
+        get filteredCount() {
+            switch(this.activeFilter) {
+                case 'open': return this.counts.open;
+                case 'closed': return this.counts.closed;
+                case 'unread': return this.counts.unread;
+                default: return this.counts.all;
+            }
+        },
+        
+        setFilter(filter) {
+            this.activeFilter = filter;
+            this.applyFilter();
+        },
+        
+        isVisible(status, hasUnread) {
+            switch(this.activeFilter) {
+                case 'open': 
+                    return status === 'ouvert';
+                case 'closed': 
+                    return status === 'ferme' || status === 'fermé';
+                case 'unread': 
+                    return hasUnread;
+                default: 
+                    return true;
+            }
+        },
+        
+        applyFilter() {
+            const items = document.querySelectorAll('.chat-conv-item');
+            items.forEach(item => {
+                const status = item.dataset.status || 'ouvert';
+                const hasUnread = item.dataset.unread === '1';
+                
+                if (this.isVisible(status, hasUnread)) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+    }
+}
+
+// Emoji insertion
+function insertEmoji(emoji) {
+    const input = document.getElementById('message-input');
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const text = input.value;
+    input.value = text.substring(0, start) + emoji + text.substring(end);
+    input.focus();
+    input.selectionStart = input.selectionEnd = start + emoji.length;
+    document.getElementById('emoji-picker').classList.remove('open');
+    
+    // Update char count
+    const charCount = document.getElementById('char-count');
+    if (charCount) {
+        charCount.textContent = input.value.length;
+    }
+}
+
+// Close emoji picker when clicking outside
+document.addEventListener('click', function(e) {
+    const picker = document.getElementById('emoji-picker');
+    const btn = document.querySelector('.chat-emoji-btn');
+    if (picker && btn && !picker.contains(e.target) && !btn.contains(e.target)) {
+        picker.classList.remove('open');
+    }
+});
+
+// Update char count on input
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('message-input');
+    const charCount = document.getElementById('char-count');
+    if (input && charCount) {
+        input.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+    }
+});
+</script>
+{% endblock %}

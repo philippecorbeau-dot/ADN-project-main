@@ -1,0 +1,1902 @@
+{% extends 'base.html.twig' %}
+
+{# =============== SEO OPTIMISÉ POUR LA PAGE EXPERTISE =============== #}
+{% block title %}Expertise ADN Family Office | {{ annees_expertise() }} ans, {{ clients_accompagnes() }} familles, {{ actifs_geres() }}M€{% endblock %}
+
+{% block meta_description %}{{ annees_expertise() }} ans d'expertise en gestion de patrimoine, immobilier, transmission, private equity. {{ clients_accompagnes() }} familles accompagnées, {{ actifs_geres() }}M€ d'actifs gérés à Paris.{% endblock %}
+
+{% block og_title %}Notre Expertise - Family Office Indépendant | ADN Family Office{% endblock %}
+{% block og_description %}Une équipe d'experts passionnés : gestion de patrimoine, immobilier, transmission, private equity. 92% de clients satisfaits.{% endblock %}
+
+{# JSON-LD pour la page Expertise #}
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "Notre Expertise - ADN Family Office",
+    "description": "Découvrez l'expertise et la méthodologie d'ADN Family Office, premier family office accessible à toutes les familles.",
+    "url": "{{ url('app_expertise') }}",
+    "mainEntity": {
+        "@type": "Organization",
+        "name": "ADN Family Office",
+        "foundingDate": "2009",
+        "numberOfEmployees": {
+            "@type": "QuantitativeValue",
+            "value": "10+"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "{{ clients_accompagnes() }}"
+        }
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Accueil",
+            "item": "{{ url('app_home') }}"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Expertise",
+            "item": "{{ url('app_expertise') }}"
+        }
+    ]
+}
+</script>
+{% endblock %}
+
+{% block header %}
+    {% include 'partials/modern-header-module.html.twig' %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+    /* ===== Variables CSS et Reset ===== */
+    :root {
+        /* Dégradé bleu conforme à la charte ADN (même que les autres pages) */
+        --primary-gradient: linear-gradient(135deg, #101A50 0%, #0057FF 40%, #1F299C 70%, #0D5EED 100%);
+        --brand-blue: #1C29A1;
+        --brand-blue-strong: #0057FF;
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --dark-gradient: linear-gradient(135deg, #2D3436 0%, #000000 100%);
+        --light-gradient: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+        --glass-bg: rgba(255, 255, 255, 0.25);
+        --glass-border: rgba(255, 255, 255, 0.18);
+        --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.1);
+        --shadow-2xl: 0 25px 60px rgba(0, 0, 0, 0.15);
+        --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+        scroll-behavior: smooth;
+    }
+
+    /* ===== Bouton Retour Accueil Moderne ===== */
+    .back-home-button {
+        position: fixed;
+        top: 100px;
+        left: 30px;
+        z-index: 999;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        border-radius: 100px;
+        padding: 14px 24px;
+        will-change: transform, opacity;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--brand-blue);
+        font-weight: 600;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+        transition: var(--transition-smooth);
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.1);
+    }
+
+    .back-home-button:hover {
+        transform: translateX(8px) scale(1.05);
+        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .back-home-button svg {
+        width: 18px;
+        height: 18px;
+        transition: transform 0.3s ease;
+    }
+
+    .back-home-button:hover svg {
+        transform: translateX(-3px);
+    }
+
+    /* ===== Hero Section Moderne ===== */
+        .expertise-hero {
+        background: var(--primary-gradient);
+            position: relative;
+        padding: 200px 0 150px;
+            overflow: hidden;
+        min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .expertise-hero::before {
+            content: '';
+            position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        animation: float 20s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    .floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+            top: 0;
+            left: 0;
+    }
+
+    .shape {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        animation: float-shape 15s ease-in-out infinite;
+    }
+
+    .shape:nth-child(1) {
+        width: 80px;
+        height: 80px;
+        left: 10%;
+        top: 20%;
+        animation-delay: 0s;
+    }
+
+    .shape:nth-child(2) {
+        width: 120px;
+        height: 120px;
+        right: 10%;
+        top: 30%;
+        animation-delay: 3s;
+    }
+
+    .shape:nth-child(3) {
+        width: 60px;
+        height: 60px;
+        left: 80%;
+        bottom: 20%;
+        animation-delay: 6s;
+        }
+
+    @keyframes float-shape {
+        0%, 100% { 
+            transform: translateY(0) translateX(0) rotate(0deg);
+            opacity: 0.5;
+        }
+        33% { 
+            transform: translateY(-30px) translateX(30px) rotate(120deg);
+            opacity: 0.8;
+        }
+        66% { 
+            transform: translateY(30px) translateX(-30px) rotate(240deg);
+            opacity: 0.3;
+        }
+        }
+
+        .expertise-hero-content {
+            position: relative;
+        z-index: 5;
+        text-align: center;
+        max-width: 900px;
+            margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 100px;
+        padding: 12px 28px;
+        margin-bottom: 40px;
+        animation: slide-down 0.8s ease-out;
+    }
+
+    @keyframes slide-down {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .hero-badge svg {
+        width: 24px;
+        height: 24px;
+        color: #fbbf24;
+    }
+
+    .hero-badge span {
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        }
+        
+        .expertise-hero h1 {
+        font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 800;
+        color: white;
+        margin-bottom: 30px;
+        line-height: 1.1;
+        letter-spacing: -2px;
+        animation: fade-up 1s ease-out 0.2s both;
+        }
+        
+    @keyframes fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        }
+        
+    .expertise-hero .lead-text {
+            font-size: 1.4rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 50px;
+        line-height: 1.7;
+        font-weight: 400;
+        animation: fade-up 1s ease-out 0.4s both;
+        }
+
+    .expertise-hero .lead-text .highlight {
+        color: #fbbf24;
+        font-weight: 600;
+        position: relative;
+    }
+
+    /* Stats Cards Modernisées */
+    .hero-stats {
+            display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        max-width: 800px;
+        margin: 60px auto 50px;
+        }
+
+    .stat-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 30px;
+        text-align: center;
+        transition: var(--transition-smooth);
+        animation: scale-in 0.6s ease-out forwards;
+        opacity: 0;
+        }
+
+    .stat-card:nth-child(1) { animation-delay: 0.6s; }
+    .stat-card:nth-child(2) { animation-delay: 0.8s; }
+    .stat-card:nth-child(3) { animation-delay: 1s; }
+
+    @keyframes scale-in {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+        }
+
+    .stat-card:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.35);
+        }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 800;
+            color: white;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #ffffff, #fbbf24);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        }
+
+    .hero-cta {
+        margin-top: 50px;
+        animation: fade-up 1s ease-out 1.2s both;
+    }
+
+    .cta-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: white;
+        color: var(--brand-blue);
+        padding: 18px 40px;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-decoration: none;
+        transition: var(--transition-smooth);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+    .cta-primary:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        color: #0D5EED;
+        }
+
+    /* ===== Section Expertise Cards ===== */
+    .expertise-section {
+        padding: 120px 0;
+        background: #f8f9fa;
+            position: relative;
+        }
+
+    .section-header {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto 80px;
+        }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, rgba(16, 26, 80, 0.1), rgba(13, 94, 237, 0.1));
+        border-radius: 100px;
+        padding: 10px 24px;
+        margin-bottom: 30px;
+        }
+
+    .section-badge svg {
+        width: 20px;
+        height: 20px;
+        color: var(--brand-blue);
+    }
+
+    .section-badge span {
+        color: var(--brand-blue);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    .section-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+    }
+
+    .section-subtitle {
+        font-size: 1.25rem;
+        color: #6b7280;
+        font-weight: 400;
+        line-height: 1.7;
+        }
+
+    /* Nouvelle Grid d'Expertise */
+    .expertise-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        align-items: stretch; /* Assure que toutes les cartes ont la même hauteur */
+    }
+
+    .expertise-card {
+        background: white;
+        border-radius: 32px;
+        padding: 40px;
+        position: relative;
+        transition: var(--transition-smooth);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid rgba(0,0,0,0.03);
+        height: 100%; /* Prend toute la hauteur disponible */
+    }
+
+    .expertise-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primary-gradient);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+    }
+
+    .expertise-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(13, 94, 237, 0.12);
+        border-color: rgba(13, 94, 237, 0.1);
+    }
+
+    .expertise-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .expertise-icon-wrapper {
+        width: 70px;
+        height: 70px;
+        background: var(--primary-gradient);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 25px rgba(13, 94, 237, 0.25);
+        transition: var(--transition-smooth);
+    }
+
+    .expertise-card:hover .expertise-icon-wrapper {
+        transform: rotate(10deg) scale(1.1);
+    }
+
+    .expertise-icon-wrapper svg {
+        width: 32px;
+        height: 32px;
+        color: white;
+    }
+
+    .expertise-card h3 {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 20px;
+        letter-spacing: -0.5px;
+    }
+
+    .expertise-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 30px 0;
+        flex-grow: 1; /* Pousse le contenu suivant vers le bas si besoin, mais margin-top auto sur result fait le job d'alignement */
+    }
+
+    .expertise-features li {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 8px 0;
+        color: #4b5563;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .expertise-features li::before {
+        content: '✓';
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        background: #e0f2fe;
+        color: #0284c7;
+        border-radius: 50%;
+        font-weight: 800;
+        font-size: 10px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    /* Modification précédente supprimée pour utiliser la nouvelle approche plus propre */
+    
+    .expertise-result {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        margin-top: auto; /* Aligne ce bloc tout en bas de la carte */
+        border: 1px solid #e2e8f0;
+        transition: var(--transition-smooth);
+    }
+    
+    .expertise-card:hover .expertise-result {
+        background: #f0f9ff;
+        border-color: #bae6fd;
+    }
+
+    .expertise-result strong {
+        display: block;
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        font-weight: 700;
+    }
+
+    .expertise-result span {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--brand-blue);
+    }
+
+    /* ===== Section Équipe Moderne ===== */
+        .team-section {
+        padding: 120px 0;
+        background: white;
+            position: relative;
+        overflow: hidden;
+        }
+
+    .team-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 60px;
+        margin-top: 80px;
+        }
+
+    /* Nouvelle Card pour les Photos */
+    .team-member-card {
+            position: relative;
+        border-radius: 32px;
+            overflow: hidden;
+        background: white;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+    .team-member-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 30px 80px rgba(102, 126, 234, 0.2);
+        }
+
+    .member-image-container {
+        position: relative;
+        height: 500px;
+        overflow: hidden;
+        background: linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%);
+    }
+
+    .member-photo {
+            width: 100%;
+            height: 100%;
+        object-fit: contain;
+        object-position: center;
+        transition: transform 0.6s ease;
+        }
+
+    .team-member-card:hover .member-photo {
+        transform: scale(1.05);
+        }
+
+    .member-gradient-overlay {
+            position: absolute;
+        bottom: 0;
+            left: 0;
+            right: 0;
+        height: 60%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+            opacity: 0;
+        transition: opacity 0.4s ease;
+        }
+
+    .team-member-card:hover .member-gradient-overlay {
+            opacity: 1;
+        }
+
+    .member-info {
+        padding: 40px;
+        background: white;
+        }
+
+    .member-name {
+            font-size: 2rem;
+            font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 10px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        }
+
+    .member-role {
+        font-size: 1.1rem;
+            font-weight: 600;
+        color: var(--brand-blue);
+        margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+    .member-bio {
+        font-size: 1rem;
+        color: #4b5563;
+        line-height: 1.8;
+        margin-bottom: 30px;
+        }
+
+    .member-credentials {
+            display: none;
+        }
+
+    .credential-item {
+            display: flex;
+            align-items: center;
+        gap: 15px;
+        }
+
+    .credential-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+            flex-shrink: 0;
+    }
+
+    .credential-icon svg {
+        width: 20px;
+        height: 20px;
+        color: var(--brand-blue);
+        }
+
+    .credential-text {
+        font-size: 0.95rem;
+        color: #4b5563;
+            font-weight: 500;
+        }
+
+    .member-social {
+            display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        }
+
+    .social-link {
+        width: 48px;
+        height: 48px;
+            border-radius: 50%;
+        background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        transition: var(--transition-smooth);
+            text-decoration: none;
+        }
+
+    .social-link:hover {
+        background: var(--primary-gradient);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+    .social-link i {
+        font-size: 20px;
+        color: var(--brand-blue);
+        transition: color 0.3s ease;
+    }
+
+    .social-link:hover i {
+            color: white;
+    }
+
+    /* ===== Methodologie Section Redesign ===== */
+    .methodology-section {
+        padding: 120px 0;
+        background: #f8f9fa;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Arrière-plan décoratif */
+    .methodology-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 50% 50%, rgba(13, 94, 237, 0.03) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .process-timeline {
+        max-width: 1000px;
+        margin: 80px auto 0;
+        position: relative;
+        padding: 40px 20px;
+    }
+
+    /* Ligne centrale */
+    .process-timeline::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, 
+            rgba(13, 94, 237, 0) 0%, 
+            #0D5EED 15%, 
+            #0D5EED 85%, 
+            rgba(13, 94, 237, 0) 100%
+        );
+    }
+
+    .process-step {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Changed from center to allow varying heights */
+        margin-bottom: 60px; /* Reduced margin */
+        position: relative;
+        width: 100%;
+    }
+
+    .process-step:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Point central sur la ligne */
+    .step-point {
+        position: absolute;
+        left: 50%;
+        top: 30px; /* Align with top of card */
+        transform: translate(-50%, 0);
+        width: 20px;
+        height: 20px;
+        background: white;
+        border: 4px solid var(--brand-blue);
+        border-radius: 50%;
+        z-index: 2;
+        box-shadow: 0 0 0 4px rgba(13, 94, 237, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .process-step:hover .step-point {
+        background: var(--brand-blue);
+        box-shadow: 0 0 0 8px rgba(13, 94, 237, 0.3);
+        transform: translate(-50%, 0) scale(1.2);
+    }
+
+    /* Carte de contenu */
+    .step-content {
+        width: 45%;
+        padding: 40px;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: 1px solid rgba(0,0,0,0.03);
+        z-index: 1;
+    }
+
+    /* Flèche de connexion vers la ligne centrale */
+    .step-content::after {
+        content: '';
+        position: absolute;
+        top: 36px; /* Adjusted for top alignment */
+        width: 0;
+        height: 0;
+        border-style: solid;
+    }
+
+    /* Positionnement Alterné */
+    .process-step:nth-child(odd) {
+        flex-direction: row;
+    }
+    
+    .process-step:nth-child(even) {
+        flex-direction: row-reverse;
+    }
+
+    .process-step:nth-child(odd) .step-content {
+        margin-right: auto;
+        text-align: right;
+    }
+    
+    .process-step:nth-child(even) .step-content {
+        margin-left: auto;
+        text-align: left;
+    }
+
+    /* Position des flèches */
+    .process-step:nth-child(odd) .step-content::after {
+        right: -10px;
+        border-width: 10px 0 10px 10px;
+        border-color: transparent transparent transparent white;
+    }
+
+    .process-step:nth-child(even) .step-content::after {
+        left: -10px;
+        border-width: 10px 10px 10px 0;
+        border-color: transparent white transparent transparent;
+    }
+
+    .step-content:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 60px rgba(13, 94, 237, 0.12);
+    }
+
+    /* Numéro stylisé en background */
+    .step-number-bg {
+        position: absolute;
+        top: 10px;
+        font-size: 8rem;
+        font-weight: 900;
+        color: rgba(13, 94, 237, 0.03);
+        line-height: 1;
+        user-select: none;
+        pointer-events: none;
+        transition: all 0.3s ease;
+        font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    .process-step:nth-child(odd) .step-number-bg {
+        right: 20px;
+    }
+
+    .process-step:nth-child(even) .step-number-bg {
+        left: 20px;
+    }
+
+    .step-content:hover .step-number-bg {
+        color: rgba(13, 94, 237, 0.08);
+        transform: scale(1.1);
+    }
+
+    .step-content h3 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .step-content p {
+        color: #4b5563;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 25px;
+    }
+
+    .step-meta {
+        display: inline-flex;
+        background: #f8fafc;
+        padding: 12px 24px;
+        border-radius: 12px;
+        gap: 30px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .process-step:nth-child(odd) .step-meta {
+        flex-direction: row-reverse;
+    }
+
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meta-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #94a3b8;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .meta-value {
+        font-size: 0.95rem;
+        color: var(--brand-blue);
+        font-weight: 700;
+    }
+    
+    .step-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background: var(--primary-gradient);
+        border-radius: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 20px rgba(13, 94, 237, 0.2);
+        color: white;
+    }
+    
+    .process-step:nth-child(odd) .step-icon {
+        margin-left: auto;
+    }
+
+    /* ===== Results Section ===== */
+    .results-section {
+        padding: 120px 0;
+        background: var(--primary-gradient);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Ajout d'un motif subtil en background */
+    .results-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 1px, transparent 1px),
+                          radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: 40px 40px;
+        opacity: 0.3;
+    }
+
+    .results-section .section-title {
+        background: none;
+        -webkit-text-fill-color: white;
+        color: white;
+        margin-bottom: 15px;
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .results-section .section-subtitle,
+    .results-section p {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-size: 1.2rem;
+        font-weight: 300;
+    }
+
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 30px;
+        max-width: 1100px;
+        margin: 70px auto 0;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .result-item {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 24px;
+        padding: 40px 25px;
+        transition: all 0.4s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .result-item:hover {
+        transform: translateY(-10px);
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .result-value {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 10px;
+        display: block;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        line-height: 1.1;
+    }
+
+    .result-description {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    /* ===== CTA Section ===== */
+    .cta-final {
+        padding: 120px 0;
+        background: white;
+        text-align: center;
+        }
+
+    .cta-final h2 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 25px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .cta-final p {
+        font-size: 1.25rem;
+        color: #6b7280;
+        margin-bottom: 50px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-button-group {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+            }
+
+    .btn-gradient {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 18px 40px;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        transition: var(--transition-smooth);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            }
+            
+    .btn-gradient:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: var(--brand-blue);
+        padding: 18px 40px;
+        border: 2px solid var(--brand-blue);
+        border-radius: 100px;
+        font-weight: 700;
+                font-size: 1.1rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        transition: var(--transition-smooth);
+            }
+            
+    .btn-outline:hover {
+        background: var(--brand-blue-strong);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+    }
+
+    /* ===== Animations au scroll ===== */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+            }
+            
+    /* ===== Responsive Design ===== */
+    @media (max-width: 1024px) {
+        .expertise-grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            }
+            
+        .team-grid {
+                grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        .process-timeline::before {
+            left: 30px;
+            }
+            
+        .process-step,
+        .process-step:nth-child(even) {
+            flex-direction: column;
+            align-items: flex-start;
+            padding-left: 70px;
+            }
+            
+        .step-point {
+            left: 30px;
+        }
+
+        .process-step:nth-child(odd) .step-content,
+        .process-step:nth-child(even) .step-content {
+            width: 100%;
+            margin: 0;
+            text-align: left;
+            }
+
+        .process-step:nth-child(odd) .step-content::after,
+        .process-step:nth-child(even) .step-content::after {
+            left: -10px;
+            right: auto;
+            border-width: 10px 10px 10px 0;
+            border-color: transparent white transparent transparent;
+        }
+
+        .process-step:nth-child(odd) .step-meta {
+            flex-direction: row;
+        }
+
+        .process-step:nth-child(odd) .step-icon {
+            margin-left: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .back-home-button {
+            display: none;
+            }
+
+        .expertise-hero {
+            padding: 150px 0 100px;
+            min-height: auto;
+            }
+
+        .expertise-hero h1 {
+            font-size: 3rem;
+            letter-spacing: -1px;
+            }
+
+        .expertise-hero .lead-text {
+            font-size: 1.1rem;
+            }
+
+        .hero-stats {
+            grid-template-columns: 1fr;
+            gap: 20px;
+            }
+            
+        .section-title {
+                font-size: 2.5rem;
+            }
+            
+        .expertise-card {
+            padding: 32px;
+            }
+            
+        .team-member-card {
+            border-radius: 24px;
+            }
+            
+        .member-image-container {
+            height: 400px;
+            }
+            
+        .member-info {
+            padding: 30px;
+            }
+            
+        .member-name {
+            font-size: 1.75rem;
+            }
+            
+        .results-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            }
+
+        .result-value {
+            font-size: 2.5rem;
+            }
+
+        .cta-button-group {
+            flex-direction: column;
+            align-items: center;
+            }
+
+        .btn-gradient,
+        .btn-outline {
+            width: 100%;
+            max-width: 300px;
+            justify-content: center;
+            }
+    }
+
+    @media (max-width: 480px) {
+        .expertise-hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            }
+
+        .section-title {
+            font-size: 2rem;
+            }
+
+        .expertise-grid {
+            grid-template-columns: 1fr;
+            padding: 0 15px;
+        }
+
+        .expertise-card {
+            padding: 24px;
+            }
+
+        .member-image-container {
+            height: 350px;
+        }
+
+        .process-step {
+            margin-bottom: 60px;
+            }
+            
+        .step-content {
+            padding: 24px;
+        }
+
+        .result-item {
+            padding: 30px 20px;
+            }
+            
+        .cta-final h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Bouton retour élégant -->
+    <a href="{{ path('app_home') }}" class="back-home-button">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Retour à l'accueil
+    </a>
+
+    <!-- Hero Section Moderne -->
+    <section class="expertise-hero">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+        
+        <div class="container">
+            <div class="expertise-hero-content">
+                <div class="hero-badge">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <span>Excellence Premium</span>
+                </div>
+                
+                <h1>Notre Expertise</h1>
+                <p class="lead-text">
+                    Le premier family office qui offre un <span class="highlight">accompagnement sur mesure</span> 
+                    à toutes les familles
+                </p>
+                
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">150+</div>
+                        <div class="stat-label">Familles accompagnées</div>
+                        </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{ actifs_geres() }}M€</div>
+                        <div class="stat-label">D'actifs gérés</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">12%</div>
+                        <div class="stat-label">Performance moyenne</div>
+                    </div>
+                </div>
+                
+                <div class="hero-cta">
+                    <a href="{{ path('app_contact') }}" class="cta-primary">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                        Prendre rendez-vous
+                </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Expertise -->
+    <section class="expertise-section">
+        <div class="container">
+            <div class="section-header fade-in">
+                <div class="section-badge">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    <span>Nos Domaines</span>
+                </div>
+                <h2 class="section-title">Piliers d'Expertise</h2>
+                <p class="section-subtitle">
+                    Une approche globale et personnalisée pour préserver et développer votre patrimoine
+                </p>
+            </div>
+
+            <div class="expertise-grid">
+                <!-- Gestion de Patrimoine -->
+                <div class="expertise-card fade-in">
+                    <div class="expertise-icon-wrapper">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                        </svg>
+                    </div>
+                    <h3>Gestion de Patrimoine</h3>
+                    <ul class="expertise-features">
+                        <li>Allocation d'actifs optimisée</li>
+                        <li>Gestion des risques personnalisée</li>
+                        <li>Reporting trimestriel détaillé</li>
+                    </ul>
+                    <div class="expertise-result">
+                        <strong>Résultat typique</strong>
+                        <span>+12% de performance annuelle</span>
+                    </div>
+                </div>
+
+                <!-- Immobilier -->
+                <div class="expertise-card fade-in">
+                    <div class="expertise-icon-wrapper">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                        </svg>
+                    </div>
+                    <h3>Immobilier</h3>
+                    <ul class="expertise-features">
+                        <li>SCPI sélectionnées rigoureusement</li>
+                        <li>Immobilier direct optimisé</li>
+                        <li>Gestion locative déléguée</li>
+                    </ul>
+                    <div class="expertise-result">
+                        <strong>Résultat typique</strong>
+                        <span>6-8% de rendement locatif</span>
+                    </div>
+                </div>
+
+                <!-- Transmission -->
+                <div class="expertise-card fade-in">
+                    <div class="expertise-icon-wrapper">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M13 7H7v6h6V7z"/>
+                            <path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2z"/>
+                        </svg>
+                    </div>
+                    <h3>Transmission</h3>
+                    <ul class="expertise-features">
+                        <li>Optimisation fiscale successorale</li>
+                        <li>Structuration patrimoniale</li>
+                        <li>Accompagnement juridique</li>
+                    </ul>
+                    <div class="expertise-result">
+                        <strong>Résultat typique</strong>
+                        <span>-40% d'économie fiscale</span>
+                    </div>
+                </div>
+
+                <!-- Gouvernance -->
+                <div class="expertise-card fade-in">
+                    <div class="expertise-icon-wrapper">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <h3>Gouvernance</h3>
+                    <ul class="expertise-features">
+                        <li>Conseil d'administration familial</li>
+                        <li>Gestion des conflits</li>
+                        <li>Formation des héritiers</li>
+                    </ul>
+                    <div class="expertise-result">
+                        <strong>Résultat typique</strong>
+                        <span>100% de familles préservées</span>
+                    </div>
+                </div>
+
+                <!-- Private Equity -->
+                <div class="expertise-card fade-in">
+                    <div class="expertise-icon-wrapper">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <h3>Private Equity</h3>
+                    <ul class="expertise-features">
+                        <li>FCPI/FIP sélectionnés</li>
+                        <li>Due diligence approfondie</li>
+                        <li>Accès aux meilleurs fonds</li>
+                    </ul>
+                    <div class="expertise-result">
+                        <strong>Résultat typique</strong>
+                        <span>+15% de performance</span>
+                    </div>
+                </div>
+
+                <!-- Financier -->
+                <div class="expertise-card fade-in">
+                    <div class="expertise-icon-wrapper">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
+                            <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <h3>Financier</h3>
+                    <ul class="expertise-features">
+                        <li>Assurance-vie optimisée</li>
+                        <li>PEA et PEA-PME</li>
+                        <li>PER structuré</li>
+                    </ul>
+                    <div class="expertise-result">
+                        <strong>Résultat typique</strong>
+                        <span>-30% d'impôts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Équipe -->
+    <section class="team-section">
+        <div class="team-container">
+            <div class="section-header fade-in">
+                <div class="section-badge">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    <span>Notre ADN</span>
+                </div>
+                <h2 class="section-title">L'Équipe Fondatrice</h2>
+                <p class="section-subtitle">
+                    Des experts passionnés dévoués à votre réussite financière
+                </p>
+            </div>
+
+            <div class="team-grid">
+                <!-- Philippe Corbeau -->
+                <div class="team-member-card fade-in">
+                    <div class="member-image-container">
+                        <img src="{{ asset('images/Phil.png') }}" 
+                             alt="Philippe Corbeau" 
+                             class="member-photo">
+                        <div class="member-gradient-overlay"></div>
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Philippe Corbeau</h3>
+                        <p class="member-role">CO-FONDATEUR</p>
+                        <p class="member-bio">
+                            Fort de plus de dix ans d'expérience en gestion de patrimoine chez HSBC, LCL et Tikehau Capital, Philippe a développé une expertise solide en analyse financière et en construction de stratégies d'investissement sur mesure. Spécialisé dans l'accompagnement de clients exigeants, il intervient sur les enjeux de transmission, de valorisation et d'allocation d'actifs.
+                        </p>
+                        <div class="member-credentials">
+                            <div class="credential-item">
+                                <div class="credential-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    </svg>
+                </div>
+                                
+                    </div>
+                </div>
+                        <div class="member-social">
+                            <a href="#" class="social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="#" class="social-link" title="Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                    </div>
+                </div>
+                    </div>
+
+                <!-- Eudes Blin -->
+                <div class="team-member-card fade-in">
+                    <div class="member-image-container">
+                        <img src="{{ asset('images/Blin.png') }}" 
+                             alt="Eudes Blin" 
+                             class="member-photo">
+                        <div class="member-gradient-overlay"></div>
+                </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Eudes Blin</h3>
+                        <p class="member-role">CO-FONDATEUR</p>
+                        <p class="member-bio">
+                            Fort d'un parcours de plus de 8 ans entre immobilier, finance et investissement, Eudes a développé une forte capacité à structurer des opérations à valeur ajoutée. Après des expériences chez BNP Paribas et Tikehau Capital, il apporte son expertise en ingénierie patrimoniale, analyse de projets, structuration civile et coordination des acteurs.
+                                </p>
+                        <div class="member-credentials">
+                            <div class="credential-item">
+                                <div class="credential-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          
+                                    </div>
+                                
+                                </div>
+                        </div>
+                        <div class="member-social">
+                            <a href="#" class="social-link" title="LinkedIn">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+                            <a href="#" class="social-link" title="Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </section>
+
+    <!-- Section Méthodologie -->
+    <section class="methodology-section">
+        <div class="container">
+            <div class="section-header fade-in">
+                <div class="section-badge">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                        </svg>
+                    <span>Processus</span>
+                                    </div>
+                <h2 class="section-title">Notre Méthodologie ADN</h2>
+                <p class="section-subtitle">
+                    Un processus structuré pour un accompagnement optimal
+                </p>
+                                    </div>
+
+            <div class="process-timeline">
+                <!-- Step 1 -->
+                <div class="process-step fade-in">
+                    <div class="step-point"></div>
+                    <div class="step-content">
+                        <div class="step-number-bg">01</div>
+                        <div class="step-icon">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                        </div>
+                        <h3>Diagnostic 360°</h3>
+                        <p>Analyse complète de votre situation civile, économique et fiscale pour identifier vos besoins et opportunités.</p>
+                        <div class="step-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Durée</span>
+                                <span class="meta-value">2-3 semaines</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Livrable</span>
+                                <span class="meta-value">Rapport complet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="process-step fade-in">
+                    <div class="step-point"></div>
+                    <div class="step-content">
+                        <div class="step-number-bg">02</div>
+                        <div class="step-icon">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                        </div>
+                        <h3>Architecture Patrimoniale</h3>
+                        <p>Conception d'une stratégie sur mesure adaptée à vos objectifs de vie et vos contraintes spécifiques.</p>
+                        <div class="step-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Durée</span>
+                                <span class="meta-value">1-2 semaines</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Livrable</span>
+                                <span class="meta-value">Plan d'action</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="process-step fade-in">
+                    <div class="step-point"></div>
+                    <div class="step-content">
+                        <div class="step-number-bg">03</div>
+                        <div class="step-icon">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                            </svg>
+                        </div>
+                        <h3>Implémentation</h3>
+                        <p>Mise en œuvre progressive et sécurisée de la stratégie avec sélection rigoureuse des solutions.</p>
+                        <div class="step-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Durée</span>
+                                <span class="meta-value">1-3 mois</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Livrable</span>
+                                <span class="meta-value">Portefeuille structuré</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="process-step fade-in">
+                    <div class="step-point"></div>
+                    <div class="step-content">
+                        <div class="step-number-bg">04</div>
+                        <div class="step-icon">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <h3>Suivi & Optimisation</h3>
+                        <p>Accompagnement continu avec reporting régulier et ajustements pour maximiser la performance.</p>
+                        <div class="step-meta">
+                            <div class="meta-item">
+                                <span class="meta-label">Fréquence</span>
+                                <span class="meta-value">Trimestrielle</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-label">Outils</span>
+                                <span class="meta-value">Dashboard digital</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    </div>
+    </section>
+
+    <!-- Section Résultats -->
+    <section class="results-section">
+        <div class="container">
+            <div class="text-center">
+                <h2 class="section-title text-white mb-3">Nos Résultats</h2>
+                <p class="text-white opacity-90 text-xl">Des performances qui parlent d'elles-mêmes</p>
+                </div>
+
+            <div class="results-grid">
+                <div class="result-item fade-in">
+                    <span class="result-value">150+</span>
+                    <span class="result-description">Familles accompagnées</span>
+                </div>
+                <div class="result-item fade-in">
+                    <span class="result-value">{{ actifs_geres() }}M€</span>
+                    <span class="result-description">D'actifs gérés</span>
+                </div>
+                <div class="result-item fade-in">
+                    <span class="result-value">12%</span>
+                    <span class="result-description">Performance moyenne</span>
+                </div>
+                <div class="result-item fade-in">
+                    <span class="result-value">92%</span>
+                    <span class="result-description">Satisfaction client</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="cta-final">
+        <div class="container">
+            <h2>Prêt à transformer votre patrimoine ?</h2>
+            <p>Découvrez comment notre expertise peut vous aider à atteindre vos objectifs</p>
+            <div class="cta-button-group">
+                <a href="{{ path('app_contact') }}" class="btn-gradient">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                Bilan patrimonial gratuit
+            </a>
+                <a href="{{ path('app_home') }}#services" class="btn-outline">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Découvrir nos services
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intersection Observer pour les animations au scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Ne pas désobserver pour permettre les animations répétées
+                    }
+                });
+            }, observerOptions);
+
+            // Observer tous les éléments avec la classe fade-in
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Animation des statistiques au scroll
+            const animateValue = (obj, start, end, duration) => {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    const value = Math.floor(progress * (end - start) + start);
+                    obj.innerHTML = value;
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            };
+
+            // Observer pour les statistiques
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+                        entry.target.classList.add('animated');
+                        const value = entry.target.textContent;
+                        if (value.includes('+')) {
+                            const num = parseInt(value.replace('+', ''));
+                            animateValue(entry.target, 0, num, 2000);
+                setTimeout(() => {
+                                entry.target.innerHTML = value;
+                            }, 2000);
+                        }
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            // Smooth scroll pour les liens internes
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Parallax effect pour le hero (desktop seulement)
+            if (window.innerWidth > 768) {
+                window.addEventListener('scroll', () => {
+                    const scrolled = window.pageYOffset;
+                    const hero = document.querySelector('.expertise-hero');
+                    if (hero) {
+                        hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+                    }
+                });
+            }
+
+            // Hover effects pour les cards
+            const cards = document.querySelectorAll('.expertise-card, .team-member-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-15px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            const backButton = document.querySelector('.back-home-button');
+            if (backButton) {
+                let isVisible = true;
+                let lastScroll = 0;
+
+                window.addEventListener('scroll', () => {
+                    const currentScroll = window.pageYOffset;
+
+                    if (currentScroll > lastScroll && currentScroll > 100) {
+                        if (isVisible) {
+                            backButton.style.transform = 'translateX(-100px)';
+                            backButton.style.opacity = '0';
+                            backButton.style.pointerEvents = 'none';
+                            backButton.setAttribute('aria-hidden', 'true');
+                            backButton.setAttribute('tabindex', '-1');
+                            isVisible = false;
+                        }
+                    } else {
+                        if (!isVisible) {
+                            backButton.style.transform = 'translateX(0)';
+                            backButton.style.opacity = '1';
+                            backButton.style.pointerEvents = 'auto';
+                            backButton.removeAttribute('aria-hidden');
+                            backButton.removeAttribute('tabindex');
+                            isVisible = true;
+                        }
+                    }
+
+                    lastScroll = currentScroll;
+                });
+            }
+        });
+    </script>
+{% endblock %}

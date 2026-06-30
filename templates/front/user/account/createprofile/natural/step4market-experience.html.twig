@@ -1,0 +1,269 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+
+{% block title %}Connaissance des marchés financiers - Expérience des marchés{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header avec progression -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-bold text-gray-900">Votre compréhension des risques</h1>
+                <div class="text-sm text-gray-500">
+                    Étape {{ step }}/{{ totalSteps }}
+                </div>
+            </div>
+            
+            <!-- Barre de progression -->
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 h-2 rounded-full transition-all duration-300" 
+                     style="width: {{ (step / totalSteps) * 100 }}%"></div>
+            </div>
+        </div>
+
+        <!-- Introduction -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <div class="flex items-start space-x-3">
+                <i class="fa-solid fa-chart-area text-blue-600 mt-1"></i>
+                <div class="flex-1">
+                    <h3 class="font-semibold text-blue-800 mb-2">Informations sur l'expérience des marchés</h3>
+                    <p class="text-sm text-blue-700">
+                        Ces questions nous permettent d'évaluer votre expérience pratique sur les différents marchés financiers et produits d'investissement.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire -->
+        <form method="post" class="space-y-6">
+            {{ form_start(form) }}
+            
+            <!-- Actions / OPC actions -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.hasStocksExperience) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.hasStocksExperience) }}
+                </div>
+                
+                <!-- Sous-questions conditionnelles -->
+                <div id="stocks-details" class="mt-4 hidden space-y-4">
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-2">
+                            {{ form_label(form.stocksOperationsCount) }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Combien d'opérations (achats, ventes, arbitrages) réalisez-vous en moyenne par an ?
+                        </p>
+                        {{ form_widget(form.stocksOperationsCount) }}
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-2">
+                            {{ form_label(form.stocksVolume) }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Volume de transactions (moy. Annuelle des 24 derniers mois) sur Actions / OPC actions
+                        </p>
+                        {{ form_widget(form.stocksVolume) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Obligations / OPC obligations -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.hasBondsExperience) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.hasBondsExperience) }}
+                </div>
+                
+                <!-- Sous-questions conditionnelles -->
+                <div id="bonds-details" class="mt-4 hidden space-y-4">
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-2">
+                            {{ form_label(form.bondsOperationsCount) }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Combien d'opérations (achats, ventes, arbitrages) réalisez-vous en moyenne par an ?
+                        </p>
+                        {{ form_widget(form.bondsOperationsCount) }}
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-2">
+                            {{ form_label(form.bondsVolume) }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Volume de transactions (moy. Annuelle des 24 derniers mois) sur Obligations / OPC obligations
+                        </p>
+                        {{ form_widget(form.bondsVolume) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- OPCVM (FCP, SICAV) -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.hasUcitsExperience) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.hasUcitsExperience) }}
+                </div>
+                
+                <!-- Sous-questions conditionnelles -->
+                <div id="ucits-details" class="mt-4 hidden space-y-4">
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-2">
+                            {{ form_label(form.ucitsOperationsCount) }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Combien d'opérations (achats, ventes, arbitrages) réalisez-vous en moyenne par an ?
+                        </p>
+                        {{ form_widget(form.ucitsOperationsCount) }}
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-2">
+                            {{ form_label(form.ucitsVolume) }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Volume de transactions (moy. Annuelle des 24 derniers mois) sur OPCVM (FCP, SICAV)
+                        </p>
+                        {{ form_widget(form.ucitsVolume) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Immobilier (ex: SCPI, OPCI) -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.hasRealEstateExperience) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.hasRealEstateExperience) }}
+                </div>
+                
+                <!-- Sous-questions conditionnelles -->
+                <div id="real-estate-details" class="mt-4 hidden space-y-4">
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-2">
+                            {{ form_label(form.realEstateOperationsCount) }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Combien d'opérations (achats, ventes, arbitrages) réalisez-vous en moyenne par an ?
+                        </p>
+                        {{ form_widget(form.realEstateOperationsCount) }}
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-2">
+                            {{ form_label(form.realEstateVolume) }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Volume de transactions (moy. Annuelle des 24 derniers mois) sur Immobilier (ex: SCPI, OPCI)
+                        </p>
+                        {{ form_widget(form.realEstateVolume) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instruments complexes -->
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">
+                        {{ form_label(form.hasComplexInstrumentsExperience) }}
+                    </h3>
+                </div>
+                <div class="space-y-3">
+                    {{ form_widget(form.hasComplexInstrumentsExperience) }}
+                </div>
+                
+                <!-- Sous-questions conditionnelles -->
+                <div id="complex-instruments-details" class="mt-4 hidden space-y-4">
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-2">
+                            {{ form_label(form.complexInstrumentsOperationsCount) }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Combien d'opérations (achats, ventes, arbitrages) réalisez-vous en moyenne par an ?
+                        </p>
+                        {{ form_widget(form.complexInstrumentsOperationsCount) }}
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-md font-medium text-gray-700 mb-2">
+                            {{ form_label(form.complexInstrumentsVolume) }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-2">
+                            Volume de transactions (moy. Annuelle des 24 derniers mois) sur Instruments complexes (ex: produits structurés, FIA, certificats)
+                        </p>
+                        {{ form_widget(form.complexInstrumentsVolume) }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boutons de navigation -->
+            <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                <a href="{{ path('user_create_profile', {'step': 4, 'substep': 'complex-products'}) }}" 
+                   class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                    <i class="fa-solid fa-arrow-left mr-2"></i>
+                    Précédent
+                </a>
+                
+                <button type="submit" 
+                        class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all transform hover:scale-105">
+                    Terminer
+                    <i class="fa-solid fa-check ml-2"></i>
+                </button>
+            </div>
+
+            {{ form_end(form) }}
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript pour l'affichage conditionnel -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fonction générique pour gérer l'affichage conditionnel
+    function setupConditionalDisplay(radioName, detailsId) {
+        const radios = document.querySelectorAll(`input[name="${radioName}"]`);
+        const details = document.getElementById(detailsId);
+        
+        function toggleDetails() {
+            const selectedValue = document.querySelector(`input[name="${radioName}"]:checked`);
+            if (selectedValue && selectedValue.value === '1') {
+                details.classList.remove('hidden');
+            } else {
+                details.classList.add('hidden');
+            }
+        }
+        
+        radios.forEach(radio => {
+            radio.addEventListener('change', toggleDetails);
+        });
+        
+        // Initialiser l'état
+        toggleDetails();
+    }
+    
+    // Configuration pour chaque section
+    setupConditionalDisplay('knowledge_market_experience[hasStocksExperience]', 'stocks-details');
+    setupConditionalDisplay('knowledge_market_experience[hasBondsExperience]', 'bonds-details');
+    setupConditionalDisplay('knowledge_market_experience[hasUcitsExperience]', 'ucits-details');
+    setupConditionalDisplay('knowledge_market_experience[hasRealEstateExperience]', 'real-estate-details');
+    setupConditionalDisplay('knowledge_market_experience[hasComplexInstrumentsExperience]', 'complex-instruments-details');
+});
+</script>
+{% endblock %} 

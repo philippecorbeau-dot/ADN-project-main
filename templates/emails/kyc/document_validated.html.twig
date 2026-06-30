@@ -1,0 +1,34 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Document validé' %}
+
+{% block content %}
+    <h1>✅ Votre document a été validé</h1>
+    
+    <p>Bonjour {{ user.firstname ?? 'Cher client' }},</p>
+    
+    <p>Bonne nouvelle ! Votre document <strong>{{ documentType }}</strong> a été validé par notre équipe.</p>
+    
+    <div class="info-box">
+        <p><strong>📄 Document concerné :</strong></p>
+        <p>{{ documentType }}</p>
+        {% if validatedAt %}
+        <p style="margin-top: 10px;"><strong>📅 Date de validation :</strong> {{ validatedAt|date('d/m/Y à H:i') }}</p>
+        {% endif %}
+    </div>
+    
+    <h2>Et maintenant ?</h2>
+    
+    <p>Vous pouvez consulter l'état de votre dossier et de tous vos documents dans votre espace personnel.</p>
+    
+    <div class="button-container">
+        <a href="{{ url('user_documents') }}" class="button">Voir mes documents</a>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p style="text-align: center; font-size: 14px; color: #64748b;">
+        Si vous avez des questions, notre équipe est à votre disposition pour vous accompagner.
+    </p>
+{% endblock %}
+

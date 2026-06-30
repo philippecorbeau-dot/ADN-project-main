@@ -1,0 +1,312 @@
+{% extends 'front/layouts/funnel.layout.html.twig' %}
+
+{% block body %}
+<div class="container pb-10 mt-24 md:mt-0">
+    <div class="rounded-xl bg-white p-6 sm:p-10 shadow-md transition-opacity transition-transform">
+        <!-- Header moderne avec icône et sous-titre -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-600 to-green-600 rounded-full mb-4">
+                <i class="fa-solid fa-shield-check text-white text-2xl"></i>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
+                {% trans %}Vérification de votre identité{% endtrans %}
+            </h1>
+            <p class="text-lg text-gray-600">
+                {% trans %}Finalisons votre inscription en toute sécurité{% endtrans %}
+            </p>
+        </div>
+
+        <!-- Premier encart - Conseils généraux -->
+        <div class="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 rounded-2xl p-8 mb-8 text-white shadow-xl">
+            <div class="flex items-center mb-6">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-lightbulb text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-xl font-bold text-white">Conseils pour l'upload</h3>
+                    <p class="text-blue-100 text-sm">Suivez ces recommandations pour un upload réussi</p>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="flex items-start group">
+                    <div class="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-white/30 transition-all duration-200">
+                        <i class="fa-solid fa-mobile-alt text-white text-sm"></i>
+                    </div>
+                    <span class="text-blue-50 group-hover:text-white transition-colors duration-200">Photographiez votre pièce d'identité avec un smartphone (pas de scan)</span>
+                </div>
+                <div class="flex items-start group">
+                    <div class="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-white/30 transition-all duration-200">
+                        <i class="fa-solid fa-eye text-white text-sm"></i>
+                    </div>
+                    <span class="text-blue-50 group-hover:text-white transition-colors duration-200">Le document doit être lisible, visible en entier, et faire moins de 10 Mo</span>
+                </div>
+                <div class="flex items-start group">
+                    <div class="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-white/30 transition-all duration-200">
+                        <i class="fa-solid fa-file-image text-white text-sm"></i>
+                    </div>
+                    <span class="text-blue-50 group-hover:text-white transition-colors duration-200">Formats acceptés : PDF, PNG, JPG, JPEG</span>
+                </div>
+                <div class="flex items-start group">
+                    <div class="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-white/30 transition-all duration-200">
+                        <i class="fa-solid fa-calendar-alt text-white text-sm"></i>
+                    </div>
+                    <span class="text-blue-50 group-hover:text-white transition-colors duration-200">Justificatif de domicile de moins de 3 mois</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deuxième encart - Points importants -->
+        <div class="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 rounded-2xl p-8 mb-8 text-white shadow-xl">
+            <div class="flex items-center mb-6">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-shield-check text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-xl font-bold text-white">Points importants à vérifier</h3>
+                    <p class="text-emerald-100 text-sm">Assurez-vous de respecter ces critères de qualité</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex items-start group">
+                    <div class="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-white/30 transition-all duration-200">
+                        <i class="fa-solid fa-check text-white text-sm"></i>
+                    </div>
+                    <span class="text-emerald-50 group-hover:text-white transition-colors duration-200">Assurez-vous que tous les coins du document sont visibles</span>
+                </div>
+                <div class="flex items-start group">
+                    <div class="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-white/30 transition-all duration-200">
+                        <i class="fa-solid fa-check text-white text-sm"></i>
+                    </div>
+                    <span class="text-emerald-50 group-hover:text-white transition-colors duration-200">Évitez les reflets et les ombres sur le document</span>
+                </div>
+                <div class="flex items-start group">
+                    <div class="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-white/30 transition-all duration-200">
+                        <i class="fa-solid fa-check text-white text-sm"></i>
+                    </div>
+                    <span class="text-emerald-50 group-hover:text-white transition-colors duration-200">Utilisez un éclairage uniforme pour une meilleure qualité</span>
+                </div>
+                <div class="flex items-start group">
+                    <div class="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-4 group-hover:bg-white/30 transition-all duration-200">
+                        <i class="fa-solid fa-check text-white text-sm"></i>
+                    </div>
+                    <span class="text-emerald-50 group-hover:text-white transition-colors duration-200">Vérifiez que le document n'est pas plié ou abîmé</span>
+                </div>
+            </div>
+        </div>
+
+        {% if documents is defined and documents|length > 0 %}
+            <!-- Documents existants modernisés -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
+                    <i class="fa-solid fa-folder-open text-green-600 mr-3"></i>
+                    Documents déjà envoyés
+                </h2>
+                <div class="space-y-3">
+                    {% for doc in documents %}
+                        <div class="bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-green-300 transition-all duration-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <i class="fa-solid {{ doc.type == 'identity' ? 'fa-id-card' : 'fa-home' }} text-blue-600 text-lg"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="font-medium text-gray-800">
+                                            {{ doc.type == 'identity' ? "Pièce d'identité" : 'Justificatif de domicile' }}
+                                        </p>
+                                        <p class="text-sm text-gray-500">
+                                            Envoyé le {{ doc.uploadedAt|date('d/m/Y à H:i') }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <a href="{{ asset('uploads/kyc/' ~ doc.filename) }}" target="_blank" 
+                                       class="text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                                        <i class="fa-solid fa-eye mr-1"></i>
+                                        Voir
+                                    </a>
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                        {{ doc.status == 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                                           (doc.status == 'validated' ? 'bg-green-100 text-green-800 border border-green-200' : 
+                                           'bg-red-100 text-red-800 border border-red-200') }}">
+                                        <i class="fa-solid {{ doc.status == 'pending' ? 'fa-clock' : 
+                                                           (doc.status == 'validated' ? 'fa-check' : 'fa-times') }} mr-1"></i>
+                                        {{ doc.status == 'pending' ? 'En attente' : 
+                                           (doc.status == 'validated' ? 'Validé' : 'Refusé') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Formulaire modernisé -->
+        <div class="mb-6">
+            {{ form_start(form, {'attr': {'id': 'form-step5', 'enctype': 'multipart/form-data'}}) }}
+            
+            <!-- Zone de drop pour pièce d'identité -->
+            <div class="mb-8">
+                <label class="block text-base font-semibold mb-4 text-gray-800">
+                    <i class="fa-solid fa-id-card text-blue-600 mr-2"></i>
+                    Pièce d'identité
+                </label>
+                <div class="relative">
+                    <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-400 transition-colors duration-200 bg-gray-50 hover:bg-blue-50">
+                        <i class="fa-solid fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-lg font-medium text-gray-700 mb-2">Glissez votre fichier ici</p>
+                        <p class="text-sm text-gray-500 mb-4">ou cliquez pour sélectionner</p>
+                        <div class="flex items-center justify-center space-x-2 text-xs text-gray-500">
+                            <i class="fa-solid fa-file"></i>
+                            <span>PDF, PNG, JPG, JPEG - Max 10Mo</span>
+                        </div>
+                        {{ form_widget(form.identityProof, {
+                            'attr': {
+                                'class': 'absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10',
+                                'accept': 'image/*,application/pdf'
+                            }
+                        }) }}
+                    </div>
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date d'expiration</label>
+                            {{ form_widget(form.identityExpirationDate, {
+                                'attr': { 'class': 'w-full border border-gray-300 rounded-md px-3 py-2 date-mask', 'placeholder': 'JJ/MM/AAAA' }
+                            }) }}
+                            {{ form_errors(form.identityExpirationDate) }}
+                            <p class="text-xs text-gray-500 mt-1">Votre pièce d'identité doit être en cours de validité.</p>
+                        </div>
+                    </div>
+                    <div id="identity-preview" class="hidden mt-4">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-check-circle text-green-600 mr-3"></i>
+                                <span class="text-green-800 font-medium">Fichier sélectionné</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ form_errors(form.identityProof) }}
+            </div>
+
+            <!-- Zone de drop pour justificatif de domicile -->
+            <div class="mb-8">
+                <label class="block text-base font-semibold mb-4 text-gray-800">
+                    <i class="fa-solid fa-home text-green-600 mr-2"></i>
+                    Justificatif de domicile
+                </label>
+                <div class="relative">
+                    <div class="relative border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-green-400 transition-colors duration-200 bg-gray-50 hover:bg-green-50">
+                        <i class="fa-solid fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-lg font-medium text-gray-700 mb-2">Glissez votre fichier ici</p>
+                        <p class="text-sm text-gray-500 mb-4">ou cliquez pour sélectionner</p>
+                        <div class="flex items-center justify-center space-x-2 text-xs text-gray-500">
+                            <i class="fa-solid fa-file"></i>
+                            <span>PDF, PNG, JPG, JPEG - Max 10Mo - Moins de 3 mois</span>
+                        </div>
+                        {{ form_widget(form.addressProof, {
+                            'attr': {
+                                'class': 'absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10',
+                                'accept': 'image/*,application/pdf'
+                            }
+                        }) }}
+                    </div>
+                    <div id="address-preview" class="hidden mt-4">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-check-circle text-green-600 mr-3"></i>
+                                <span class="text-green-800 font-medium">Fichier sélectionné</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ form_errors(form.addressProof) }}
+            </div>
+
+            <!-- Boutons de navigation modernisés -->
+            <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                <a href="{{ path('user_create_profile', {'step' : 4 }) }}" 
+                   class="flex items-center px-6 py-3 text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 font-medium">
+                    <i class="fa-solid fa-arrow-left mr-2"></i>
+                    Précédent
+                </a>
+                <button type="submit" 
+                        class="flex items-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
+                    <i class="fa-solid fa-paper-plane mr-2"></i>
+                    Envoyer
+                </button>
+            </div>
+            
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+<!-- Script pour la prévisualisation des fichiers -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const identityInput = document.querySelector('input[name*="identityProof"]');
+    const addressInput = document.querySelector('input[name*="addressProof"]');
+    const expirationInput = document.querySelector('.date-mask');
+    
+    function handleFileSelect(input, previewId) {
+        const preview = document.getElementById(previewId);
+        // Cherche d'abord la zone de drop la plus proche. Si non trouvée, tente via le parent .relative
+        const dropZone = input.closest('.border-dashed') || (input.closest('.relative') ? input.closest('.relative').querySelector('.border-dashed') : null);
+        
+        input.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                if (preview) preview.classList.remove('hidden');
+                if (dropZone) {
+                    dropZone.classList.add('border-green-400', 'bg-green-50');
+                    dropZone.classList.remove('border-gray-300', 'bg-gray-50');
+                }
+            } else {
+                if (preview) preview.classList.add('hidden');
+                if (dropZone) {
+                    dropZone.classList.remove('border-green-400', 'bg-green-50');
+                    dropZone.classList.add('border-gray-300', 'bg-gray-50');
+                }
+            }
+        });
+    }
+    
+    // Empêcher le clic sur la zone de drop d'ouvrir le sélecteur si on clique sur des champs internes
+    document.querySelectorAll('.border-dashed').forEach(zone => {
+        zone.addEventListener('click', function(e){
+            if (e.target.closest('input[type="date"], .date-fr, label')) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Permettre le click sur la zone verte d'adresse pour ouvrir correctement le file picker
+    if (addressInput) {
+        const addressZone = addressInput.closest('.border-dashed');
+        if (addressZone) {
+            addressZone.addEventListener('click', function(){
+                addressInput.click();
+            });
+        }
+    }
+
+    // Calendrier simple (native si disponible, sinon flatpickr léger)
+    if (expirationInput) {
+        try {
+            // Utiliser le datepicker natif s'il existe
+            expirationInput.setAttribute('type','date');
+        } catch (e) { /* no-op */ }
+    }
+    
+    if (identityInput) handleFileSelect(identityInput, 'identity-preview');
+    if (addressInput) handleFileSelect(addressInput, 'address-preview');
+});
+</script>
+
+{% include 'front/partials/modals/finish-profile.html.twig' %}
+{% endblock %}

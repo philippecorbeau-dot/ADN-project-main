@@ -1,0 +1,39 @@
+{% extends 'emails/base_layout.html.twig' %}
+
+{% set header_title = 'Document à corriger' %}
+
+{% block content %}
+    <h1>⚠️ Votre document nécessite une correction</h1>
+    
+    <p>Bonjour {{ user.firstname ?? 'Cher client' }},</p>
+    
+    <p>Nous avons examiné votre document <strong>{{ documentType }}</strong>, mais nous ne pouvons malheureusement pas le valider en l'état.</p>
+    
+    <div class="warning-box">
+        <p><strong>❌ Motif du refus :</strong></p>
+        <p style="margin-top: 8px;">{{ refusalReason }}</p>
+    </div>
+    
+    <h2>Comment corriger ?</h2>
+    
+    <p>Pour continuer la validation de votre dossier, veuillez soumettre un nouveau document en tenant compte du motif indiqué ci-dessus.</p>
+    
+    <ul style="margin: 20px 0; padding-left: 20px; color: #475569;">
+        <li style="margin-bottom: 10px;">📸 Assurez-vous que le document est lisible et de bonne qualité</li>
+        <li style="margin-bottom: 10px;">📋 Vérifiez que le document correspond bien au type demandé</li>
+        <li style="margin-bottom: 10px;">📅 Assurez-vous que le document n'est pas expiré</li>
+        <li style="margin-bottom: 10px;">✍️ Vérifiez que les informations correspondent à votre profil</li>
+    </ul>
+    
+    <div class="button-container">
+        <a href="{{ url('user_documents') }}" class="button">Renvoyer un document</a>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <p style="text-align: center; font-size: 14px; color: #64748b;">
+        Besoin d'aide ? Notre équipe est disponible pour vous accompagner dans cette démarche.<br>
+        N'hésitez pas à nous contacter via votre espace personnel.
+    </p>
+{% endblock %}
+

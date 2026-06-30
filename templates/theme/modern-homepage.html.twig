@@ -1,0 +1,4296 @@
+{% extends 'base.html.twig' %}
+
+{# =============== SEO OPTIMISÉ POUR LA HOMEPAGE =============== #}
+{# Title 50-60 chars, mot-cl\u00e9 principal en t\u00eate #}
+{% block title %}ADN Family Office Paris | Gestion de patrimoine accessible{% endblock %}
+
+{# Meta description 150-155 chars max #}
+{% block meta_description %}Family office indépendant à Paris : gestion de patrimoine, transmission, private equity, immobilier. Accessible à toutes les familles. Consultation gratuite.{% endblock %}
+
+{% block og_title %}ADN Family Office | Le family office accessible à toutes les familles{% endblock %}
+{% block og_description %}{{ annees_expertise() }} ans d'expertise, {{ clients_accompagnes() }} familles accompagnées, {{ actifs_geres() }}M€ d'actifs gérés. Gestion de patrimoine, transmission, private equity à Paris.{% endblock %}
+{% block og_type %}website{% endblock %}
+
+{# JSON-LD spécifique à la Homepage #}
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "ADN Family Office",
+    "alternateName": "ADN FO",
+    "url": "{{ url('app_home') }}",
+    "description": "Premier family office ouvert à toutes les familles - Gestion de patrimoine, investissement et transmission",
+    "publisher": {
+        "@type": "Organization",
+        "name": "ADN Family Office"
+    },
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "{{ url('app_home') }}?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FinancialService",
+    "name": "ADN Family Office",
+    "description": "Family office spécialisé en gestion de patrimoine, investissement immobilier, private equity et transmission successorale pour les familles françaises.",
+    "url": "{{ url('app_home') }}",
+    "logo": "{{ absolute_url(asset('build/theme/images/ADN_Logo_enlarged_x5.png')) }}",
+    "image": "{{ absolute_url(asset('build/theme/images/og-image-adn.jpg')) }}",
+    "telephone": "+33-7-55-60-89-47",
+    "email": "contact@adnfamilyoffice.fr",
+    "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "140 bis rue de Rennes",
+        "addressLocality": "Paris",
+        "postalCode": "75006",
+        "addressCountry": "FR"
+    },
+    "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "48.8456",
+        "longitude": "2.3276"
+    },
+    "openingHoursSpecification": [
+        {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "09:00",
+            "closes": "18:00"
+        }
+    ],
+    "priceRange": "€€€",
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "170",
+        "bestRating": "5"
+    },
+    "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Services de gestion patrimoniale",
+        "itemListElement": [
+            {
+                "@type": "OfferCatalog",
+                "name": "Gestion de patrimoine",
+                "itemListElement": [
+                    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Optimisation fiscale"}},
+                    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Stratégies d'investissement"}},
+                    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Conseil patrimonial"}}
+                ]
+            },
+            {
+                "@type": "OfferCatalog",
+                "name": "Gestion immobilière",
+                "itemListElement": [
+                    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "SCPI & OPCI"}},
+                    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Défiscalisation immobilière"}}
+                ]
+            },
+            {
+                "@type": "OfferCatalog",
+                "name": "Private Equity",
+                "itemListElement": [
+                    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Capital investissement"}},
+                    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Investissement startup"}}
+                ]
+            }
+        ]
+    },
+    "sameAs": [
+        "https://www.linkedin.com/company/adn-family-office"
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Accueil",
+            "item": "{{ url('app_home') }}"
+        }
+    ]
+}
+</script>
+{% endblock %}
+
+{% block header %}
+    <!-- HEADER MODERNE SIMPLE -->
+    <header class="clean-modern-header">
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="logo-section">
+                <a href="{{ path('app_home') }}" class="logo-link">
+                    <img src="{{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }}" alt="ADN Family Office" class="logo-img" loading="eager" decoding="async" fetchpriority="high" data-critical>
+                </a>
+            </div>
+            
+            <!-- Navigation Desktop -->
+            <nav class="desktop-nav">
+                <div class="nav-item dropdown-container">
+                    <a href="#services" class="nav-link">
+                        Services
+                        <svg class="dropdown-arrow" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <h4>🏛️ Gestion de patrimoine</h4>
+                                <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'optimisation-fiscale'}) }}">Optimisation fiscale</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'strategies-investissement'}) }}">Stratégies d'investissement</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'diversification'}) }}">Diversification</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'conseil-patrimonial'}) }}">Conseil patrimonial</a>
+                            </div>
+                            <div class="dropdown-section">
+                                <h4>🏢 Gestion immobilière</h4>
+                                <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'immobilier-residentiel'}) }}">Immobilier résidentiel</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'immobilier-commercial'}) }}">Immobilier commercial</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'scpi-opci'}) }}">SCPI & OPCI</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'defiscalisation-immobiliere'}) }}">Défiscalisation immobilière</a>
+                            </div>
+                            <div class="dropdown-section">
+                                <h4>👥 Transmission & succession</h4>
+                                <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'planification-successorale'}) }}">Planification successorale</a>
+                                <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'donations-familiales'}) }}">Donations familiales</a>
+                                <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'holdings-familiaux'}) }}">Société familliale</a>
+                            </div>
+                            <div class="dropdown-section">
+                                <h4>⚙️ Conseil stratégique du dirigeant</h4>
+                                <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'optimisation-remuneration'}) }}">Optimisation rémunération</a>
+                                <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'gestion-tresorerie'}) }}">Gestion trésorière</a>
+                                <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'aide-au-developpement'}) }}">Aide au développement</a>
+                                <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'session'}) }}">Cession</a>
+                            </div>
+                            <div class="dropdown-section">
+                                <h4>🚀 Private equity</h4>
+                                <a href="{{ path('service_detail', {category: 'private-equity', slug: 'capital-investissement'}) }}">Capital investissement</a>
+                                <a href="{{ path('service_detail', {category: 'private-equity', slug: 'investissement-startup'}) }}">Investissement startup</a>
+                                <a href="{{ path('service_detail', {category: 'private-equity', slug: 'fonds-prives'}) }}">Fonds privés</a>
+                            </div>
+                            <div class="dropdown-section">
+                                <h4>💼 Investissements financiers</h4>
+                                <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'gestion-de-portefeuille'}) }}">Gestion de portefeuille</a>
+                                <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'assurance-vie'}) }}">Assurance vie</a>
+                                <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'placements-financiers'}) }}">Placements financiers</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-item">
+                    <a href="{{ path('app_expertise') }}" class="nav-link">Expertise</a>
+                </div>
+                
+                <div class="nav-item dropdown-container">
+                    <a href="{{ path('news_index') }}" class="nav-link">
+                        Actualités
+                        <svg class="dropdown-arrow" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-section">
+                                <h4>Actualités financières</h4>
+                                <a href="{{ path('news_category', {slug: 'fiscalite'}) }}">Fiscalité</a>
+                                <a href="{{ path('news_category', {slug: 'marches-financiers'}) }}">Marchés financiers</a>
+                                <a href="{{ path('news_category', {slug: 'evolutions-reglementaires'}) }}">Évolutions réglementaires</a>
+                            </div>
+                            <div class="dropdown-section">
+                                <h4>Insights</h4>
+                                <a href="{{ path('news_category', {slug: 'analyses-de-marche'}) }}">Analyses de marché</a>
+                                <a href="{{ path('news_category', {slug: 'tendances-sectorielles'}) }}">Tendances sectorielles</a>
+                                <a href="{{ path('news_category', {slug: 'conseils-d-experts'}) }}">Conseils d'experts</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-item">
+                    <a href="{{ path('app_contact') }}" class="nav-link">Contact</a>
+                </div>
+            </nav>
+            
+            <!-- Actions -->
+            <div class="header-actions">
+                {% if app.user %}
+                    {# Afficher "Mon espace" seulement si l'utilisateur n'est pas redirigé vers MoneyPitch #}
+                    {% if not app.user.shouldRedirectToMoneyPitch() %}
+                        <a href="{{ path('user_dashboard') }}" class="btn-primary">Mon espace</a>
+                    {% endif %}
+                    <a href="{{ path('app_logout') }}" class="btn-secondary">Déconnexion</a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="btn-secondary">Se connecter</a>
+                    <a href="{{ path('app_register') }}" class="btn-primary">S'inscrire</a>
+                {% endif %}
+            </div>
+            
+            <!-- Menu Mobile -->
+            <button class="mobile-toggle" id="mobileToggle">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        
+        <!-- Menu Mobile Overlay -->
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-content">
+                <div class="mobile-header">
+                    <div class="mobile-logo-container">
+                        <img src="{{ asset('build/theme/images/ADN_Logo_enlarged_x5.png') }}" alt="ADN" class="mobile-logo" loading="eager" decoding="async" fetchpriority="high" data-critical>
+                    </div>
+                    <button class="mobile-close" id="mobileClose">&times;</button>
+                </div>
+                <nav class="mobile-nav">
+                    <!-- Services avec sous-menu -->
+                    <div class="mobile-dropdown">
+                        <a href="#services" class="mobile-link mobile-dropdown-toggle">
+                            Services
+                            <svg class="mobile-dropdown-arrow" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </a>
+                        <div class="mobile-submenu">
+                            <div class="mobile-submenu-section">
+                                <h4>🏛️ Gestion de patrimoine</h4>
+                                <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'optimisation-fiscale'}) }}">Optimisation fiscale</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'strategies-investissement'}) }}">Stratégies d'investissement</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'diversification'}) }}">Diversification</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-de-patrimoine', slug: 'conseil-patrimonial'}) }}">Conseil patrimonial</a>
+                            </div>
+                            <div class="mobile-submenu-section">
+                                <h4>🏢 Gestion immobilière</h4>
+                                <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'immobilier-residentiel'}) }}">Immobilier résidentiel</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'immobilier-commercial'}) }}">Immobilier commercial</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'scpi-opci'}) }}">SCPI & OPCI</a>
+                                <a href="{{ path('service_detail', {category: 'gestion-immobiliere', slug: 'defiscalisation-immobiliere'}) }}">Défiscalisation immobilière</a>
+                            </div>
+                            <div class="mobile-submenu-section">
+                                <h4>👥 Transmission & succession</h4>
+                                <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'planification-successorale'}) }}">Planification successorale</a>
+                                <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'donations-familiales'}) }}">Donations familiales</a>
+                                <a href="{{ path('service_detail', {category: 'transmission-succession', slug: 'holdings-familiaux'}) }}">Société familliale</a>
+                            </div>
+                            <div class="mobile-submenu-section">
+                                <h4>⚙️ Conseil stratégique du dirigeant</h4>
+                                <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'optimisation-remuneration'}) }}">Optimisation rémunération</a>
+                                <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'gestion-tresorerie'}) }}">Gestion trésorière</a>
+                                <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'aide-au-developpement'}) }}">Aide au développement</a>
+                                <a href="{{ path('service_detail', {category: 'conseil-strategique-du-dirigeant', slug: 'session'}) }}">Cession</a>
+                            </div>
+                            <div class="mobile-submenu-section">
+                                <h4>🚀 Private equity</h4>
+                                <a href="{{ path('service_detail', {category: 'private-equity', slug: 'capital-investissement'}) }}">Capital investissement</a>
+                                <a href="{{ path('service_detail', {category: 'private-equity', slug: 'investissement-startup'}) }}">Investissement startup</a>
+                                <a href="{{ path('service_detail', {category: 'private-equity', slug: 'fonds-prives'}) }}">Fonds privés</a>
+                            </div>
+                            <div class="mobile-submenu-section">
+                                <h4>💼 Investissements financiers</h4>
+                                <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'gestion-de-portefeuille'}) }}">Gestion de portefeuille</a>
+                                <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'assurance-vie'}) }}">Assurance vie</a>
+                                <a href="{{ path('service_detail', {category: 'investissements-financiers', slug: 'placements-financiers'}) }}">Placements financiers</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Expertise -->
+                    <a href="{{ path('app_expertise') }}" class="mobile-link">Expertise</a>
+                    
+                    <!-- Actualités avec sous-menu -->
+                    <div class="mobile-dropdown">
+                        <a href="#actualites" class="mobile-link mobile-dropdown-toggle">
+                            Actualités
+                            <svg class="mobile-dropdown-arrow" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </a>
+                        <div class="mobile-submenu">
+                            <div class="mobile-submenu-section">
+                                <h4>Actualités financières</h4>
+                                <a href="{{ path('news_category', {slug: 'fiscalite'}) }}">Fiscalité</a>
+                                <a href="{{ path('news_category', {slug: 'marches-financiers'}) }}">Marchés financiers</a>
+                                <a href="{{ path('news_category', {slug: 'evolutions-reglementaires'}) }}">Évolutions réglementaires</a>
+                            </div>
+                            <div class="mobile-submenu-section">
+                                <h4>Insights</h4>
+                                <a href="{{ path('news_category', {slug: 'analyses-de-marche'}) }}">Analyses de marché</a>
+                                <a href="{{ path('news_category', {slug: 'tendances-sectorielles'}) }}">Tendances sectorielles</a>
+                                <a href="{{ path('news_category', {slug: 'conseils-d-experts'}) }}">Conseils d'experts</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact -->
+                    <a href="{{ path('app_contact') }}" class="mobile-link">Contact</a>
+                </nav>
+                <div class="mobile-actions">
+                    {% if app.user %}
+                        {# Afficher "Mon espace" seulement si l'utilisateur n'est pas redirigé vers MoneyPitch #}
+                        {% if not app.user.shouldRedirectToMoneyPitch() %}
+                            <a href="{{ path('user_dashboard') }}" class="mobile-btn-primary">Mon espace</a>
+                        {% endif %}
+                        <a href="{{ path('app_logout') }}" class="mobile-btn-secondary">Déconnexion</a>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="mobile-btn-secondary">Se connecter</a>
+                        <a href="{{ path('app_register') }}" class="mobile-btn-primary">S'inscrire</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <style>
+    /* Header moderne */
+    .clean-modern-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 9998;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .header-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 80px;
+    }
+    
+    .logo-section {
+        display: flex;
+        align-items: center;
+    }
+    
+    .logo-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        transition: transform 0.3s ease;
+    }
+    
+    .logo-link:hover {
+        transform: scale(1.05);
+    }
+    
+    .logo-img {
+        height: 40px;
+        margin-right: 10px;
+    }
+    
+    .logo-text {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #1C29A1;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+    }
+    
+    .logo-subtitle {
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .desktop-nav {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+    }
+    
+    .nav-item {
+        position: relative;
+    }
+    
+    .nav-link {
+        color: #1C29A1;
+        text-decoration: none;
+        font-weight: 500;
+        font-family: 'Inter', sans-serif;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .nav-link:hover {
+        background: rgba(28, 41, 161, 0.1);
+        color: #1C29A1;
+    }
+    
+    .dropdown-arrow {
+        transition: transform 0.3s ease;
+        opacity: 0.7;
+    }
+    
+    .dropdown-container:hover .dropdown-arrow {
+        transform: rotate(180deg);
+        opacity: 1;
+    }
+    
+    /* Menu déroulant moderne */
+    .dropdown-menu {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 1rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(-50%) translateY(-10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        min-width: 650px;
+        backdrop-filter: blur(20px);
+    }
+    
+    .dropdown-container:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+    }
+    
+    .dropdown-content {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        padding: 2rem;
+    }
+    
+    .dropdown-section h4 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 700;
+        color: #1C29A1;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        border-bottom: 2px solid rgba(28, 41, 161, 0.1);
+        padding-bottom: 0.5rem;
+    }
+    
+    .dropdown-section a {
+        display: block;
+        padding: 0.5rem 0;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border-radius: 0.25rem;
+        padding-left: 0.5rem;
+        margin-left: -0.5rem;
+    }
+    
+    .dropdown-section a:hover {
+        color: #1C29A1;
+        background: rgba(28, 41, 161, 0.05);
+        padding-left: 1rem;
+    }
+    
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #1C29A1, #3B82F6);
+        color: white;
+        box-shadow: 0 4px 14px rgba(28, 41, 161, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(28, 41, 161, 0.4);
+        color: white;
+    }
+    
+    .btn-secondary {
+        background: transparent;
+        color: #1C29A1;
+        border: 1px solid rgba(28, 41, 161, 0.3);
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(28, 41, 161, 0.1);
+        color: #1C29A1;
+    }
+    
+    .mobile-toggle {
+        display: none;
+        flex-direction: column;
+        gap: 4px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        z-index: 9999;
+        position: relative;
+    }
+    
+    .hamburger-line {
+        width: 24px;
+        height: 3px;
+        background: #1C29A1;
+        transition: all 0.3s ease;
+        border-radius: 2px;
+    }
+    
+    .mobile-toggle.active .hamburger-line:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+    }
+    
+    .mobile-toggle.active .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .mobile-toggle.active .hamburger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+    }
+    
+    .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 9999;
+        pointer-events: none;
+    }
+    
+    .mobile-menu.active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+    }
+    
+    .mobile-content {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 320px;
+        height: 100vh;
+        background: white;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        padding: 2rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        z-index: 10000;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .mobile-menu.active .mobile-content {
+        transform: translateX(0);
+    }
+    
+    .mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .mobile-logo-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .mobile-logo {
+        height: 35px;
+    }
+    
+    .mobile-logo-text {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #1C29A1;
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+    }
+    
+    .mobile-logo-subtitle {
+        font-size: 0.6rem;
+        font-weight: 500;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .mobile-close {
+        background: none;
+        border: none;
+        font-size: 2rem;
+        color: #1C29A1;
+        cursor: pointer;
+    }
+    
+    .mobile-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .mobile-link {
+        color: #1C29A1;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        transition: color 0.3s ease;
+    }
+    
+    .mobile-link:hover {
+        color: #3B82F6;
+    }
+    
+    /* Styles pour les sous-menus mobiles */
+    .mobile-dropdown {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .mobile-dropdown-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .mobile-dropdown-arrow {
+        transition: transform 0.3s ease;
+        opacity: 0.7;
+        margin-left: 0.5rem;
+    }
+    
+    .mobile-dropdown.active .mobile-dropdown-arrow {
+        transform: rotate(180deg);
+        opacity: 1;
+    }
+    
+    .mobile-submenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease, padding 0.3s ease, opacity 0.3s ease;
+        background: #f8fafc;
+        margin: 0 -2rem;
+        padding: 0 2rem;
+        opacity: 0;
+    }
+    
+    .mobile-dropdown.active .mobile-submenu {
+        max-height: none;
+        height: auto;
+        padding: 1rem 2rem;
+        opacity: 1;
+        max-height: 1200px; /* Hauteur très grande pour transition */
+    }
+    
+    .mobile-submenu-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .mobile-submenu-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    .mobile-submenu-section h4 {
+        color: #1C29A1;
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.25rem;
+        border-bottom: 1px solid rgba(28, 41, 161, 0.2);
+    }
+    
+    .mobile-submenu-section a {
+        display: block;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 0.5rem 0;
+        padding-left: 1rem;
+        border-left: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-submenu-section a:hover {
+        color: #1C29A1;
+        border-left-color: #1C29A1;
+        background: rgba(28, 41, 161, 0.05);
+        padding-left: 1.25rem;
+    }
+    
+    .mobile-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .mobile-btn-primary,
+    .mobile-btn-secondary {
+        padding: 1rem;
+        text-align: center;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-btn-primary {
+        background: linear-gradient(135deg, #1C29A1, #3B82F6);
+        color: white;
+    }
+    
+    .mobile-btn-secondary {
+        background: transparent;
+        color: #1C29A1;
+        border: 1px solid rgba(28, 41, 161, 0.3);
+    }
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .dropdown-menu {
+            min-width: 500px;
+        }
+        
+        .dropdown-content {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+    }
+    
+    @media (max-width: 880px) {
+        .dropdown-menu {
+            min-width: 400px;
+        }
+        
+        .dropdown-content {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .dropdown-section h4 {
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dropdown-section a {
+            font-size: 0.8rem;
+            padding: 0.25rem 0;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .desktop-nav,
+        .header-actions {
+            display: none;
+        }
+        
+        .mobile-toggle {
+            display: flex;
+        }
+        
+        .header-container {
+            padding: 0 1rem;
+            height: 70px;
+        }
+        
+        .logo-text {
+            display: none;
+        }
+        
+        .logo-img {
+            height: 35px;
+            margin-right: 0;
+        }
+        
+        .clean-modern-header {
+            height: 70px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .mobile-content {
+            width: 100%;
+            padding: 1.5rem;
+        }
+        
+        .header-container {
+            padding: 0 0.75rem;
+            height: 60px;
+        }
+        
+        .logo-img {
+            height: 30px;
+        }
+        
+        .clean-modern-header {
+            height: 60px;
+        }
+        
+        .mobile-toggle {
+            padding: 0.75rem;
+        }
+        
+        .hamburger-line {
+            width: 20px;
+            height: 2px;
+        }
+        
+        /* Ajustements pour les sous-menus sur petits écrans */
+        .mobile-submenu-section {
+            margin-bottom: 1rem;
+        }
+        
+        .mobile-submenu-section h4 {
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .mobile-submenu-section a {
+            font-size: 0.8rem;
+            padding: 0.4rem 0;
+            padding-left: 0.75rem;
+        }
+        
+        .mobile-submenu-section a:hover {
+            padding-left: 1rem;
+        }
+        
+        .mobile-dropdown.active .mobile-submenu {
+            max-height: 1000px;
+            padding: 0.75rem 1.5rem;
+            height: auto;
+        }
+    }
+    
+    /* Styles pour le tableau de comparaison */
+    .investment-comparison-table {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        margin: 2rem 0;
+    }
+    
+    .comparison-header,
+    .comparison-row,
+    .comparison-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        gap: 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .comparison-header {
+        background: linear-gradient(135deg, #1C29A1, #3B82F6);
+        color: white;
+    }
+    
+    .comparison-header h3 {
+        padding: 1.5rem 1rem;
+        font-weight: 700;
+        text-align: center;
+        margin: 0;
+        font-size: 1rem;
+        color: white !important;
+    }
+    
+    .comparison-actions {
+        background: #f8fafc;
+        border-bottom: none;
+    }
+    
+    .criteria-column,
+    .criteria-cell {
+        background: #f1f5f9;
+        font-weight: 600;
+        color: #1e293b;
+    }
+    
+    .criteria-column h3 {
+        color: white !important;
+        background: linear-gradient(135deg, #1C29A1, #3B82F6);
+        padding: 1.5rem 1rem;
+        margin: 0;
+        font-weight: 700;
+        text-align: center;
+        font-size: 1rem;
+    }
+    
+    .criteria-cell,
+    .product-cell {
+        padding: 1rem;
+        text-align: center;
+        font-size: 0.9rem;
+        border-right: 1px solid #e5e7eb;
+    }
+    
+    .criteria-cell {
+        text-align: left;
+        background: #f8fafc;
+    }
+    
+    .product-cell:last-child {
+        border-right: none;
+    }
+    
+    /* Badges de risque */
+    .risk-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .risk-badge.moderate {
+        background: #fbbf24;
+        color: #92400e;
+    }
+    
+    .risk-badge.high {
+        background: #ef4444;
+        color: white;
+    }
+    
+    .risk-badge.low {
+        background: #10b981;
+        color: white;
+    }
+    
+    .risk-badge.moderate-high {
+        background: #f59e0b;
+        color: white;
+    }
+    
+    /* Badges de liquidité */
+    .liquidity-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .liquidity-badge.limited {
+        background: #fbbf24;
+        color: #92400e;
+    }
+    
+    .liquidity-badge.good {
+        background: #10b981;
+        color: white;
+    }
+    
+    .liquidity-badge.total {
+        background: #059669;
+        color: white;
+    }
+    
+    .liquidity-badge.blocked {
+        background: #ef4444;
+        color: white;
+    }
+    
+    /* Boutons Découvrir */
+    .btn-discover {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-transform: uppercase;
+        font-size: 0.875rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .scpi-btn {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+    
+    .scpi-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        color: white;
+    }
+    
+    .pea-btn {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+    }
+    
+    .pea-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        color: white;
+    }
+    
+    .assurance-btn {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+    }
+    
+    .assurance-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        color: white;
+    }
+    
+    .per-btn {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+    }
+    
+    .per-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        color: white;
+    }
+    
+    /* Responsive pour le tableau */
+    @media (max-width: 1024px) {
+        .investment-comparison-table {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .comparison-header,
+        .comparison-row,
+        .comparison-actions {
+            min-width: 800px; /* Largeur minimale pour maintenir la lisibilité */
+            grid-template-columns: 200px repeat(4, 1fr);
+        }
+        
+        .criteria-cell,
+        .product-cell {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .comparison-header h3 {
+            font-size: 0.9rem;
+            padding: 1rem 0.5rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .investment-comparison-table {
+            margin: 1rem -1rem;
+            border-radius: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            box-shadow: none;
+            border: 1px solid #e5e7eb;
+        }
+        
+        /* Mode carte empilée pour mobile */
+        .comparison-header,
+        .comparison-row,
+        .comparison-actions {
+            display: block;
+            min-width: auto;
+        }
+        
+        .comparison-header {
+            display: none; /* Cacher l'en-tête en mode mobile */
+        }
+        
+        /* Transformer chaque produit en carte */
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comparison-row:last-of-type {
+            margin-bottom: 0;
+        }
+        
+        .criteria-cell {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #1C29A1, #3B82F6);
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            border: none;
+        }
+        
+        .product-cell {
+            padding: 1rem;
+            border: none;
+            border-bottom: 1px solid #f3f4f6;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .product-cell:nth-child(2n) {
+            border-right: 1px solid #f3f4f6;
+        }
+        
+        .product-cell:last-child,
+        .product-cell:nth-last-child(2) {
+            border-bottom: none;
+        }
+        
+        /* Ajout des labels pour identifier les produits */
+        .product-cell::before {
+            content: attr(data-product);
+            font-weight: 600;
+            color: #1C29A1;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Actions en mode mobile */
+        .comparison-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+        
+        .comparison-actions .criteria-cell {
+            display: none; /* Cacher le titre "Actions" */
+        }
+        
+        .comparison-actions .product-cell {
+            border: none;
+            padding: 0;
+            background: transparent;
+        }
+        
+        .btn-discover {
+            padding: 0.75rem 1rem;
+            font-size: 0.8rem;
+            width: 100%;
+            text-align: center;
+            border-radius: 0.5rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .investment-comparison-table {
+            margin: 1rem -0.5rem;
+        }
+        
+        /* Mode liste verticale pour très petits écrans */
+        .comparison-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+            margin-bottom: 1rem;
+        }
+        
+        .product-cell {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f3f4f6;
+            text-align: center;
+        }
+        
+        .product-cell:nth-child(2n) {
+            border-right: none;
+        }
+        
+        .product-cell::before {
+            display: block;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid rgba(28, 41, 161, 0.2);
+        }
+        
+        .comparison-actions {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+        
+        .btn-discover {
+            padding: 0.75rem;
+            font-size: 0.75rem;
+        }
+        
+        /* Badges plus petits */
+        .risk-badge,
+        .liquidity-badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+        }
+    }
+    
+    /* Optimisation responsive mobile pour la page d'accueil */
+    @media (max-width: 768px) {
+        /* Hero Section Mobile */
+        .modern-hero {
+            padding-top: 100px; /* Espace pour le header fixe */
+        }
+        
+        .hero-grid {
+            min-height: auto !important;
+        }
+        
+        .hero-image-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            animation: none !important;
+        }
+        
+        .hero-image-container:hover {
+            animation: none !important;
+        }
+        
+        .modern-hero-image {
+            animation: none !important;
+        }
+        
+        .animate-fade-right,
+        .animate-pulse-slow {
+            animation: none !important;
+        }
+        
+        .hero-main-image {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            object-fit: contain;
+            display: block;
+        }
+    }
+    
+    /* Container général mobile */
+    .modern-container {
+        padding: 0 1rem;
+    }
+    
+    /* Sections mobiles */
+    .modern-section {
+        padding: 3rem 0;
+    }
+    
+    /* CTA Buttons */
+    .modern-cta-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+    
+    /* Desktop: boutons côte à côte avec même largeur */
+    @media (min-width: 768px) {
+        .modern-cta-buttons {
+            flex-direction: row;
+            gap: 1rem;
+        }
+        
+        .modern-cta-buttons .btn-modern-primary,
+        .modern-cta-buttons .btn-modern-secondary {
+            flex: 0 0 220px !important;
+            width: 220px !important;
+        }
+    }
+    
+    .btn-modern-primary,
+    .btn-modern-secondary {
+        padding: 1rem 2rem;
+        text-align: center;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .btn-modern-primary {
+        background: linear-gradient(135deg, #1C29A1, #3B82F6);
+        color: white;
+        border: none;
+    }
+    
+    .btn-modern-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.95);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+    }
+    
+    .btn-modern-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Stats mobile */
+    .modern-stats {
+        display: grid;
+        /* 2 colonnes par défaut, puis 4 colonnes sur desktop */
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    @media (min-width: 1024px) {
+        .modern-stats {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    
+    .modern-stat-card {
+        text-align: center;
+        padding: 1.25rem 1rem;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.25) 100%);
+        border-radius: 1rem;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .modern-stat-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .modern-stat-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 1rem;
+        padding: 1px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 50%, rgba(255,255,255,0.3) 100%);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    
+    .modern-stat-card:hover {
+        transform: translateY(-4px);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.35) 100%);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    }
+    
+    .modern-stat-card:hover::before {
+        opacity: 1;
+    }
+    
+    .stat-number {
+        display: block;
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.35rem;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        letter-spacing: -0.02em;
+        line-height: 1;
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.95);
+        font-weight: 600;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        line-height: 1.2;
+    }
+    
+    /* Titres mobiles */
+    .modern-hero-title {
+        font-size: 2rem;
+        line-height: 1.2;
+        font-weight: 800;
+        color: #1C29A1;
+        margin-bottom: 1.5rem;
+    }
+    
+    .modern-hero-subtitle {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 2rem;
+    }
+    
+    .modern-section-title {
+        font-size: 2rem;
+        line-height: 1.2;
+        font-weight: 800;
+        color: #1C29A1;
+        margin-bottom: 1rem;
+    }
+    
+    .modern-section-subtitle {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #64748b;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    /* Responsive mobile plus petit */
+    @media (max-width: 640px) {
+        .modern-hero {
+            padding-top: 0 !important;
+            margin-top: 140px !important; /* Espace renforcé sous le header mobile (70px header + marge) */
+        }
+        
+        .modern-container {
+            padding: 0 0.75rem;
+        }
+        
+        .modern-section {
+            padding: 2rem 0;
+        }
+        
+        .hero-grid {
+            gap: 2rem;
+        }
+        
+        .modern-hero-title {
+            font-size: 1.75rem;
+        }
+        
+        .modern-hero-subtitle {
+            font-size: 0.9rem;
+        }
+        
+        .modern-section-title {
+            font-size: 1.75rem;
+        }
+        
+        .modern-section-subtitle {
+            font-size: 0.9rem;
+        }
+        
+        .modern-stats {
+            gap: 0.75rem;
+        }
+        
+        .modern-stat-card {
+            padding: 1rem 0.75rem;
+        }
+        
+        .stat-number {
+            font-size: 1.25rem;
+            color: white;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        }
+        
+        .stat-label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+        }
+        
+        .btn-modern-primary,
+        .btn-modern-secondary {
+            padding: 0.875rem 1.5rem;
+            font-size: 0.9rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .modern-hero {
+            padding-top: 0 !important;
+            margin-top: 100px !important; /* Espace renforcé pour très petits écrans (60px header + marge) */
+        }
+        
+        .modern-container {
+            padding: 0 0.5rem;
+        }
+        
+        .modern-section {
+            padding: 1.5rem 0;
+        }
+        
+        .hero-grid {
+            gap: 1.5rem;
+        }
+        
+        .modern-hero-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .modern-hero-subtitle {
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modern-section-title {
+            font-size: 1.5rem;
+        }
+        
+        .modern-section-subtitle {
+            font-size: 0.85rem;
+        }
+        
+        .modern-cta-buttons {
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+        
+        .btn-modern-primary,
+        .btn-modern-secondary {
+            padding: 0.75rem 1.25rem;
+            font-size: 0.85rem;
+        }
+        
+        .modern-stats {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .modern-stat-card {
+            padding: 0.75rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.1rem;
+            margin-bottom: 0.1rem;
+            color: white;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+        }
+        
+        .stat-label {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            line-height: 1.1;
+        }
+        
+        .hero-image-container {
+            max-width: 300px;
+        }
+    }
+    
+    /* Optimisations globales d'espacement et tactiles pour mobile */
+    
+    /* Amélioration des espacements entre sections */
+    @media (max-width: 768px) {
+        /* Espacements des cartes d'expertise */
+        .grid.grid-cols-1.md\\:grid-cols-3 {
+            gap: 1.5rem;
+        }
+        
+        /* Cartes témoignages */
+        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+            gap: 1.5rem;
+        }
+        
+        /* Amélioration des boutons pour le tactile */
+        .btn-primary,
+        .btn-secondary,
+        .mobile-btn-primary,
+        .mobile-btn-secondary {
+            min-height: 44px; /* Taille minimale recommandée pour le tactile */
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+        
+        /* Amélioration des liens de navigation mobile */
+        .mobile-link {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        /* Ajustement des marges des sections */
+        .text-center.mb-16 {
+            margin-bottom: 2rem;
+        }
+        
+        /* Amélioration des cartes avec hover tactile */
+        .group.bg-white.rounded-2xl {
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        .group.bg-white.rounded-2xl:active {
+            transform: scale(0.98);
+        }
+        
+        /* Amélioration du CTA final */
+        .bg-blue-600.text-white.px-8.py-4 {
+            min-height: 48px;
+            padding: 1rem 2rem;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        /* Espacement optimisé pour le contenu hero mobile */
+        .modern-hero-content {
+            padding: 0 0.5rem;
+        }
+        
+        /* Optimisation des titres de section pour mobile */
+        .modern-section-title {
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        
+        .modern-section-subtitle {
+            margin-bottom: 2rem;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        /* Réduction des espacements pour petits écrans */
+        .grid.grid-cols-1.md\\:grid-cols-3,
+        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+            gap: 1rem;
+        }
+        
+        .text-center.mb-16 {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Amélioration des cartes d'expertise */
+        .group.bg-white.rounded-2xl.p-8 {
+            padding: 1.5rem;
+        }
+        
+        /* Ajustement des badges pour meilleure lisibilité */
+        .inline-block.px-4.py-2 {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        /* Espacement minimal pour très petits écrans */
+        .grid.grid-cols-1.md\\:grid-cols-3,
+        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+            gap: 0.75rem;
+        }
+        
+        .text-center.mb-16 {
+            margin-bottom: 1rem;
+        }
+        
+        .modern-section-subtitle {
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Cartes encore plus compactes */
+        .group.bg-white.rounded-2xl.p-8 {
+            padding: 1rem;
+        }
+        
+        /* Ajustement des icônes dans les cartes */
+        .w-16.h-16 {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        .w-8.h-8 {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+        
+        /* Optimisation des témoignages */
+        .bg-white.rounded-2xl.p-8.shadow-lg {
+            padding: 1rem;
+        }
+        
+        .w-12.h-12 {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+        
+        /* Amélioration de la section finale CTA */
+        .flex.flex-col.sm\\:flex-row.gap-4 {
+            gap: 0.75rem;
+        }
+        
+        .flex.flex-col.sm\\:flex-row.gap-4 a {
+            padding: 0.875rem 1.5rem;
+            font-size: 0.9rem;
+        }
+    }
+    
+    /* Optimisations tactiles universelles */
+    @media (max-width: 768px) {
+        /* Suppression des effets de sélection sur mobile */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Réactivation de la sélection pour les textes */
+        p, span, h1, h2, h3, h4, h5, h6, li {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        /* Amélioration des zones cliquables */
+        a, button, .service-card, .modern-circle-center {
+            min-height: 44px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+        
+        /* Feedback tactile amélioré */
+        a:active, button:active {
+            opacity: 0.7;
+            transform: scale(0.98);
+        }
+        
+        /* Amélioration du scroll */
+        body {
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Optimisation des images pour le mobile */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    }
+
+    /* Forcer un espace global sous le header fixe sur la home (mobile) */
+    @media (max-width: 768px) {
+        header.clean-modern-header + main {
+            padding-top: 90px !important;
+        }
+    }
+    @media (max-width: 480px) {
+        header.clean-modern-header + main {
+            padding-top: 70px !important;
+        }
+    }
+
+    </style>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileClose = document.getElementById('mobileClose');
+        
+        // Vérifications de sécurité
+        if (!mobileToggle || !mobileMenu || !mobileClose) { return; }
+        
+        const submenuSections = document.querySelectorAll('.mobile-submenu-section');
+        
+        // Fonction pour ouvrir le menu
+        function openMobileMenu() {
+            mobileMenu.classList.add('active');
+            mobileToggle.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Fonction pour fermer le menu
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('active');
+            mobileToggle.classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Fermer tous les sous-menus
+            document.querySelectorAll('.mobile-dropdown.active').forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+        
+        // Event listener pour le bouton hamburger
+        mobileToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (mobileMenu.classList.contains('active')) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+        
+        // Event listener pour le bouton de fermeture
+        mobileClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeMobileMenu();
+        });
+        
+        // Event listener pour fermer en cliquant sur l'overlay
+        mobileMenu.addEventListener('click', function(e) {
+            if (e.target === mobileMenu) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Gestion des sous-menus mobiles
+        document.querySelectorAll('.mobile-dropdown-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const dropdown = this.closest('.mobile-dropdown');
+                const isActive = dropdown.classList.contains('active');
+                
+                // Fermer tous les autres sous-menus
+                document.querySelectorAll('.mobile-dropdown.active').forEach(activeDropdown => {
+                    if (activeDropdown !== dropdown) {
+                        activeDropdown.classList.remove('active');
+                    }
+                });
+                
+                // Toggle le sous-menu actuel
+                dropdown.classList.toggle('active', !isActive);
+                
+            });
+        });
+        
+        // Fermer le menu sur clic des liens (sauf les toggles)
+        document.querySelectorAll('.mobile-link:not(.mobile-dropdown-toggle)').forEach(link => {
+            link.addEventListener('click', function(e) {
+                closeMobileMenu();
+            });
+        });
+        
+        // Fermer le menu sur clic des liens de sous-menu
+        document.querySelectorAll('.mobile-submenu a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                closeMobileMenu();
+            });
+        });
+        
+        // Fermer le menu avec la touche Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    });
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('app') }}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Correction anti-césure pour le titre du hero afin d'éviter "ou-vert" */
+        /* Police Inter pour garantir le point sur le i de "office" */
+        .modern-hero-title {
+            -webkit-hyphens: none;
+            hyphens: none;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Animations personnalisées pour l'image Hero */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-10px) rotate(1deg); }
+            66% { transform: translateY(5px) rotate(-1deg); }
+        }
+        
+        .animate-shimmer {
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 4s ease-in-out infinite;
+        }
+        
+        .animate-bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
+        }
+        
+        .hero-image-container {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .hero-image-container:hover {
+            animation-play-state: paused;
+        }
+        
+        .hero-image-container img {
+            transition: transform 0.5s ease, filter 0.5s ease;
+        }
+        
+        .hero-image-container:hover img {
+            transform: scale(1.03);
+            filter: brightness(1.05);
+        }
+        
+        /* Désactiver les animations en mobile */
+        @media (max-width: 768px) {
+            .hero-image-container,
+            .hero-image-container:hover,
+            .modern-hero-image,
+            .animate-fade-right,
+            .animate-pulse-slow {
+                animation: none !important;
+                transform: none !important;
+            }
+            
+            .hero-image-container img {
+                transition: none !important;
+            }
+            
+            .hero-image-container:hover img {
+                transform: none !important;
+                filter: none !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <!-- HERO SECTION MODERNE -->
+    <section class="modern-hero is-safari-fixed" id="hero">
+        <div class="modern-container">
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 xl:gap-12 items-center hero-grid">
+                <!-- Contenu Hero -->
+                <div class="modern-hero-content animate-on-scroll order-2 xl:order-1">
+                    <h1 class="modern-hero-title animate-fade-up">
+                        Premier family office ouvert à <span style="color: #2563EB;">toutes les familles</span>
+                    </h1>
+                    
+                    <p class="modern-hero-subtitle animate-fade-up delay-200">
+                        ADN Family Office révolutionne l'accompagnement patrimonial en rendant accessible à tous 
+                        une expertise financière d'exception. Nous guidons chaque famille vers la prospérité, 
+                        quels que soient sa taille et son patrimoine.
+                    </p>
+                    
+                    <div class="modern-cta-buttons animate-fade-up delay-300" style="display: flex; gap: 1rem; align-items: stretch;">
+                        <a href="{{ path('app_register') }}" class="btn-modern-primary" style="min-width: 200px; text-align: center; white-space: nowrap;">
+                            Découvrir nos solutions
+                        </a>
+                        <a href="#services" class="btn-modern-secondary" style="min-width: 200px; text-align: center; white-space: nowrap;">
+                            En savoir plus
+                        </a>
+                    </div>
+                    
+                    <!-- Statistiques modernisées (valeurs dynamiques depuis le back-office) -->
+                    <div class="modern-stats animate-fade-up delay-400">
+                        <div class="modern-stat-card">
+                            <span class="stat-number" data-target="{{ clients_accompagnes() }}">{{ clients_accompagnes() }}</span>
+                            <span class="stat-label">Clients accompagnés</span>
+                        </div>
+                        <div class="modern-stat-card">
+                            <span class="stat-number" data-target="{{ actifs_geres() }}">{{ actifs_geres() }}</span>
+                            <span class="stat-label">M€ d'actifs gérés</span>
+                        </div>
+                        <div class="modern-stat-card">
+                            <span class="stat-number" data-target="{{ annees_expertise() }}">{{ annees_expertise() }}</span>
+                            <span class="stat-label">Ans d'expertise</span>
+                        </div>
+                        <div class="modern-stat-card">
+                            <span class="stat-number" data-target="{{ montant_accessible()|replace({' ': ''}) }}">{{ montant_accessible() }}€</span>
+                            <span class="stat-label">Accessible dès</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Image Hero principale -->
+                <div class="modern-hero-image animate-fade-right delay-500 order-1 xl:order-2">
+                    <div class="relative w-full max-w-lg mx-auto lg:mx-0 min-h-[600px]">
+                        <!-- Image principale avec effet moderne -->
+                        <div class="hero-image-container relative overflow-hidden rounded-2xl shadow-2xl min-h-[600px]"
+                             style="box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);">
+                            <img 
+                                src="{{ asset('images/adn-famille.jpeg') }}" 
+                                alt="ADN Family Office - Accompagnement familial" 
+                                class="w-full h-full object-cover object-center"
+                                width="1536"
+                                height="1024"
+                                style="min-height: 600px;"
+                                loading="eager"
+                                fetchpriority="high"
+                            >
+                            <!-- Overlay dégradé bleu pour intégration avec le fond -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-blue-800/20 to-transparent pointer-events-none"></div>
+                        </div>
+                        
+                        <!-- Halo lumineux subtil autour de l'image -->
+                        <div class="absolute -inset-4 bg-gradient-to-r from-blue-500/20 via-purple-500/15 to-blue-400/20 rounded-2xl blur-2xl -z-10 animate-pulse-slow"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION SERVICES MODERNE -->
+    <section class="modern-section bg-white" id="services">
+        <div class="modern-section-bg-pattern"></div>
+        <div class="modern-container">
+            <div class="text-center mb-16">
+                <span class="inline-block px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-semibold mb-4 animate-on-scroll">
+                    À vos côtés, pour chaque décision patrimoniale
+                </span>
+                <h2 class="modern-section-title animate-on-scroll">
+                    ADN Family Office<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                        votre interlocuteur privilégié
+                    </span>
+                </h2>
+                <p class="modern-section-subtitle animate-on-scroll delay-200">
+                    Un accompagnement global pour structurer, faire croître et transmettre votre patrimoine familial 
+                    avec des experts dédiés pour chaque besoin.
+                </p>
+            </div>
+            
+            <!-- Menu circulaire modernisé -->
+            <div class="relative animate-on-scroll delay-300">
+                {% include 'partials/modern-circle-menu.html.twig' %}
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION EXPERTISE -->
+    <section class="modern-section bg-gradient-to-br from-gray-50 to-white" id="expertise">
+        <div class="modern-container">
+            <div class="text-center mb-16">
+                <h2 class="modern-section-title animate-on-scroll">
+                    L'expertise qui fait la différence
+                </h2>
+                <p class="modern-section-subtitle animate-on-scroll delay-200">
+                    Notre équipe d'experts sélectionne pour vous les meilleures solutions d'investissement 
+                    et optimise votre stratégie patrimoniale.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Carte Expertise 1 -->
+                <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 animate-on-scroll">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Gestion de patrimoine</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Optimisation fiscale, diversification et stratégies d'investissement personnalisées 
+                        pour maximiser votre rendement.
+                    </p>
+                </div>
+                
+                <!-- Carte Expertise 2 -->
+                <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 animate-on-scroll delay-200">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Transmission & succession</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Anticipation et optimisation de la transmission familiale avec des solutions 
+                        juridiques et fiscales adaptées.
+                    </p>
+                </div>
+                
+                <!-- Carte Expertise 3 -->
+                <div class="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 animate-on-scroll delay-400">
+                    <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-pink-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Investissements financiers</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Accès privilégié aux meilleures opportunités d'investissement avec une approche 
+                        diversifiée et professionnelle.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION POURQUOI CHOISIR ADN -->
+    <section class="modern-section bg-white">
+        <div class="modern-container">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="animate-on-scroll">
+                    <span class="inline-block px-4 py-2 bg-purple-50 text-purple-600 rounded-full text-sm font-semibold mb-4">
+                        Pourquoi choisir ADN Family Office ?
+                    </span>
+                    <h2 class="text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                        L'excellence accessible à <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">toutes les familles</span>
+                    </h2>
+                    <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                        Nous démocratisons l'accès aux services premium de family office traditionnellement 
+                        réservés aux grandes fortunes, en proposant des solutions sur-mesure adaptées à 
+                        chaque situation patrimoniale.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Accompagnement personnalisé</h4>
+                                <p class="text-gray-600">Chaque famille bénéficie d'un conseiller dédié et d'une stratégie sur-mesure.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Expertise reconnue</h4>
+                                <p class="text-gray-600">{{ annees_expertise() }} ans d'expérience cumulée et une équipe de spécialistes certifiés.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Innovation technologique</h4>
+                                <p class="text-gray-600">Plateforme digitale moderne pour suivre et gérer vos investissements.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="animate-on-scroll delay-300">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl transform rotate-3"></div>
+                        <div class="relative bg-white p-8 rounded-3xl shadow-2xl">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-6">Nos engagements</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Transparence totale</span>
+                                    <span class="text-2xl">💎</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Frais compétitifs</span>
+                                    <span class="text-2xl">💰</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Accompagnement dans l'ensemble des démarches</span>
+                                    <span class="text-2xl">🎯</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Suivi constant</span>
+                                    <span class="text-2xl">🔔</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION TÉMOIGNAGES -->
+    <section class="modern-section bg-gradient-to-br from-blue-50 to-purple-50">
+        <div class="modern-container">
+            <div class="text-center mb-16">
+                <h2 class="modern-section-title animate-on-scroll">
+                    Ils nous font confiance
+                </h2>
+                <p class="modern-section-subtitle animate-on-scroll delay-200">
+                    Découvrez les témoignages de nos clients qui ont fait le choix de l'excellence.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Témoignage 1 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 animate-on-scroll">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                            M.D
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold text-gray-900">Marc Dupont</h4>
+                            <p class="text-gray-600 text-sm">Entrepreneur</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic leading-relaxed">
+                        "ADN Family Office a transformé ma vision de la gestion patrimoniale. 
+                        Un accompagnement exceptionnel et des résultats au-delà de mes attentes."
+                    </p>
+                    <div class="flex text-yellow-400 mt-4">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+                </div>
+                
+                <!-- Témoignage 2 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 animate-on-scroll delay-200">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                            S.M
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold text-gray-900">Sophie Martin</h4>
+                            <p class="text-gray-600 text-sm">Dirigeante</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic leading-relaxed">
+                        "Une équipe à l'écoute, des conseils pertinents et une approche innovante. 
+                        Je recommande vivement leurs services."
+                    </p>
+                    <div class="flex text-yellow-400 mt-4">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+                </div>
+                
+                <!-- Témoignage 3 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 animate-on-scroll delay-400">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
+                            P.L
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-semibold text-gray-900">Pierre Leroy</h4>
+                            <p class="text-gray-600 text-sm">Investisseur</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic leading-relaxed">
+                        "Grâce à ADN, j'ai pu diversifier mon patrimoine avec sérénité. 
+                        Un service client irréprochable."
+                    </p>
+                    <div class="flex text-yellow-400 mt-4">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION COMPARAISON PRODUITS MODERNISÉE -->
+    <section class="modern-section comparison-section" id="comparison">
+        <div class="comparison-background"></div>
+        <div class="modern-container relative z-10">
+            <div class="comparison-header-content text-center mb-16">
+                <div class="comparison-badge animate-on-scroll">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    <span>Comparaison des produits</span>
+                </div>
+                <h2 class="comparison-title animate-on-scroll delay-100">
+                    Comparaison des produits d'investissement
+                </h2>
+                <p class="comparison-subtitle animate-on-scroll delay-200">
+                    Découvrez et comparez nos différentes solutions d'investissement pour choisir celle qui correspond le mieux à vos objectifs patrimoniaux.
+                </p>
+            </div>
+            
+            <div class="investment-comparison-table-modern animate-on-scroll delay-300">
+                <div class="comparison-table-header">
+                    <div class="criteria-column-modern">
+                        <div class="criteria-header-content">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            <h3>Critères</h3>
+                        </div>
+                    </div>
+                    <div class="product-column-modern scpi">
+                        <div class="product-header-content">
+                            <div class="product-icon scpi-icon">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                                </svg>
+                            </div>
+                            <h3>SCPI</h3>
+                            <div class="product-badge scpi-badge">Immobilier</div>
+                        </div>
+                    </div>
+                    <div class="product-column-modern pea-pme">
+                        <div class="product-header-content">
+                            <div class="product-icon pea-icon">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                </svg>
+                            </div>
+                            <h3>PEA</h3>
+                            <div class="product-badge pea-badge">Actions</div>
+                        </div>
+                    </div>
+                    <div class="product-column-modern assurance-vie">
+                        <div class="product-header-content">
+                            <div class="product-icon assurance-icon">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                            </div>
+                            <h3>Assurance-vie</h3>
+                            <div class="product-badge assurance-badge">Sécurité</div>
+                        </div>
+                    </div>
+                    <div class="product-column-modern per">
+                        <div class="product-header-content">
+                            <div class="product-icon per-icon">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                </svg>
+                            </div>
+                            <h3>PER</h3>
+                            <div class="product-badge per-badge">Retraite</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comparison-table-body">
+                    <!-- Ligne Rendement -->
+                    <div class="comparison-row-modern" data-row="yield">
+                        <div class="criteria-cell-modern">
+                            <div class="criteria-content">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                </svg>
+                                <span>Rendement attendu</span>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern scpi" data-product="SCPI">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['yield']['SCPI'] ?? '6-8%' }}</span>
+                                <div class="cell-indicator scpi-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern pea-pme" data-product="PEA-PME">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['yield']['PEA'] ?? '100%' }}</span>
+                                <div class="cell-indicator pea-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern assurance-vie" data-product="Assurance-vie">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['yield']['ASSURANCE_VIE'] ?? '2-6%' }}</span>
+                                <div class="cell-indicator assurance-indicator"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern per" data-product="PER">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['yield']['PER'] ?? 'Variable' }}</span>
+                                <div class="cell-indicator per-indicator"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ligne Risque -->
+                    <div class="comparison-row-modern" data-row="risk">
+                        <div class="criteria-cell-modern">
+                            <div class="criteria-content">
+                                <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M4.93 4.93a10 10 0 1114.14 14.14A10 10 0 014.93 4.93z"/>
+                                </svg>
+                                <span>Niveau de risque</span>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern scpi risk-moderate" data-product="SCPI">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['risk']['SCPI'] ?? 'Modéré' }}</span>
+                                <div class="risk-level risk-moderate-bar"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern pea-pme risk-high" data-product="PEA-PME">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['risk']['PEA'] ?? 'Élevé' }}</span>
+                                <div class="risk-level risk-high-bar"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern assurance-vie risk-low" data-product="Assurance-vie">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['risk']['ASSURANCE_VIE'] ?? 'Faible à Modéré' }}</span>
+                                <div class="risk-level risk-low-bar"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern per risk-variable" data-product="PER">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['risk']['PER'] ?? 'Faible à Élevé' }}</span>
+                                <div class="risk-level risk-variable-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ligne Liquidité -->
+                    <div class="comparison-row-modern" data-row="liquidity">
+                        <div class="criteria-cell-modern">
+                            <div class="criteria-content">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                <span>Liquidité</span>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern scpi liquidity-limited" data-product="SCPI">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['liquidity']['SCPI'] ?? 'Limitée' }}</span>
+                                <div class="liquidity-indicator limited"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern pea-pme liquidity-good" data-product="PEA-PME">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['liquidity']['PEA'] ?? 'Bonne' }}</span>
+                                <div class="liquidity-indicator good"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern assurance-vie liquidity-total" data-product="Assurance-vie">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['liquidity']['ASSURANCE_VIE'] ?? 'Totale' }}</span>
+                                <div class="liquidity-indicator total"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern per liquidity-blocked" data-product="PER">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['liquidity']['PER'] ?? 'Bloquée' }}</span>
+                                <div class="liquidity-indicator blocked"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ligne Avantage fiscal -->
+                    <div class="comparison-row-modern" data-row="taxation">
+                        <div class="criteria-cell-modern">
+                            <div class="criteria-content">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                </svg>
+                                <span>Fiscalité</span>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern scpi" data-product="SCPI">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['taxation']['SCPI'] ?? 'Revenus fonciers' }}</span>
+                                <div class="tax-badge scpi-tax">Revenus fonciers</div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern pea-pme" data-product="PEA-PME">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['taxation']['PEA'] ?? 'Exonération après 5 ans' }}</span>
+                                <div class="tax-badge pea-tax">Exonération après 5 ans</div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern assurance-vie" data-product="Assurance-vie">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['taxation']['ASSURANCE_VIE'] ?? 'Abattement après 8 ans' }}</span>
+                                <div class="tax-badge assurance-tax">Abattement après 8 ans</div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern per" data-product="PER">
+                            <div class="cell-content">
+                                <span class="cell-value">{{ comparison['taxation']['PER'] ?? "Déduction à l'entrée" }}</span>
+                                <div class="tax-badge per-tax">Déduction à l'entrée</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ligne Investissement minimum -->
+                    <div class="comparison-row-modern" data-row="investment">
+                        <div class="criteria-cell-modern">
+                            <div class="criteria-content">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>
+                                    <circle cx="12" cy="12" r="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span>Investissement minimum</span>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern scpi" data-product="SCPI">
+                            <div class="cell-content">
+                                <span class="cell-value amount">{{ comparison['min_investment']['SCPI'] ?? '1 000 €' }}</span>
+                                <div class="amount-bar scpi-amount"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern pea-pme" data-product="PEA-PME">
+                            <div class="cell-content">
+                                <span class="cell-value amount">{{ comparison['min_investment']['PEA'] ?? '100 €' }}</span>
+                                <div class="amount-bar pea-amount"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern assurance-vie" data-product="Assurance-vie">
+                            <div class="cell-content">
+                                <span class="cell-value amount">{{ comparison['min_investment']['ASSURANCE_VIE'] ?? '500 €' }}</span>
+                                <div class="amount-bar assurance-amount"></div>
+                            </div>
+                        </div>
+                        <div class="product-cell-modern per" data-product="PER">
+                            <div class="cell-content">
+                                <span class="cell-value amount">{{ comparison['min_investment']['PER'] ?? '300 €' }}</span>
+                                <div class="amount-bar per-amount"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comparison-actions-modern">
+                    <div class="criteria-cell-modern">
+                        <div class="criteria-content">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span><strong>Actions</strong></span>
+                        </div>
+                    </div>
+                    <div class="product-cell-modern scpi" data-product="SCPI">
+                        <div class="action-content">
+                            {% if app.user %}
+                                <a href="{{ path('product_scpi') }}" class="btn-discover-modern scpi-btn">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                    <span>Découvrir</span>
+                                </a>
+                            {% else %}
+                                <a href="{{ path('app_register') }}" class="btn-discover-modern scpi-btn" title="Inscription requise pour accéder aux détails">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                    <span>Découvrir</span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="product-cell-modern pea-pme" data-product="PEA-PME">
+                        <div class="action-content">
+                            {% if app.user %}
+                                <a href="{{ path('product_pea_pme') }}" class="btn-discover-modern pea-btn">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                    <span>Découvrir</span>
+                                </a>
+                            {% else %}
+                                <a href="{{ path('app_register') }}" class="btn-discover-modern pea-btn" title="Inscription requise pour accéder aux détails">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                    <span>Découvrir</span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="product-cell-modern assurance-vie" data-product="Assurance-vie">
+                        <div class="action-content">
+                            {% if app.user %}
+                                <a href="{{ path('product_assurance_vie') }}" class="btn-discover-modern assurance-btn">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                    <span>Découvrir</span>
+                                </a>
+                            {% else %}
+                                <a href="{{ path('app_register') }}" class="btn-discover-modern assurance-btn" title="Inscription requise pour accéder aux détails">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                    <span>Découvrir</span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="product-cell-modern per" data-product="PER">
+                        <div class="action-content">
+                            {% if app.user %}
+                                <a href="{{ path('product_per') }}" class="btn-discover-modern per-btn">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                    <span>Découvrir</span>
+                                </a>
+                            {% else %}
+                                <a href="{{ path('app_register') }}" class="btn-discover-modern per-btn" title="Inscription requise pour accéder aux détails">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                    <span>Découvrir</span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Note de bas de page (mentions légales) -->
+            <p class="comparison-disclaimer">
+                <span aria-hidden="true">*</span> Rendements indicatifs, donnés à titre illustratif et non garantis. Les performances passées ne préjugent pas des performances futures. Tout investissement comporte des risques de perte en capital.
+            </p>
+            
+            <!-- Version Mobile : Carousel -->
+            <div class="investment-comparison-carousel-mobile">
+                <div class="carousel-mobile-container">
+                    <div class="carousel-mobile-wrapper">
+                        <div class="carousel-mobile-slides" id="homepageCarouselSlides">
+                            <!-- SCPI Slide -->
+                            <div class="carousel-mobile-slide" data-slide="0">
+                                <div class="product-mobile-card">
+                                    <div class="product-mobile-header scpi-header">
+                                        <div class="product-mobile-icon">
+                                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                                            </svg>
+                                        </div>
+                                        <h3>SCPI</h3>
+                                        <span class="product-mobile-badge">Immobilier</span>
+                                    </div>
+                                    <div class="product-mobile-body">
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                                </svg>
+                                                <span>Rendement attendu</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <strong>6-8%</strong>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M4.93 4.93a10 10 0 1114.14 14.14A10 10 0 014.93 4.93z"/>
+                                                </svg>
+                                                <span>Niveau de risque</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="risk-badge risk-moderate">Modéré</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                                </svg>
+                                                <span>Liquidité</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="liquidity-badge liquidity-limited">Limitée</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h8M9 9v6m0 0l3 3m-3-3l3-3m2-5a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span>Fiscalité</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="tax-badge">Totale</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                                </svg>
+                                                <span>Investissement minimum</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <strong>500 €</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-mobile-action">
+                                        {% if app.user %}
+                                            <a href="{{ path('product_scpi') }}" class="btn-mobile-discover scpi-btn">
+                                                <span>Découvrir</span>
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                </svg>
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('app_register') }}" class="btn-mobile-discover scpi-btn" title="Inscription requise">
+                                                <span>Découvrir</span>
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                </svg>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- PEA Slide -->
+                            <div class="carousel-mobile-slide" data-slide="1">
+                                <div class="product-mobile-card">
+                                    <div class="product-mobile-header pea-header">
+                                        <div class="product-mobile-icon">
+                                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                            </svg>
+                                        </div>
+                                        <h3>PEA</h3>
+                                        <span class="product-mobile-badge">Actions</span>
+                                    </div>
+                                    <div class="product-mobile-body">
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                                </svg>
+                                                <span>Rendement attendu</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <strong>8-12%</strong>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M4.93 4.93a10 10 0 1114.14 14.14A10 10 0 014.93 4.93z"/>
+                                                </svg>
+                                                <span>Niveau de risque</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="risk-badge risk-high">Élevé</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                                </svg>
+                                                <span>Liquidité</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="liquidity-badge liquidity-daily">Quotidienne</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h8M9 9v6m0 0l3 3m-3-3l3-3m2-5a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span>Fiscalité</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="tax-badge">Après 5 ans</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                                </svg>
+                                                <span>Investissement minimum</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <strong>100 €</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-mobile-action">
+                                        {% if app.user %}
+                                            <a href="{{ path('product_pea_pme') }}" class="btn-mobile-discover pea-btn">
+                                                <span>Découvrir</span>
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                </svg>
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('app_register') }}" class="btn-mobile-discover pea-btn" title="Inscription requise">
+                                                <span>Découvrir</span>
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                </svg>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Assurance-vie Slide -->
+                            <div class="carousel-mobile-slide" data-slide="2">
+                                <div class="product-mobile-card">
+                                    <div class="product-mobile-header assurance-header">
+                                        <div class="product-mobile-icon">
+                                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <h3>Assurance-vie</h3>
+                                        <span class="product-mobile-badge">Sécurité</span>
+                                    </div>
+                                    <div class="product-mobile-body">
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                                </svg>
+                                                <span>Rendement attendu</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <strong>2-6%</strong>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M4.93 4.93a10 10 0 1114.14 14.14A10 10 0 014.93 4.93z"/>
+                                                </svg>
+                                                <span>Niveau de risque</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="risk-badge risk-low">Faible à modéré</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                                </svg>
+                                                <span>Liquidité</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="liquidity-badge liquidity-total">Totale</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h8M9 9v6m0 0l3 3m-3-3l3-3m2-5a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span>Fiscalité</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="tax-badge">Après 8 ans</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                                </svg>
+                                                <span>Investissement minimum</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <strong>500 €</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-mobile-action">
+                                        {% if app.user %}
+                                            <a href="{{ path('product_assurance_vie') }}" class="btn-mobile-discover assurance-btn">
+                                                <span>Découvrir</span>
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                </svg>
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('app_register') }}" class="btn-mobile-discover assurance-btn" title="Inscription requise">
+                                                <span>Découvrir</span>
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                </svg>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- PER Slide -->
+                            <div class="carousel-mobile-slide" data-slide="3">
+                                <div class="product-mobile-card">
+                                    <div class="product-mobile-header per-header">
+                                        <div class="product-mobile-icon">
+                                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                            </svg>
+                                        </div>
+                                        <h3>PER</h3>
+                                        <span class="product-mobile-badge">Retraite</span>
+                                    </div>
+                                    <div class="product-mobile-body">
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                                </svg>
+                                                <span>Rendement attendu</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <strong>2-8%</strong>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M4.93 4.93a10 10 0 1114.14 14.14A10 10 0 014.93 4.93z"/>
+                                                </svg>
+                                                <span>Niveau de risque</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="risk-badge risk-low">Faible à modéré</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                                </svg>
+                                                <span>Liquidité</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="liquidity-badge liquidity-retirement">Retraite</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h8M9 9v6m0 0l3 3m-3-3l3-3m2-5a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span>Fiscalité</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <span class="tax-badge">Déductible IR</span>
+                                            </div>
+                                        </div>
+                                        <div class="product-mobile-item">
+                                            <div class="item-label">
+                                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                                                </svg>
+                                                <span>Investissement minimum</span>
+                                            </div>
+                                            <div class="item-value">
+                                                <strong>100 €</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-mobile-action">
+                                        {% if app.user %}
+                                            <a href="{{ path('product_per') }}" class="btn-mobile-discover per-btn">
+                                                <span>Découvrir</span>
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                </svg>
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('app_register') }}" class="btn-mobile-discover per-btn" title="Inscription requise">
+                                                <span>Découvrir</span>
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                </svg>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation buttons -->
+                    <button class="carousel-mobile-prev" onclick="homepagePrevSlide()">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <button class="carousel-mobile-next" onclick="homepageNextSlide()">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Indicators -->
+                    <div class="carousel-mobile-indicators">
+                        <button class="indicator-mobile active" onclick="homepageGoToSlide(0)" data-indicator="0"></button>
+                        <button class="indicator-mobile" onclick="homepageGoToSlide(1)" data-indicator="1"></button>
+                        <button class="indicator-mobile" onclick="homepageGoToSlide(2)" data-indicator="2"></button>
+                        <button class="indicator-mobile" onclick="homepageGoToSlide(3)" data-indicator="3"></button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PARTNER CAROUSEL -->
+            <div class="partners-carousel-section mt-16 mb-8">
+                <div class="text-center mb-8">
+                    <p class="text-xl font-bold text-gray-600 uppercase tracking-wider">Nos Partenaires</p>
+                </div>
+                <div class="partners-marquee-container overflow-hidden relative w-full">
+                    <div class="partners-marquee-track flex items-center gap-12">
+                        <!-- Loop 1 -->
+                        <img src="/images/Logo-partenaire/ALDERAN.png" alt="Alderan" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/Axa-logo.png" alt="AXA" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/CNP.png" alt="CNP" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/CNPLUXEMBOURG.png" alt="CNP Luxembourg" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/EPSICAP.png" alt="Epsicap" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/GENERALIE.png" alt="Generali" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/GENERALUXEMBOURG.png" alt="Generali Luxembourg" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/NORTHIA.png" alt="Northia" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/NOVAXIA.png" alt="Novaxia" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/SWISSLIFE.png" alt="SwissLife" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/VIEPLUS.png" alt="Vie Plus" class="partner-logo" loading="lazy" decoding="async">
+                        
+                        <!-- Loop 2 -->
+                        <img src="/images/Logo-partenaire/ALDERAN.png" alt="Alderan" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/Axa-logo.png" alt="AXA" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/CNP.png" alt="CNP" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/CNPLUXEMBOURG.png" alt="CNP Luxembourg" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/EPSICAP.png" alt="Epsicap" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/GENERALIE.png" alt="Generali" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/GENERALUXEMBOURG.png" alt="Generali Luxembourg" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/NORTHIA.png" alt="Northia" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/NOVAXIA.png" alt="Novaxia" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/SWISSLIFE.png" alt="SwissLife" class="partner-logo" loading="lazy" decoding="async">
+                        <img src="/images/Logo-partenaire/VIEPLUS.png" alt="Vie Plus" class="partner-logo" loading="lazy" decoding="async">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comparison-footer text-center mt-16 animate-on-scroll delay-400">
+                {% if app.user %}
+                    <div class="access-granted-card">
+                        <div class="access-icon">
+                            <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3>Accès complet débloqué !</h3>
+                        <p>Vous avez accès à toutes nos analyses détaillées et recommandations personnalisées</p>
+                        <a href="{{ path('user_dashboard') }}" class="btn-dashboard-modern">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+                            </svg>
+                            <span>Accéder à mon espace</span>
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="registration-cta-card">
+                        <div class="cta-icon">
+                            <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <h3>Inscrivez-vous pour accéder aux analyses complètes</h3>
+                        <p>Découvrez nos recommandations personnalisées et analyses détaillées de chaque produit</p>
+                        <a href="{{ path('app_register') }}" class="btn-register-modern">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            <span>Créer mon compte gratuitement</span>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    {# SECTION SIMULATEUR D'INVESTISSEMENT - Temporairement masquée (à réactiver plus tard)
+    <section class="simulator-section" id="simulateur">
+        <div class="simulator-background">
+            <div class="simulator-grid"></div>
+            <div class="simulator-glow simulator-glow-1"></div>
+            <div class="simulator-glow simulator-glow-2"></div>
+        </div>
+        
+        <div class="simulator-container">
+            <!-- En-tête du simulateur -->
+            <div class="simulator-header animate-on-scroll">
+                <div class="simulator-badge">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                    <span>Simulateur de patrimoine</span>
+                </div>
+                <h2 class="simulator-title">
+                    Pourquoi le <span class="simulator-highlight">conseil</span> fait la différence
+                </h2>
+                <p class="simulator-subtitle">
+                    Comparez l'évolution de votre épargne avec et sans accompagnement professionnel
+                </p>
+            </div>
+
+            <div class="simulator-wrapper animate-on-scroll delay-200">
+                <!-- Colonne gauche : Inputs -->
+                <div class="simulator-inputs">
+                    <!-- Placement de départ -->
+                    <div class="input-card">
+                        <div class="input-header">
+                            <div class="input-icon input-icon-amount">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                    <path d="M12 9v6M9 12h6"/>
+                                </svg>
+                            </div>
+                            <div class="input-label-group">
+                                <label class="input-label">Placement de départ</label>
+                                <span class="input-value" id="initial-display">1 000 €</span>
+                            </div>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="initial-amount" min="500" max="100000" value="1000" step="500" class="simulator-slider slider-amount">
+                            <div class="slider-track">
+                                <div class="slider-fill slider-fill-amount" id="initial-fill"></div>
+                            </div>
+                        </div>
+                        <div class="slider-labels">
+                            <span>500 €</span>
+                            <span>100 000 €</span>
+                        </div>
+                    </div>
+
+                    <!-- Épargne mensuelle -->
+                    <div class="input-card">
+                        <div class="input-header">
+                            <div class="input-icon input-icon-monthly">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 5h-14a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2v-10a2 2 0 00-2-2z"/>
+                                    <path d="M3 10h18"/>
+                                    <path d="M7 15h.01M11 15h2"/>
+                                </svg>
+                            </div>
+                            <div class="input-label-group">
+                                <label class="input-label">Épargne mensuelle</label>
+                                <span class="input-value" id="monthly-display">150 €</span>
+                            </div>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="monthly-amount" min="0" max="2000" value="150" step="25" class="simulator-slider slider-monthly">
+                            <div class="slider-track">
+                                <div class="slider-fill slider-fill-monthly" id="monthly-fill"></div>
+                            </div>
+                        </div>
+                        <div class="slider-labels">
+                            <span>0 €</span>
+                            <span>2 000 €</span>
+                        </div>
+                    </div>
+
+                    <!-- Durée du placement -->
+                    <div class="input-card">
+                        <div class="input-header">
+                            <div class="input-icon input-icon-duration">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12,6 12,12 16,14"/>
+                                </svg>
+                            </div>
+                            <div class="input-label-group">
+                                <label class="input-label">Durée du placement</label>
+                                <span class="input-value" id="duration-display">43 ans</span>
+                            </div>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="investment-duration" min="5" max="50" value="43" step="1" class="simulator-slider slider-duration">
+                            <div class="slider-track">
+                                <div class="slider-fill slider-fill-duration" id="duration-fill"></div>
+                            </div>
+                        </div>
+                        <div class="slider-labels">
+                            <span>5 ans</span>
+                            <span>50 ans</span>
+                        </div>
+                    </div>
+
+                    <!-- Encadré explicatif des rendements -->
+                    <div class="fees-info-card rates-info-card">
+                        <div class="fees-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                            <span>Rendements comparés</span>
+                        </div>
+                        <div class="fees-grid rates-grid">
+                            <div class="fee-item rate-item rate-without">
+                                <span class="fee-label">Fonds euros (seul)</span>
+                                <span class="fee-value rate-value-low">~5 % /an</span>
+                            </div>
+                            <div class="fee-item rate-item rate-with">
+                                <span class="fee-label">Avec conseil ADN</span>
+                                <span class="fee-value rate-value-high">~10 % /an</span>
+                            </div>
+                        </div>
+                        <p class="rates-note">* Rendements moyens historiques, non garantis</p>
+                    </div>
+                </div>
+
+                <!-- Colonne droite : Résultats -->
+                <div class="simulator-results">
+                    <!-- Graphique de progression -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Projection de votre patrimoine</h3>
+                            <div class="chart-legend">
+                                <div class="legend-item legend-without">
+                                    <span class="legend-dot"></span>
+                                    <span>Sans conseil (5%)</span>
+                                </div>
+                                <div class="legend-item legend-with">
+                                    <span class="legend-dot"></span>
+                                    <span>Avec conseil ADN (10%)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="investment-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Résumé des résultats - Comparaison -->
+                    <div class="results-comparison">
+                        <!-- Total investi -->
+                        <div class="comparison-header">
+                            <div class="total-invested">
+                                <span class="invested-label">Total versé sur la période</span>
+                                <span class="invested-value" id="total-invested">78 400 €</span>
+                            </div>
+                        </div>
+
+                        <!-- Cartes de comparaison -->
+                        <div class="comparison-cards">
+                            <!-- Sans conseil -->
+                            <div class="comparison-card card-without">
+                                <div class="card-badge badge-without">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M8 12h8"/>
+                                    </svg>
+                                    <span>Sans conseil</span>
+                                </div>
+                                <div class="card-rate">Rendement 5% /an</div>
+                                <div class="card-result">
+                                    <span class="result-amount" id="result-without">271 234 €</span>
+                                    <span class="result-gain" id="gain-without">+192 834 € de gains</span>
+                                </div>
+                            </div>
+
+                            <!-- Avec conseil ADN -->
+                            <div class="comparison-card card-with">
+                                <div class="card-badge badge-with">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                        <polyline points="22,4 12,14.01 9,11.01"/>
+                                    </svg>
+                                    <span>Avec conseil ADN</span>
+                                </div>
+                                <div class="card-rate">Rendement 10% /an</div>
+                                <div class="card-result">
+                                    <span class="result-amount result-highlight" id="result-with">1 174 441 €</span>
+                                    <span class="result-gain" id="gain-with">+1 096 041 € de gains</span>
+                                </div>
+                                <div class="card-ribbon">Recommandé</div>
+                            </div>
+                        </div>
+
+                        <!-- Différence mise en avant -->
+                        <div class="difference-highlight">
+                            <div class="difference-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2v20M17 5l-5-3-5 3M17 19l-5 3-5-3"/>
+                                </svg>
+                            </div>
+                            <div class="difference-content">
+                                <span class="difference-label">Gain supplémentaire grâce au conseil</span>
+                                <span class="difference-value" id="difference-value">+903 207 €</span>
+                                <span class="difference-multiplier" id="difference-multiplier">Capital multiplié par 4,3×</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA -->
+                    <div class="simulator-cta">
+                        <a href="{{ path('app_contact') }}" class="btn-simulator-cta">
+                            <span>Bénéficier du conseil ADN</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        <p class="simulator-disclaimer">
+                            * Simulation indicative. Les performances passées ne préjugent pas des performances futures. Les rendements affichés sont des moyennes historiques et ne constituent pas une garantie.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    #}
+
+    <!-- SECTION ACCESSIBILITÉ 24/7 -->
+    <section class="modern-section bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-20">
+        <div class="modern-container">
+            <div class="text-center mb-12 animate-on-scroll">
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold mb-4">
+                    Accessibilité totale
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Votre patrimoine accessible 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">24/7</span>
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Consultez et gérez votre patrimoine à tout moment, où que vous soyez
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto animate-on-scroll delay-200">
+                <!-- Carte Espace Client -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-blue-200 group">
+                    <div class="flex items-start gap-6">
+                        <div class="flex-shrink-0">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Espace Client</h3>
+                            <p class="text-gray-600 mb-4 leading-relaxed">
+                                Accédez à votre espace client sécurisé depuis n'importe quel appareil. Consultez vos investissements, vos documents et votre historique en temps réel.
+                            </p>
+                            <div class="flex items-center gap-2 text-blue-600 font-semibold">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>24/24 - 7/7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carte Site Optimisé Mobile -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-indigo-200 group">
+                    <div class="flex items-start gap-6">
+                        <div class="flex-shrink-0">
+                            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Site Optimisé Mobile</h3>
+                            <p class="text-gray-600 mb-4 leading-relaxed">
+                                Notre plateforme web est entièrement optimisée pour mobile. Accédez à votre espace client depuis votre smartphone ou tablette avec une expérience utilisateur fluide et intuitive.
+                            </p>
+                            <div class="flex items-center gap-2 text-indigo-600 font-semibold">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                                <span>Responsive Design</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Badge de disponibilité -->
+            <div class="text-center mt-8 animate-on-scroll delay-300">
+                <div class="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-md border border-gray-200">
+                    <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-sm font-semibold text-gray-700">Plateforme disponible 24/7</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER CTA -->
+    {# Footer CTA avec dégradé conforme à la charte ADN #}
+    <section class="modern-section text-white" style="background: linear-gradient(90deg, #101A50 0%, #0057FF 40%, #1F299C 70%, #0D5EED 100%);">
+        <div class="modern-container text-center">
+            <h2 class="text-4xl font-bold mb-6 animate-on-scroll">
+                Prêt à optimiser votre patrimoine ?
+            </h2>
+            <p class="text-xl mb-8 max-w-4xl mx-auto animate-on-scroll delay-200 footer-cta-tagline">
+                Rejoignez les familles qui ont fait le choix de l'excellence avec ADN Family Office
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center animate-on-scroll delay-400">
+                <a href="{{ path('app_register') }}" class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+                    Commencer maintenant
+                </a>
+                <a href="{{ path('app_contact') }}" class="border-2 border-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+                    Nous contacter
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+
+<!-- Styles pour le carousel de partenaires -->
+<style>
+    /* CTA footer : phrase d'accroche sur une seule ligne en desktop */
+    .footer-cta-tagline {
+        white-space: nowrap;
+    }
+    @media (max-width: 900px) {
+        .footer-cta-tagline {
+            white-space: normal;
+            font-size: 1.05rem;
+            padding: 0 0.5rem;
+        }
+    }
+
+    .partner-logo {
+        height: 90px;
+        width: 220px;
+        object-fit: contain;
+        opacity: 0.9;
+        transition: all 0.3s ease;
+    }
+    
+    /* Agrandissement des logos standards CNP et Generali */
+    img[src*="CNP.png"], 
+    img[src*="GENERALIE"] {
+        transform: scale(1.35);
+    }
+
+    /* Agrandissement MAXIMAL pour Generali Luxembourg */
+    img[src*="GENERALUXEMBOURG"] {
+        transform: scale(1.9);
+    }
+
+    /* Agrandissement EXTRÊME pour CNP Luxembourg qui est très petit */
+    img[src*="CNPLUXEMBOURG"] {
+        transform: scale(2.8);
+    }
+
+    .partner-logo:hover {
+        opacity: 1;
+    }
+    
+    /* Hover standards */
+    .partner-logo:not([src*="CNP"]):not([src*="GENERAL"]):hover {
+        transform: scale(1.05);
+    }
+
+    /* Hover CNP/Generali standards */
+    img[src*="CNP.png"]:hover, 
+    img[src*="GENERALIE"]:hover {
+        transform: scale(1.45);
+    }
+
+    /* Hover Luxembourg */
+    img[src*="GENERALUXEMBOURG"]:hover {
+        transform: scale(2.0);
+    }
+
+    img[src*="CNPLUXEMBOURG"]:hover {
+        transform: scale(2.9);
+    }
+
+    .partners-marquee-container {
+        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+    .partners-marquee-track {
+        animation: marquee 40s linear infinite;
+        width: max-content;
+    }
+    .partners-marquee-track:hover {
+        animation-play-state: paused;
+    }
+    @keyframes marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+</style>
+
+<!-- Styles pour le carousel mobile de comparaison -->
+<style>
+    /* Carousel mobile pour le tableau de comparaison */
+    .investment-comparison-carousel-mobile {
+        display: none;
+    }
+    
+    .carousel-mobile-container {
+        position: relative;
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .carousel-mobile-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .carousel-mobile-slides {
+        display: flex;
+        transition: transform 0.3s ease;
+    }
+    
+    .carousel-mobile-slide {
+        min-width: 100%;
+        padding: 1.5rem;
+    }
+    
+    .product-mobile-card {
+        background: white;
+    }
+    
+    .product-mobile-header {
+        text-align: center;
+        padding: 1.5rem 0;
+        border-bottom: 2px solid #f3f4f6;
+        margin-bottom: 1.5rem;
+    }
+    
+    .product-mobile-header.scpi-header {
+        background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+    }
+    
+    .product-mobile-header.pea-header {
+        background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    }
+    
+    .product-mobile-header.assurance-header {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    }
+    
+    .product-mobile-header.per-header {
+        background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+    }
+    
+    .product-mobile-icon {
+        margin: 0 auto 1rem;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .product-mobile-header h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    
+    .product-mobile-badge {
+        display: inline-block;
+        padding: 0.25rem 1rem;
+        background: white;
+        color: #6b7280;
+        border-radius: 2rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .product-mobile-body {
+        padding: 0 0.5rem;
+    }
+    
+    .product-mobile-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.875rem 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .product-mobile-item:last-child {
+        border-bottom: none;
+    }
+    
+    .item-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+    
+    .item-value {
+        text-align: right;
+        font-size: 0.875rem;
+    }
+    
+    .item-value strong {
+        color: #1f2937;
+        font-weight: 700;
+    }
+    
+    /* Badges spécifiques */
+    .risk-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.375rem;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .risk-low { background: #dcfce7; color: #15803d; }
+    .risk-moderate { background: #fed7aa; color: #c2410c; }
+    .risk-high { background: #fee2e2; color: #dc2626; }
+    
+    .liquidity-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.375rem;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+    
+    .liquidity-limited { background: #fef3c7; color: #a16207; }
+    .liquidity-daily { background: #d1fae5; color: #047857; }
+    .liquidity-total { background: #dbeafe; color: #1e40af; }
+    .liquidity-retirement { background: #f3e8ff; color: #7c3aed; }
+    
+    .tax-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.375rem;
+        background: #e0e7ff;
+        color: #4338ca;
+        font-weight: 600;
+        font-size: 0.75rem;
+    }
+    
+    /* Action button */
+    .product-mobile-action {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f3f4f6;
+    }
+    
+    .btn-mobile-discover {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-mobile-discover.scpi-btn {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
+    
+    .btn-mobile-discover.pea-btn {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        color: white;
+    }
+    
+    .btn-mobile-discover.assurance-btn {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+    }
+    
+    .btn-mobile-discover.per-btn {
+        background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+        color: white;
+    }
+    
+    .btn-mobile-discover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Navigation buttons */
+    .carousel-mobile-prev,
+    .carousel-mobile-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+    
+    .carousel-mobile-prev:hover,
+    .carousel-mobile-next:hover {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+    }
+    
+    .carousel-mobile-prev {
+        left: 1rem;
+    }
+    
+    .carousel-mobile-next {
+        right: 1rem;
+    }
+    
+    /* Indicators */
+    .carousel-mobile-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1.5rem 0;
+    }
+    
+    .indicator-mobile {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        background: #d1d5db;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .indicator-mobile.active {
+        background: #2563eb;
+        width: 2rem;
+        border-radius: 0.5rem;
+    }
+    
+    /* Responsive : afficher le carousel en mobile */
+    @media (max-width: 1024px) {
+        /* Cacher le tableau sur mobile */
+        .investment-comparison-table-modern {
+            display: none !important;
+        }
+        
+        /* Afficher le carousel sur mobile */
+        .investment-comparison-carousel-mobile {
+            display: block !important;
+            margin-top: 2rem;
+        }
+    }
+    
+    /* S'assurer que le carousel est toujours caché sur desktop */
+    @media (min-width: 1025px) {
+        .investment-comparison-carousel-mobile {
+            display: none !important;
+        }
+    }
+</style>
+
+<!-- Script pour le carousel mobile -->
+<script>
+    let homepageCurrentSlide = 0;
+    const homepageTotalSlides = 4;
+
+    function homepageGoToSlide(slideIndex) {
+        homepageCurrentSlide = slideIndex;
+        homepageUpdateCarousel();
+    }
+
+    function homepagePrevSlide() {
+        homepageCurrentSlide = (homepageCurrentSlide - 1 + homepageTotalSlides) % homepageTotalSlides;
+        homepageUpdateCarousel();
+    }
+
+    function homepageNextSlide() {
+        homepageCurrentSlide = (homepageCurrentSlide + 1) % homepageTotalSlides;
+        homepageUpdateCarousel();
+    }
+
+    function homepageUpdateCarousel() {
+        const slides = document.getElementById('homepageCarouselSlides');
+        if (slides) {
+            const offset = -homepageCurrentSlide * 100;
+            slides.style.transform = `translateX(${offset}%)`;
+            
+            // Update indicators
+            document.querySelectorAll('.indicator-mobile').forEach((indicator, index) => {
+                if (index === homepageCurrentSlide) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+        }
+    }
+
+    // Touch swipe support
+    let homepageTouchStartX = 0;
+    let homepageTouchEndX = 0;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const carouselElement = document.querySelector('.carousel-mobile-wrapper');
+        if (carouselElement) {
+            carouselElement.addEventListener('touchstart', function(e) {
+                homepageTouchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            carouselElement.addEventListener('touchend', function(e) {
+                homepageTouchEndX = e.changedTouches[0].screenX;
+                handleHomepageSwipe();
+            }, { passive: true });
+        }
+    });
+
+    function handleHomepageSwipe() {
+        const swipeThreshold = 50;
+        const diff = homepageTouchStartX - homepageTouchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // Swipe left - next slide
+                homepageNextSlide();
+            } else {
+                // Swipe right - previous slide
+                homepagePrevSlide();
+            }
+        }
+    }
+</script>
+
+{# Scripts du simulateur d'investissement - Temporairement masqués (à réactiver plus tard avec la section simulateur)
+<!-- Chart.js pour le simulateur -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<!-- Script du simulateur d'investissement - Comparaison Avec/Sans conseil ADN -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Configuration des rendements
+    const TAUX_SANS_CONSEIL = 0.05;  // 5% - Fonds euros classique
+    const TAUX_AVEC_CONSEIL = 0.10;  // 10% - Avec conseil ADN
+
+    // Éléments DOM - Sliders
+    const initialSlider = document.getElementById('initial-amount');
+    const monthlySlider = document.getElementById('monthly-amount');
+    const durationSlider = document.getElementById('investment-duration');
+    
+    if (!initialSlider || !monthlySlider || !durationSlider) return;
+
+    // Affichages des valeurs
+    const initialDisplay = document.getElementById('initial-display');
+    const monthlyDisplay = document.getElementById('monthly-display');
+    const durationDisplay = document.getElementById('duration-display');
+    
+    // Barres de progression
+    const initialFill = document.getElementById('initial-fill');
+    const monthlyFill = document.getElementById('monthly-fill');
+    const durationFill = document.getElementById('duration-fill');
+
+    // Résultats
+    const totalInvestedEl = document.getElementById('total-invested');
+    const resultWithoutEl = document.getElementById('result-without');
+    const gainWithoutEl = document.getElementById('gain-without');
+    const resultWithEl = document.getElementById('result-with');
+    const gainWithEl = document.getElementById('gain-with');
+    const differenceValueEl = document.getElementById('difference-value');
+    const differenceMultiplierEl = document.getElementById('difference-multiplier');
+
+    // Configuration du graphique
+    let investmentChart = null;
+    const chartCanvas = document.getElementById('investment-chart');
+    
+    if (chartCanvas) {
+        const ctx = chartCanvas.getContext('2d');
+        
+        // Gradient pour la courbe avec conseil ADN
+        const gradientWith = ctx.createLinearGradient(0, 0, 0, 280);
+        gradientWith.addColorStop(0, 'rgba(20, 184, 166, 0.35)');
+        gradientWith.addColorStop(1, 'rgba(20, 184, 166, 0)');
+        
+        // Gradient pour la courbe sans conseil
+        const gradientWithout = ctx.createLinearGradient(0, 0, 0, 280);
+        gradientWithout.addColorStop(0, 'rgba(148, 163, 184, 0.2)');
+        gradientWithout.addColorStop(1, 'rgba(148, 163, 184, 0)');
+
+        investmentChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Sans conseil (5%)',
+                        data: [],
+                        borderColor: '#94a3b8',
+                        backgroundColor: gradientWithout,
+                        borderWidth: 2,
+                        borderDash: [6, 4],
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#94a3b8',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                    },
+                    {
+                        label: 'Avec conseil ADN (10%)',
+                        data: [],
+                        borderColor: '#14b8a6',
+                        backgroundColor: gradientWith,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#14b8a6',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 2,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#94a3b8',
+                        borderColor: 'rgba(148, 163, 184, 0.2)',
+                        borderWidth: 1,
+                        padding: 14,
+                        cornerRadius: 10,
+                        titleFont: {
+                            family: 'Outfit, sans-serif',
+                            size: 14,
+                            weight: 600
+                        },
+                        bodyFont: {
+                            family: 'Outfit, sans-serif',
+                            size: 13
+                        },
+                        callbacks: {
+                            title: function(items) {
+                                return 'Année ' + items[0].label;
+                            },
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                return context.dataset.label + ': ' + formatCurrency(value);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(148, 163, 184, 0.08)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            font: {
+                                family: 'Outfit, sans-serif',
+                                size: 11
+                            },
+                            maxTicksLimit: 10,
+                            callback: function(value, index) {
+                                const label = this.getLabelForValue(value);
+                                if (index === 0) return 'Début';
+                                if (label % 5 === 0 || index === this.chart.data.labels.length - 1) {
+                                    return label + ' ans';
+                                }
+                                return '';
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(148, 163, 184, 0.08)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            font: {
+                                family: 'Outfit, sans-serif',
+                                size: 11
+                            },
+                            callback: function(value) {
+                                if (value >= 1000000) {
+                                    return (value / 1000000).toFixed(1) + ' M€';
+                                }
+                                if (value >= 1000) {
+                                    return (value / 1000).toFixed(0) + ' k€';
+                                }
+                                return value + ' €';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Formatage des devises
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: 'EUR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(Math.round(value));
+    }
+
+    // Calcul du capital avec versements mensuels et intérêts composés
+    function calculateFutureValue(initial, monthly, years, annualRate) {
+        const monthlyRate = annualRate / 12;
+        const months = years * 12;
+        
+        // Valeur future du capital initial
+        const futureInitial = initial * Math.pow(1 + monthlyRate, months);
+        
+        // Valeur future des versements mensuels (formule des annuités)
+        let futureMonthly = 0;
+        if (monthlyRate > 0 && monthly > 0) {
+            futureMonthly = monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+        } else if (monthly > 0) {
+            futureMonthly = monthly * months;
+        }
+        
+        return futureInitial + futureMonthly;
+    }
+
+    // Calcul de la projection année par année
+    function calculateYearlyProjection(initial, monthly, years, annualRate) {
+        const data = [];
+        for (let year = 0; year <= years; year++) {
+            const value = calculateFutureValue(initial, monthly, year, annualRate);
+            data.push(Math.round(value));
+        }
+        return data;
+    }
+
+    // Calcul complet
+    function calculateProjection() {
+        const initial = parseInt(initialSlider.value);
+        const monthly = parseInt(monthlySlider.value);
+        const years = parseInt(durationSlider.value);
+
+        // Total versé
+        const totalInvested = initial + (monthly * 12 * years);
+
+        // Calcul sans conseil (5%)
+        const finalWithout = calculateFutureValue(initial, monthly, years, TAUX_SANS_CONSEIL);
+        const gainWithout = finalWithout - totalInvested;
+        const dataWithout = calculateYearlyProjection(initial, monthly, years, TAUX_SANS_CONSEIL);
+
+        // Calcul avec conseil ADN (10%)
+        const finalWith = calculateFutureValue(initial, monthly, years, TAUX_AVEC_CONSEIL);
+        const gainWith = finalWith - totalInvested;
+        const dataWith = calculateYearlyProjection(initial, monthly, years, TAUX_AVEC_CONSEIL);
+
+        // Différence
+        const difference = finalWith - finalWithout;
+        const multiplier = finalWithout > 0 ? (finalWith / finalWithout) : 0;
+
+        // Labels pour le graphique
+        const labels = [];
+        for (let i = 0; i <= years; i++) {
+            labels.push(i);
+        }
+
+        return {
+            initial,
+            monthly,
+            years,
+            totalInvested,
+            finalWithout: Math.round(finalWithout),
+            gainWithout: Math.round(gainWithout),
+            finalWith: Math.round(finalWith),
+            gainWith: Math.round(gainWith),
+            difference: Math.round(difference),
+            multiplier: multiplier.toFixed(1),
+            labels,
+            dataWithout,
+            dataWith
+        };
+    }
+
+    // Mise à jour de l'interface
+    function updateUI() {
+        const result = calculateProjection();
+
+        // Mise à jour des affichages de sliders
+        initialDisplay.textContent = formatCurrency(result.initial);
+        monthlyDisplay.textContent = formatCurrency(result.monthly);
+        durationDisplay.textContent = result.years + ' an' + (result.years > 1 ? 's' : '');
+
+        // Mise à jour des barres de progression
+        const initialPercent = ((result.initial - 500) / (100000 - 500)) * 100;
+        const monthlyPercent = (result.monthly / 2000) * 100;
+        const durationPercent = ((result.years - 5) / (50 - 5)) * 100;
+
+        initialFill.style.width = Math.min(100, Math.max(0, initialPercent)) + '%';
+        monthlyFill.style.width = Math.min(100, Math.max(0, monthlyPercent)) + '%';
+        durationFill.style.width = Math.min(100, Math.max(0, durationPercent)) + '%';
+
+        // Mise à jour des résultats
+        totalInvestedEl.textContent = formatCurrency(result.totalInvested);
+        
+        resultWithoutEl.textContent = formatCurrency(result.finalWithout);
+        gainWithoutEl.textContent = '+' + formatCurrency(result.gainWithout) + ' de gains';
+        
+        resultWithEl.textContent = formatCurrency(result.finalWith);
+        gainWithEl.textContent = '+' + formatCurrency(result.gainWith) + ' de gains';
+        
+        differenceValueEl.textContent = '+' + formatCurrency(result.difference);
+        differenceMultiplierEl.textContent = 'Capital multiplié par ' + result.multiplier + '×';
+
+        // Mise à jour du graphique
+        if (investmentChart) {
+            investmentChart.data.labels = result.labels;
+            investmentChart.data.datasets[0].data = result.dataWithout;
+            investmentChart.data.datasets[1].data = result.dataWith;
+            investmentChart.update('none');
+        }
+    }
+
+    // Event listeners pour les sliders
+    initialSlider.addEventListener('input', updateUI);
+    monthlySlider.addEventListener('input', updateUI);
+    durationSlider.addEventListener('input', updateUI);
+
+    // Initialisation
+    updateUI();
+});
+</script>
+#}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('modern_homepage') }}
+    <script src="{{ asset('assets/js/adn-animation.js') }}" defer></script>
+{% endblock %}
